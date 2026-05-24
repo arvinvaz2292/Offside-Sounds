@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offside Sound App</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: #000;
+      color: white;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    h1 {
+      font-size: 42px;
+    }
+
+    .subtitle {
+      color: #888;
+      margin-top: 5px;
+    }
+
+    .top-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .add-btn {
+      background: white;
+      color: black;
+      padding: 14px 20px;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .stop-all-btn {
+      background: #d11a2a;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .tracks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .track {
+      background: #121212;
+      border: 1px solid #222;
+      border-radius: 28px;
+      padding: 20px;
+    }
+
+    .track-title {
+      font-size: 28px;
+      margin-bottom: 15px;
+      word-break: break-word;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .play-btn {
+      flex: 1;
+      background: #333;
+      color: white;
+      padding: 28px;
+      border-radius: 22px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .play-btn.playing {
+      background: #32d46d;
+      color: black;
+    }
+
+    .stop-btn {
+      background: #a31420;
+      color: white;
+      padding: 0 24px;
+      border-radius: 22px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .section {
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      color: white;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .loop-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1e1e1e;
+      padding: 14px 16px;
+      border-radius: 18px;
+      margin-top: 20px;
+    }
+
+    .loop-btn {
+      padding: 10px 18px;
+      border-radius: 14px;
+      background: #333;
+      color: white;
+      font-weight: bold;
+    }
+
+    .loop-btn.active {
+      background: #32d46d;
+      color: black;
+    }
+
+    .footer {
+      margin-top: 40px;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 28px;
+      padding: 24px;
+    }
+
+    .footer h2 {
+      margin-bottom: 12px;
+    }
+
+    .footer ol {
+      padding-left: 20px;
+      color: #bbb;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 700px) {
+      h1 {
+        font-size: 32px;
+      }
+
+      .play-btn {
+        font-size: 20px;
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1>Offside Sound App</h1>
+      <div class="subtitle">by Arvin Vaz</div>
+    </div>
+
+    <div class="top-buttons">
+      <button class="add-btn" onclick="addTrack()">+ Add Track</button>
+      <button class="stop-all-btn" onclick="stopAll()">STOP ALL</button>
+    </div>
+  </div>
+
+  <div class="tracks" id="tracks"></div>
+
+  <div class="footer">
+    <h2>How to Use</h2>
+    <ol>
+      <li>Upload audio files into each track.</li>
+      <li>Play multiple tracks simultaneously.</li>
+      <li>Enable looping for ambience tracks.</li>
+      <li>Adjust volume live during performances.</li>
+      <li>Use STOP ALL during scene changes.</li>
+    </ol>
+  </div>
+
+  <script>
+    let tracks = [];
+
+    function createTrack(name = 'New Track') {
+      const audio = new Audio();
+      audio.loop = true;
+
+      tracks.push({
+        id: Date.now() + Math.random(),
+        name,
+        audio,
+        playing: false,
+        loop: true,
+      });
+
+      renderTracks();
+    }
+
+    function renderTracks() {
+      const container = document.getElementById('tracks');
+      container.innerHTML = '';
+
+      tracks.forEach((track) => {
+        const div = document.createElement('div');
+        div.className = 'track';
+
+        div.innerHTML = `
+          <div class="track-title">${track.name}</div>
+
+          <div class="controls">
+            <button class="play-btn ${track.playing ? 'playing' : ''}" onclick="togglePlay('${track.id}')">
+              ${track.playing ? 'PAUSE' : 'PLAY'}
+            </button>
+
+            <button class="stop-btn" onclick="stopTrack('${track.id}')">
+              STOP
+            </button>
+          </div>
+
+          <div class="section">
+            <label>Upload Audio</label>
+            <input type="file" accept="audio/*" onchange="uploadFile(event, '${track.id}')">
+          </div>
+
+          <div class="section">
+            <label>Volume</label>
+            <input type="range" min="0" max="1" step="0.01" value="1"
+              onchange="changeVolume('${track.id}', this.value)">
+          </div>
+
+          <div class="loop-row">
+            <span>Loop Track</span>
+            <button class="loop-btn ${track.loop ? 'active' : ''}" onclick="toggleLoop('${track.id}')">
+              ${track.loop ? 'ON' : 'OFF'}
+            </button>
+          </div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function uploadFile(event, id) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const track = tracks.find(t => t.id == id);
+      track.audio.src = URL.createObjectURL(file);
+      track.name = file.name.replace(/\.[^/.]+$/, '');
+
+      renderTracks();
+    }
+
+    async function togglePlay(id) {
+      const track = tracks.find(t => t.id == id);
+
+      if (!track.audio.src) {
+        alert('Upload an audio file first.');
+        return;
+      }
+
+      if (track.playing) {
+        track.audio.pause();
+        track.playing = false;
+      } else {
+        await track.audio.play();
+        track.playing = true;
+      }
+
+      renderTracks();
+    }
+
+    function stopTrack(id) {
+      const track = tracks.find(t => t.id == id);
+
+      track.audio.pause();
+      track.audio.currentTime = 0;
+      track.playing = false;
+
+      renderTracks();
+    }
+
+    function stopAll() {
+      tracks.forEach(track => {
+        track.audio.pause();
+        track.audio.currentTime = 0;
+        track.playing = false;
+      });
+
+      renderTracks();
+    }
+
+    function toggleLoop(id) {
+      const track = tracks.find(t => t.id == id);
+
+      track.loop = !track.loop;
+      track.audio.loop = track.loop;
+
+      renderTracks();
+    }
+
+    function changeVolume(id, volume) {
+      const track = tracks.find(t => t.id == id);
+      track.audio.volume = volume;
+    }
+
+    function addTrack() {
+      createTrack();
+    }
+
+    createTrack('Rain Ambience');
+    createTrack('Tension Drone');
+    createTrack('Church Bell');
+  </script>
+
+</body>
+</html>
