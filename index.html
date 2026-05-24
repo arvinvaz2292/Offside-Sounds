@@ -115,39 +115,15 @@
       opacity: 0.9;
     }
 
-    .wave-bar:nth-child(1) {
-      height: 10px;
-      animation-delay: 0s;
-    }
-
-    .wave-bar:nth-child(2) {
-      height: 24px;
-      animation-delay: 0.1s;
-    }
-
-    .wave-bar:nth-child(3) {
-      height: 16px;
-      animation-delay: 0.2s;
-    }
-
-    .wave-bar:nth-child(4) {
-      height: 28px;
-      animation-delay: 0.3s;
-    }
-
-    .wave-bar:nth-child(5) {
-      height: 14px;
-      animation-delay: 0.4s;
-    }
+    .wave-bar:nth-child(1) { height: 10px; animation-delay: 0s; }
+    .wave-bar:nth-child(2) { height: 24px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { height: 16px; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { height: 28px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { height: 14px; animation-delay: 0.4s; }
 
     @keyframes bounce {
-      0%, 100% {
-        transform: scaleY(0.5);
-      }
-
-      50% {
-        transform: scaleY(1.2);
-      }
+      0%, 100% { transform: scaleY(0.5); }
+      50% { transform: scaleY(1.2); }
     }
 
     .play-btn {
@@ -248,7 +224,6 @@
     }
   </style>
 </head>
-
 <body>
 
   <div class="header">
@@ -258,13 +233,8 @@
     </div>
 
     <div class="top-buttons">
-      <button class="add-btn" onclick="addTrack()">
-        + Add Track
-      </button>
-
-      <button class="stop-all-btn" onclick="stopAll()">
-        STOP ALL
-      </button>
+      <button class="add-btn" onclick="addTrack()">+ Add Track</button>
+      <button class="stop-all-btn" onclick="stopAll()">STOP ALL</button>
     </div>
   </div>
 
@@ -272,12 +242,10 @@
 
   <div class="footer">
     <h2>How to Use</h2>
-
     <ol>
       <li>Upload audio files into each track.</li>
       <li>Play multiple tracks simultaneously.</li>
       <li>Enable looping for ambience tracks.</li>
-      <li>Use the seek bar to scrub audio.</li>
       <li>Adjust volume live during performances.</li>
       <li>Use STOP ALL during scene changes.</li>
     </ol>
@@ -287,11 +255,8 @@
     let tracks = [];
 
     function createTrack(name = 'New Track') {
-
       const audio = new Audio();
-
       audio.loop = true;
-      audio.preload = "auto";
 
       tracks.push({
         id: Date.now() + Math.random(),
@@ -305,35 +270,21 @@
     }
 
     function renderTracks() {
-
       const container = document.getElementById('tracks');
-
       container.innerHTML = '';
 
       tracks.forEach((track) => {
-
         const div = document.createElement('div');
-
-        div.className = track.playing
-          ? 'track playing-track'
-          : 'track';
+        div.className = track.playing ? 'track playing-track' : 'track';
 
         div.innerHTML = `
-          <div class="track-title">
-            ${track.name}
-          </div>
+          <div class="track-title">${track.name}</div>
 
           <div class="controls">
-
-            <button
-              class="play-btn ${track.playing ? 'playing' : ''}"
-              onclick="togglePlay('${track.id}')"
-            >
-
+            <button class="play-btn ${track.playing ? 'playing' : ''}" onclick="togglePlay('${track.id}')">
               ${track.playing ? 'PAUSE' : 'PLAY'}
 
               ${track.playing ? `
-
                 <div class="waveform">
                   <div class="wave-bar"></div>
                   <div class="wave-bar"></div>
@@ -341,72 +292,41 @@
                   <div class="wave-bar"></div>
                   <div class="wave-bar"></div>
                 </div>
-
               ` : ''}
-
             </button>
 
-            <button
-              class="stop-btn"
-              onclick="stopTrack('${track.id}')"
-            >
+            <button class="stop-btn" onclick="stopTrack('${track.id}')">
               STOP
             </button>
-
           </div>
 
           <div class="section">
-
             <label>Upload Audio</label>
-
-            <input
-              type="file"
-              accept=".mp3,.wav,.m4a,.aac,audio/*"
-              onchange="uploadFile(event, '${track.id}')"
-            >
-
+            <input type="file" accept=".mp3,.wav,.m4a,.aac,audio/*" onchange="uploadFile(event, '${track.id}')">
           </div>
 
           <div class="section">
-
             <label>Seek Track</label>
-
             <input
               type="range"
               min="0"
               max="100"
               value="0"
-              oninput="seekTrack('${track.id}', this.value)"
+              onchange="seekTrack('${track.id}', this.value)"
             >
-
           </div>
 
           <div class="section">
-
             <label>Volume</label>
-
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value="1"
-              onchange="changeVolume('${track.id}', this.value)"
-            >
-
+            <input type="range" min="0" max="1" step="0.01" value="1"
+              onchange="changeVolume('${track.id}', this.value)">
           </div>
 
           <div class="loop-row">
-
             <span>Loop Track</span>
-
-            <button
-              class="loop-btn ${track.loop ? 'active' : ''}"
-              onclick="toggleLoop('${track.id}')"
-            >
+            <button class="loop-btn ${track.loop ? 'active' : ''}" onclick="toggleLoop('${track.id}')">
               ${track.loop ? 'ON' : 'OFF'}
             </button>
-
           </div>
         `;
 
@@ -415,9 +335,7 @@
     }
 
     function uploadFile(event, id) {
-
       const file = event.target.files[0];
-
       if (!file) return;
 
       const track = tracks.find(t => t.id == id);
@@ -425,83 +343,54 @@
       const fileURL = URL.createObjectURL(file);
 
       track.audio.src = fileURL;
-
       track.audio.load();
 
       track.name = file.name.replace(/\.[^/.]+$/, '');
 
       track.audio.oncanplaythrough = () => {
-        console.log('Loaded:', track.name);
+        console.log('Audio loaded:', track.name);
       };
 
       track.audio.onerror = () => {
-        alert(
-          'This file may not be supported on Safari/iPad. MP3 and M4A work best.'
-        );
+        alert('This audio format may not be supported on your iPad/Safari. Try MP3 or M4A.');
       };
 
       renderTracks();
     }
 
     async function togglePlay(id) {
-
       const track = tracks.find(t => t.id == id);
 
       if (!track.audio.src) {
-
         alert('Upload an audio file first.');
-
         return;
       }
 
-      try {
-
-        if (track.playing) {
-
-          track.audio.pause();
-
-          track.playing = false;
-
-        } else {
-
-          await track.audio.play();
-
-          track.playing = true;
-        }
-
-        renderTracks();
-
-      } catch (err) {
-
-        console.error(err);
-
-        alert(
-          'Playback failed. Try MP3 or M4A.'
-        );
+      if (track.playing) {
+        track.audio.pause();
+        track.playing = false;
+      } else {
+        await track.audio.play();
+        track.playing = true;
       }
+
+      renderTracks();
     }
 
     function stopTrack(id) {
-
       const track = tracks.find(t => t.id == id);
 
       track.audio.pause();
-
       track.audio.currentTime = 0;
-
       track.playing = false;
 
       renderTracks();
     }
 
     function stopAll() {
-
       tracks.forEach(track => {
-
         track.audio.pause();
-
         track.audio.currentTime = 0;
-
         track.playing = false;
       });
 
@@ -509,32 +398,26 @@
     }
 
     function toggleLoop(id) {
-
       const track = tracks.find(t => t.id == id);
 
       track.loop = !track.loop;
-
       track.audio.loop = track.loop;
 
       renderTracks();
     }
 
     function changeVolume(id, volume) {
-
       const track = tracks.find(t => t.id == id);
 
       track.audio.volume = volume;
     }
 
     function seekTrack(id, value) {
-
       const track = tracks.find(t => t.id == id);
 
       if (!track.audio.duration) return;
 
-      const time =
-        (value / 100) * track.audio.duration;
-
+      const time = (value / 100) * track.audio.duration;
       track.audio.currentTime = time;
     }
 
@@ -545,7 +428,6 @@
     createTrack('Rain Ambience');
     createTrack('Tension Drone');
     createTrack('Church Bell');
-
   </script>
 
 </body>
