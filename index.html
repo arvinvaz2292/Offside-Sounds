@@ -1,255 +1,327 @@
-Offside Sound App — Working HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <title>Offside Sound App</title>
 
 <script src="https://unpkg.com/wavesurfer.js@7"></script>
+<script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
 }
 
-body {
-  background: #050505;
-  color: white;
-  padding: 20px;
+body{
+  background:#000;
+  color:white;
+  padding:20px;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-  gap: 15px;
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+  flex-wrap:wrap;
+  gap:15px;
 }
 
-h1 {
-  font-size: 40px;
+h1{
+  font-size:42px;
 }
 
-.subtitle {
-  color: #777;
-  margin-top: 5px;
+.subtitle{
+  color:#888;
+  margin-top:5px;
 }
 
-.top-buttons {
-  display: flex;
-  gap: 10px;
+.top-buttons{
+  display:flex;
+  gap:10px;
 }
 
-button {
-  border: none;
-  cursor: pointer;
+button{
+  border:none;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.add-btn,
-.stop-all-btn {
-  padding: 14px 20px;
-  border-radius: 18px;
-  font-size: 16px;
-  font-weight: bold;
+.add-btn{
+  background:white;
+  color:black;
+  padding:14px 20px;
+  border-radius:18px;
+  font-size:16px;
+  font-weight:bold;
 }
 
-.add-btn {
-  background: white;
-  color: black;
+.stop-all-btn{
+  background:#d11a2a;
+  color:white;
+  padding:14px 20px;
+  border-radius:18px;
+  font-size:16px;
+  font-weight:bold;
 }
 
-.stop-all-btn {
-  background: #b31320;
-  color: white;
+.tracks{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-.tracks {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.track{
+  background:#121212;
+  border:1px solid #222;
+  border-radius:28px;
+  padding:20px;
+  transition:0.25s;
 }
 
-.track {
-  background: #121212;
-  border: 1px solid #222;
-  border-radius: 24px;
-  padding: 20px;
-  transition: 0.2s;
+.track.playing-track{
+  border:2px solid #32d46d;
+  box-shadow:0 0 25px rgba(50,212,109,0.35);
 }
 
-.track.playing {
-  border: 2px solid #32d46d;
-  box-shadow: 0 0 20px rgba(50,212,109,0.3);
+.track-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
 }
 
-.track-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  gap: 15px;
+.track-title{
+  font-size:30px;
+  word-break:break-word;
 }
 
-.track-title {
-  font-size: 26px;
-  font-weight: bold;
+.scene-heading{
+  color:#32d46d;
+  margin-top:6px;
+  font-size:14px;
 }
 
-.scene-label {
-  color: #32d46d;
-  margin-top: 4px;
-  font-size: 14px;
+.controls{
+  display:flex;
+  gap:10px;
 }
 
-.controls {
-  display: flex;
-  gap: 10px;
+.play-btn{
+  background:#333;
+  color:white;
+  padding:20px 34px;
+  border-radius:22px;
+  font-size:22px;
+  font-weight:bold;
 }
 
-.play-btn,
-.stop-btn {
-  border-radius: 18px;
-  font-weight: bold;
+.play-btn.playing{
+  background:#32d46d;
+  color:black;
 }
 
-.play-btn {
-  background: #333;
-  color: white;
-  padding: 18px 32px;
-  font-size: 20px;
+.stop-btn{
+  background:#a31420;
+  color:white;
+  padding:0 24px;
+  border-radius:22px;
+  font-size:18px;
+  font-weight:bold;
 }
 
-.play-btn.playing {
-  background: #32d46d;
-  color: black;
+.section{
+  margin-top:18px;
 }
 
-.stop-btn {
-  background: #8d111b;
-  color: white;
-  padding: 18px 24px;
+label{
+  display:block;
+  margin-bottom:8px;
+  color:#aaa;
+  font-size:14px;
 }
 
-.section {
-  margin-top: 18px;
+input[type="file"]{
+  width:100%;
+  color:white;
 }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #888;
-  font-size: 14px;
+input[type="range"]{
+  width:100%;
 }
 
-input[type="file"],
-input[type="text"],
-textarea {
-  width: 100%;
+.wave-container{
+  background:#1a1a1a;
+  border-radius:16px;
+  overflow:hidden;
+  margin-top:10px;
 }
 
-input[type="text"],
-textarea {
-  background: #1d1d1d;
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  color: white;
+.loop-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:15px;
 }
 
-textarea {
-  min-height: 80px;
-  resize: vertical;
+.loop-btn{
+  padding:12px 18px;
+  border-radius:14px;
+  background:#333;
+  color:white;
+  font-weight:bold;
 }
 
-input[type="range"] {
-  width: 100%;
+.loop-btn.active{
+  background:#32d46d;
+  color:black;
 }
 
-.wave {
-  background: #191919;
-  border-radius: 14px;
-  overflow: hidden;
+textarea,
+input[type="text"]{
+  width:100%;
+  background:#1b1b1b;
+  color:white;
+  border:none;
+  border-radius:14px;
+  padding:14px;
+  font-size:15px;
 }
 
-.loop-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+textarea{
+  resize:vertical;
+  min-height:100px;
 }
 
-.loop-row button {
-  background: #2a2a2a;
-  color: white;
-  padding: 10px 14px;
-  border-radius: 12px;
+.time-display{
+  color:#888;
+  margin-top:10px;
+  font-size:14px;
 }
 
-.footer {
-  margin-top: 40px;
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 24px;
-  padding: 24px;
+.footer{
+  margin-top:40px;
+  background:#111;
+  border:1px solid #222;
+  border-radius:28px;
+  padding:24px;
 }
 
-.footer ol {
-  padding-left: 20px;
-  color: #aaa;
-  line-height: 1.8;
+.footer h2{
+  margin-bottom:12px;
 }
+
+.footer ol{
+  padding-left:20px;
+  color:#bbb;
+  line-height:1.8;
+}
+
+@media(max-width:700px){
+
+  h1{
+    font-size:32px;
+  }
+
+  .controls{
+    width:100%;
+  }
+
+  .play-btn{
+    flex:1;
+  }
+
+}
+
 </style>
+
 </head>
+
 <body>
 
 <div class="header">
+
   <div>
     <h1>Offside Sound App</h1>
     <div class="subtitle">by Arvin Vaz</div>
   </div>
 
   <div class="top-buttons">
-    <button class="add-btn" onclick="addTrack()">+ Add Track</button>
-    <button class="stop-all-btn" onclick="stopAll()">STOP ALL</button>
+
+    <button class="add-btn" onclick="addTrack()">
+      + Add Track
+    </button>
+
+    <button class="stop-all-btn" onclick="stopAll()">
+      STOP ALL
+    </button>
+
   </div>
+
 </div>
 
-<div id="tracks" class="tracks"></div>
+<div class="tracks" id="tracks"></div>
 
 <div class="footer">
+
+  <h2>How to Use</h2>
+
   <ol>
     <li>Upload audio files.</li>
-    <li>Press PLAY to fade in tracks.</li>
-    <li>STOP fades out tracks.</li>
-    <li>Playing tracks move to the top.</li>
-    <li>Set loop points using buttons.</li>
-    <li>Add scene labels and notes.</li>
+    <li>Press PLAY to fade tracks in over 3 seconds.</li>
+    <li>Press STOP to fade tracks out over 3 seconds.</li>
+    <li>Create draggable loop regions on the waveform.</li>
+    <li>Enable LOOP to repeat the selected region.</li>
+    <li>Playing tracks move to the top automatically.</li>
+    <li>Add scene headings and cue notes.</li>
+    <li>Designed for theatre playback on iPad.</li>
   </ol>
+
 </div>
 
 <script>
+
 let tracks = [];
 
-function addTrack(name = 'New Track') {
+function createTrack(name='New Track'){
 
   const audio = new Audio();
 
+  audio.preload = "auto";
+
   const track = {
+
     id: Date.now() + Math.random(),
+
     name,
+
     audio,
-    playing: false,
-    volume: 1,
-    loopEnabled: false,
-    loopStart: 0,
-    loopEnd: null,
-    wavesurfer: null,
-    scene: '',
-    notes: ''
+
+    playing:false,
+
+    loopEnabled:false,
+
+    loopStart:null,
+
+    loopEnd:null,
+
+    fadeInterval:null,
+
+    waveSurfer:null,
+
+    scene:'',
+
+    notes:''
+
   };
 
   tracks.push(track);
@@ -257,11 +329,12 @@ function addTrack(name = 'New Track') {
   renderTracks();
 }
 
-function renderTracks() {
+function renderTracks(){
 
-  tracks.sort((a,b) => b.playing - a.playing);
+  tracks.sort((a,b)=> b.playing - a.playing);
 
   const container = document.getElementById('tracks');
+
   container.innerHTML = '';
 
   tracks.forEach(track => {
@@ -269,7 +342,7 @@ function renderTracks() {
     const div = document.createElement('div');
 
     div.className = track.playing
-      ? 'track playing'
+      ? 'track playing-track'
       : 'track';
 
     div.innerHTML = `
@@ -277,8 +350,15 @@ function renderTracks() {
       <div class="track-header">
 
         <div>
-          <div class="track-title">${track.name}</div>
-          <div class="scene-label">${track.scene || 'No Scene Assigned'}</div>
+
+          <div class="track-title">
+            ${track.name}
+          </div>
+
+          <div class="scene-heading">
+            ${track.scene || 'No Scene Assigned'}
+          </div>
+
         </div>
 
         <div class="controls">
@@ -302,48 +382,35 @@ function renderTracks() {
       </div>
 
       <div class="section">
+
         <label>Upload Audio</label>
 
         <input
           type="file"
-          accept="audio/*"
-          onchange="uploadFile(event, '${track.id}')"
+          accept=".mp3,.wav,.m4a,.aac,audio/*"
+          onchange="uploadFile(event,'${track.id}')"
         >
+
       </div>
 
       <div class="section">
-        <div class="wave" id="wave-${track.id}"></div>
-      </div>
 
-      <div class="section">
-        <label>Seek</label>
+        <div
+          id="waveform-${track.id}"
+          class="wave-container"
+        ></div>
 
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value="0"
-          oninput="seekTrack('${track.id}', this.value)"
+        <div
+          class="time-display"
+          id="time-${track.id}"
         >
-      </div>
-
-      <div class="loop-row">
-
-        <button onclick="setLoopStart('${track.id}')">
-          Set Loop Start
-        </button>
-
-        <button onclick="setLoopEnd('${track.id}')">
-          Set Loop End
-        </button>
-
-        <button onclick="toggleLoop('${track.id}')">
-          ${track.loopEnabled ? 'Loop ON' : 'Loop OFF'}
-        </button>
+          00:00
+        </div>
 
       </div>
 
       <div class="section">
+
         <label>Volume</label>
 
         <input
@@ -351,29 +418,52 @@ function renderTracks() {
           min="0"
           max="1"
           step="0.01"
-          value="${track.volume}"
+          value="1"
           oninput="changeVolume('${track.id}', this.value)"
         >
+
+      </div>
+
+      <div class="loop-row">
+
+        <button
+          class="loop-btn"
+          onclick="createLoopRegion('${track.id}')"
+        >
+          Create Loop
+        </button>
+
+        <button
+          class="loop-btn ${track.loopEnabled ? 'active' : ''}"
+          onclick="toggleLoop('${track.id}')"
+        >
+          ${track.loopEnabled ? 'Loop ON' : 'Loop OFF'}
+        </button>
+
       </div>
 
       <div class="section">
-        <label>Scene</label>
+
+        <label>Scene Heading</label>
 
         <input
           type="text"
-          placeholder="Scene 3 - Stadium"
+          placeholder="Scene 4 - Church Riot"
           value="${track.scene}"
           oninput="setScene('${track.id}', this.value)"
         >
+
       </div>
 
       <div class="section">
+
         <label>Notes</label>
 
         <textarea
           placeholder="Cue notes..."
           oninput="setNotes('${track.id}', this.value)"
         >${track.notes}</textarea>
+
       </div>
 
     `;
@@ -382,55 +472,152 @@ function renderTracks() {
 
     setTimeout(() => {
 
-      if (track.wavesurfer) {
-        track.wavesurfer.destroy();
+      if(track.waveSurfer){
+        track.waveSurfer.destroy();
       }
 
-      track.wavesurfer = WaveSurfer.create({
-        container: `#wave-${track.id}`,
-        waveColor: '#666',
-        progressColor: '#32d46d',
-        cursorColor: '#fff',
-        height: 90,
-        barWidth: 2
+      const regions =
+        WaveSurfer.Regions.create();
+
+      track.waveSurfer = WaveSurfer.create({
+
+        container:`#waveform-${track.id}`,
+
+        waveColor:'#666',
+
+        progressColor:'#32d46d',
+
+        cursorColor:'#fff',
+
+        height:100,
+
+        responsive:true,
+
+        barWidth:2,
+
+        normalize:true,
+
+        plugins:[regions]
+
       });
 
-      if (track.audio.src) {
-        track.wavesurfer.load(track.audio.src);
+      if(track.audio.src){
+        track.waveSurfer.load(track.audio.src);
       }
 
-    }, 50);
+      // CLICK WAVEFORM TO SEEK
+      track.waveSurfer.on('interaction', () => {
+
+        track.audio.currentTime =
+          track.waveSurfer.getCurrentTime();
+
+      });
+
+      // UPDATE CURRENT TIME
+      track.waveSurfer.on('timeupdate', (time) => {
+
+        const minutes =
+          Math.floor(time / 60)
+            .toString()
+            .padStart(2,'0');
+
+        const seconds =
+          Math.floor(time % 60)
+            .toString()
+            .padStart(2,'0');
+
+        document.getElementById(
+          `time-${track.id}`
+        ).innerText =
+          `${minutes}:${seconds}`;
+
+      });
+
+      // RECREATE LOOP REGION
+      track.waveSurfer.on('ready', () => {
+
+        if(
+          track.loopStart !== null &&
+          track.loopEnd !== null
+        ){
+
+          regions.addRegion({
+
+            start:track.loopStart,
+
+            end:track.loopEnd,
+
+            color:'rgba(50,212,109,0.25)',
+
+            drag:true,
+
+            resize:true
+
+          });
+
+        }
+
+      });
+
+      // REGION UPDATED
+      regions.on('region-updated', (region) => {
+
+        track.loopStart = region.start;
+
+        track.loopEnd = region.end;
+
+      });
+
+    },100);
 
   });
+
 }
 
-function uploadFile(event, id) {
+function uploadFile(event,id){
 
   const file = event.target.files[0];
 
-  if (!file) return;
+  if(!file) return;
 
   const track = tracks.find(t => t.id == id);
 
-  track.audio.src = URL.createObjectURL(file);
+  const fileURL = URL.createObjectURL(file);
 
-  track.name = file.name.replace(/\.[^/.]+$/, '');
+  track.audio.src = fileURL;
+
+  track.audio.load();
+
+  track.name =
+    file.name.replace(/\.[^/.]+$/, '');
 
   renderTracks();
 }
 
-async function togglePlay(id) {
+async function togglePlay(id){
 
   const track = tracks.find(t => t.id == id);
 
-  if (!track.audio.src) {
+  if(!track.audio.src){
     alert('Upload audio first.');
     return;
   }
 
-  if (track.playing) {
+  if(track.playing){
 
-    stopTrack(id);
+    fadeVolume(id,0,()=>{
+
+      track.audio.pause();
+
+      track.playing = false;
+
+      track.audio.currentTime = 0;
+
+      track.audio.volume = 1;
+
+      renderTracks();
+
+    });
 
   } else {
 
@@ -438,124 +625,151 @@ async function togglePlay(id) {
 
     await track.audio.play();
 
-    fadeAudio(track.audio, track.volume);
-
     track.playing = true;
 
     renderTracks();
+
+    fadeVolume(id,1);
+
   }
+
 }
 
-function stopTrack(id) {
+function stopTrack(id){
 
   const track = tracks.find(t => t.id == id);
 
-  fadeAudio(track.audio, 0, () => {
+  fadeVolume(id,0,()=>{
 
     track.audio.pause();
 
-    track.audio.currentTime = 0;
-
     track.playing = false;
 
-    track.audio.volume = track.volume;
+    track.audio.currentTime = 0;
+
+    track.audio.volume = 1;
 
     renderTracks();
+
   });
+
 }
 
-function stopAll() {
+function stopAll(){
 
   tracks.forEach(track => {
 
-    if (!track.playing) return;
+    if(track.playing){
 
-    fadeAudio(track.audio, 0, () => {
+      fadeVolume(track.id,0,()=>{
 
-      track.audio.pause();
+        track.audio.pause();
 
-      track.audio.currentTime = 0;
+        track.playing = false;
 
-      track.playing = false;
+        track.audio.currentTime = 0;
 
-      track.audio.volume = track.volume;
+        track.audio.volume = 1;
 
-      renderTracks();
+        renderTracks();
+
+      });
+
+    }
+
+  });
+
+}
+
+function fadeVolume(id,target,callback){
+
+  const track = tracks.find(t => t.id == id);
+
+  clearInterval(track.fadeInterval);
+
+  const duration = 3000;
+
+  const intervalTime = 50;
+
+  const steps = duration / intervalTime;
+
+  const startVolume = track.audio.volume;
+
+  const volumeChange =
+    (target - startVolume) / steps;
+
+  track.fadeInterval = setInterval(() => {
+
+    track.audio.volume += volumeChange;
+
+    // FADE IN COMPLETE
+    if(
+      volumeChange > 0 &&
+      track.audio.volume >= target
+    ){
+
+      track.audio.volume = target;
+
+      clearInterval(track.fadeInterval);
+
+      if(callback) callback();
+    }
+
+    // FADE OUT COMPLETE
+    if(
+      volumeChange < 0 &&
+      track.audio.volume <= target
+    ){
+
+      track.audio.volume = target;
+
+      clearInterval(track.fadeInterval);
+
+      if(callback) callback();
+    }
+
+  }, intervalTime);
+
+}
+
+function changeVolume(id,volume){
+
+  const track = tracks.find(t => t.id == id);
+
+  track.audio.volume = volume;
+}
+
+function createLoopRegion(id){
+
+  const track = tracks.find(t => t.id == id);
+
+  if(!track.waveSurfer) return;
+
+  const current =
+    track.audio.currentTime;
+
+  const region =
+    track.waveSurfer.regions.addRegion({
+
+      start: current,
+
+      end: current + 5,
+
+      color:'rgba(50,212,109,0.25)',
+
+      drag:true,
+
+      resize:true
 
     });
 
-  });
+  track.loopStart = region.start;
+
+  track.loopEnd = region.end;
+
 }
 
-function fadeAudio(audio, target, callback) {
-
-  const interval = setInterval(() => {
-
-    if (audio.volume < target) {
-
-      audio.volume += 0.02;
-
-      if (audio.volume >= target) {
-        audio.volume = target;
-        clearInterval(interval);
-      }
-
-    } else {
-
-      audio.volume -= 0.02;
-
-      if (audio.volume <= target) {
-
-        audio.volume = target;
-
-        clearInterval(interval);
-
-        if (callback) callback();
-      }
-    }
-
-  }, 40);
-}
-
-function seekTrack(id, value) {
-
-  const track = tracks.find(t => t.id == id);
-
-  if (!track.audio.duration) return;
-
-  const time = (value / 100) * track.audio.duration;
-
-  track.audio.currentTime = time;
-
-  if (track.wavesurfer) {
-    track.wavesurfer.seekTo(value / 100);
-  }
-}
-
-function changeVolume(id, value) {
-
-  const track = tracks.find(t => t.id == id);
-
-  track.volume = parseFloat(value);
-
-  track.audio.volume = track.volume;
-}
-
-function setLoopStart(id) {
-
-  const track = tracks.find(t => t.id == id);
-
-  track.loopStart = track.audio.currentTime;
-}
-
-function setLoopEnd(id) {
-
-  const track = tracks.find(t => t.id == id);
-
-  track.loopEnd = track.audio.currentTime;
-}
-
-function toggleLoop(id) {
+function toggleLoop(id){
 
   const track = tracks.find(t => t.id == id);
 
@@ -564,34 +778,56 @@ function toggleLoop(id) {
   renderTracks();
 }
 
-function setScene(id, value) {
-  tracks.find(t => t.id == id).scene = value;
+function setScene(id,value){
+
+  const track = tracks.find(t => t.id == id);
+
+  track.scene = value;
 }
 
-function setNotes(id, value) {
-  tracks.find(t => t.id == id).notes = value;
+function setNotes(id,value){
+
+  const track = tracks.find(t => t.id == id);
+
+  track.notes = value;
 }
 
+// LOOP ENGINE
 setInterval(() => {
 
   tracks.forEach(track => {
 
-    if (
+    if(
       track.playing &&
       track.loopEnabled &&
       track.loopEnd !== null &&
       track.audio.currentTime >= track.loopEnd
-    ) {
-      track.audio.currentTime = track.loopStart;
+    ){
+
+      track.audio.currentTime =
+        track.loopStart;
+
+      if(track.waveSurfer){
+
+        track.waveSurfer.setTime(
+          track.loopStart
+        );
+
+      }
+
     }
 
   });
 
-}, 100);
+},50);
 
-addTrack('Rain Ambience');
-addTrack('Crowd Chant');
-addTrack('Church Bell');
+function addTrack(){
+  createTrack();
+}
+
+createTrack('Rain Ambience');
+createTrack('Tension Drone');
+createTrack('Church Bell');
 
 </script>
 
