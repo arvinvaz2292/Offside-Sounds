@@ -1,319 +1,255 @@
+Offside Sound App — Working HTML
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Offside Sound App</title>
 
-<script src="https://unpkg.com/wavesurfer.js"></script>
+<script src="https://unpkg.com/wavesurfer.js@7"></script>
 
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-body{
-  background:#050505;
-  color:white;
-  padding:20px;
+body {
+  background: #050505;
+  color: white;
+  padding: 20px;
 }
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:25px;
-  flex-wrap:wrap;
-  gap:15px;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
-h1{
-  font-size:42px;
+h1 {
+  font-size: 40px;
 }
 
-.subtitle{
-  color:#777;
-  margin-top:5px;
+.subtitle {
+  color: #777;
+  margin-top: 5px;
 }
 
-.top-buttons{
-  display:flex;
-  gap:10px;
+.top-buttons {
+  display: flex;
+  gap: 10px;
 }
 
-button{
-  border:none;
-  cursor:pointer;
-  transition:0.2s;
+button {
+  border: none;
+  cursor: pointer;
 }
 
-.add-btn{
-  background:white;
-  color:black;
-  padding:14px 22px;
-  border-radius:18px;
-  font-weight:bold;
-  font-size:16px;
+.add-btn,
+.stop-all-btn {
+  padding: 14px 20px;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
-.stop-all-btn{
-  background:#d11a2a;
-  color:white;
-  padding:14px 22px;
-  border-radius:18px;
-  font-weight:bold;
-  font-size:16px;
+.add-btn {
+  background: white;
+  color: black;
 }
 
-.tracks{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
+.stop-all-btn {
+  background: #b31320;
+  color: white;
 }
 
-.track{
-  background:#111;
-  border:1px solid #222;
-  border-radius:28px;
-  padding:20px;
-  transition:0.25s;
+.tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.track.playing{
-  border:2px solid #32d46d;
-  box-shadow:0 0 30px rgba(50,212,109,0.3);
+.track {
+  background: #121212;
+  border: 1px solid #222;
+  border-radius: 24px;
+  padding: 20px;
+  transition: 0.2s;
 }
 
-.track-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:15px;
-  margin-bottom:15px;
+.track.playing {
+  border: 2px solid #32d46d;
+  box-shadow: 0 0 20px rgba(50,212,109,0.3);
 }
 
-.track-title{
-  font-size:28px;
-  font-weight:700;
+.track-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 15px;
 }
 
-.scene{
-  color:#32d46d;
-  font-size:14px;
-  margin-top:6px;
+.track-title {
+  font-size: 26px;
+  font-weight: bold;
 }
 
-.controls{
-  display:flex;
-  gap:10px;
+.scene-label {
+  color: #32d46d;
+  margin-top: 4px;
+  font-size: 14px;
 }
 
-.play-btn{
-  background:#333;
-  color:white;
-  border-radius:20px;
-  padding:22px 40px;
-  font-size:22px;
-  font-weight:bold;
+.controls {
+  display: flex;
+  gap: 10px;
 }
 
-.play-btn.playing{
-  background:#32d46d;
-  color:black;
+.play-btn,
+.stop-btn {
+  border-radius: 18px;
+  font-weight: bold;
 }
 
-.stop-btn{
-  background:#8b1018;
-  color:white;
-  border-radius:20px;
-  padding:0 26px;
-  font-size:18px;
-  font-weight:bold;
+.play-btn {
+  background: #333;
+  color: white;
+  padding: 18px 32px;
+  font-size: 20px;
 }
 
-.section{
-  margin-top:18px;
+.play-btn.playing {
+  background: #32d46d;
+  color: black;
 }
 
-label{
-  display:block;
-  margin-bottom:8px;
-  color:#888;
-  font-size:14px;
+.stop-btn {
+  background: #8d111b;
+  color: white;
+  padding: 18px 24px;
 }
 
-input[type="file"]{
-  width:100%;
-  color:white;
+.section {
+  margin-top: 18px;
 }
 
-input[type="range"]{
-  width:100%;
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #888;
+  font-size: 14px;
 }
 
-.wave-holder{
-  background:#181818;
-  border-radius:16px;
-  overflow:hidden;
+input[type="file"],
+input[type="text"],
+textarea {
+  width: 100%;
 }
 
-textarea,
-input[type="text"]{
-  width:100%;
-  background:#1b1b1b;
-  color:white;
-  border:none;
-  border-radius:14px;
-  padding:14px;
-  font-size:15px;
+input[type="text"],
+textarea {
+  background: #1d1d1d;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
 }
 
-textarea{
-  resize:vertical;
-  min-height:90px;
+textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 
-.loop-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#1a1a1a;
-  padding:14px 16px;
-  border-radius:18px;
-  margin-top:18px;
+input[type="range"] {
+  width: 100%;
 }
 
-.loop-btn{
-  background:#333;
-  color:white;
-  border-radius:14px;
-  padding:10px 18px;
-  font-weight:bold;
+.wave {
+  background: #191919;
+  border-radius: 14px;
+  overflow: hidden;
 }
 
-.loop-btn.active{
-  background:#32d46d;
-  color:black;
+.loop-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.footer{
-  margin-top:40px;
-  padding:24px;
-  border-radius:28px;
-  border:1px solid #222;
-  background:#111;
+.loop-row button {
+  background: #2a2a2a;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
 }
 
-.footer ol{
-  padding-left:20px;
-  line-height:1.9;
-  color:#aaa;
+.footer {
+  margin-top: 40px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 24px;
+  padding: 24px;
 }
 
-@media(max-width:700px){
-
-  h1{
-    font-size:32px;
-  }
-
-  .track-top{
-    flex-direction:column;
-  }
-
-  .controls{
-    width:100%;
-  }
-
-  .play-btn{
-    flex:1;
-  }
-
+.footer ol {
+  padding-left: 20px;
+  color: #aaa;
+  line-height: 1.8;
 }
-
 </style>
-
 </head>
-
 <body>
 
 <div class="header">
-
   <div>
     <h1>Offside Sound App</h1>
     <div class="subtitle">by Arvin Vaz</div>
   </div>
 
   <div class="top-buttons">
-
-    <button class="add-btn" onclick="addTrack()">
-      + Add Track
-    </button>
-
-    <button class="stop-all-btn" onclick="stopAll()">
-      STOP ALL
-    </button>
-
+    <button class="add-btn" onclick="addTrack()">+ Add Track</button>
+    <button class="stop-all-btn" onclick="stopAll()">STOP ALL</button>
   </div>
-
 </div>
 
-<div class="tracks" id="tracks"></div>
+<div id="tracks" class="tracks"></div>
 
 <div class="footer">
-
-  <h2 style="margin-bottom:12px;">How To Use</h2>
-
   <ol>
-    <li>Upload tracks.</li>
-    <li>Press PLAY to fade in.</li>
-    <li>STOP fades out the cue.</li>
-    <li>STOP ALL fades out everything.</li>
+    <li>Upload audio files.</li>
+    <li>Press PLAY to fade in tracks.</li>
+    <li>STOP fades out tracks.</li>
     <li>Playing tracks move to the top.</li>
-    <li>Create loop regions.</li>
-    <li>Add scene headings and backstage notes.</li>
+    <li>Set loop points using buttons.</li>
+    <li>Add scene labels and notes.</li>
   </ol>
-
 </div>
 
 <script>
-
 let tracks = [];
 
-function createTrack(name='New Track'){
+function addTrack(name = 'New Track') {
 
   const audio = new Audio();
 
   const track = {
-
-    id:Date.now()+Math.random(),
-
+    id: Date.now() + Math.random(),
     name,
-
     audio,
-
-    playing:false,
-
-    volume:1,
-
-    loopEnabled:false,
-
-    loopStart:0,
-
-    loopEnd:null,
-
-    wavesurfer:null,
-
-    notes:'',
-
-    scene:''
-
+    playing: false,
+    volume: 1,
+    loopEnabled: false,
+    loopStart: 0,
+    loopEnd: null,
+    wavesurfer: null,
+    scene: '',
+    notes: ''
   };
 
   tracks.push(track);
@@ -321,15 +257,14 @@ function createTrack(name='New Track'){
   renderTracks();
 }
 
-function renderTracks(){
+function renderTracks() {
 
-  tracks.sort((a,b)=> b.playing - a.playing);
+  tracks.sort((a,b) => b.playing - a.playing);
 
   const container = document.getElementById('tracks');
+  container.innerHTML = '';
 
-  container.innerHTML='';
-
-  tracks.forEach(track=>{
+  tracks.forEach(track => {
 
     const div = document.createElement('div');
 
@@ -339,18 +274,11 @@ function renderTracks(){
 
     div.innerHTML = `
 
-      <div class="track-top">
+      <div class="track-header">
 
         <div>
-
-          <div class="track-title">
-            ${track.name}
-          </div>
-
-          <div class="scene">
-            ${track.scene || 'No Scene Assigned'}
-          </div>
-
+          <div class="track-title">${track.name}</div>
+          <div class="scene-label">${track.scene || 'No Scene Assigned'}</div>
         </div>
 
         <div class="controls">
@@ -374,28 +302,20 @@ function renderTracks(){
       </div>
 
       <div class="section">
-
         <label>Upload Audio</label>
 
         <input
           type="file"
-          accept=".mp3,.wav,.m4a,.aac,audio/*"
-          onchange="uploadFile(event,'${track.id}')"
+          accept="audio/*"
+          onchange="uploadFile(event, '${track.id}')"
         >
-
       </div>
 
       <div class="section">
-
-        <div
-          class="wave-holder"
-          id="wave-${track.id}"
-        ></div>
-
+        <div class="wave" id="wave-${track.id}"></div>
       </div>
 
       <div class="section">
-
         <label>Seek</label>
 
         <input
@@ -405,11 +325,25 @@ function renderTracks(){
           value="0"
           oninput="seekTrack('${track.id}', this.value)"
         >
+      </div>
+
+      <div class="loop-row">
+
+        <button onclick="setLoopStart('${track.id}')">
+          Set Loop Start
+        </button>
+
+        <button onclick="setLoopEnd('${track.id}')">
+          Set Loop End
+        </button>
+
+        <button onclick="toggleLoop('${track.id}')">
+          ${track.loopEnabled ? 'Loop ON' : 'Loop OFF'}
+        </button>
 
       </div>
 
       <div class="section">
-
         <label>Volume</label>
 
         <input
@@ -420,141 +354,81 @@ function renderTracks(){
           value="${track.volume}"
           oninput="changeVolume('${track.id}', this.value)"
         >
-
-      </div>
-
-      <div class="loop-row">
-
-        <span>Loop Region</span>
-
-        <button
-          class="loop-btn ${track.loopEnabled ? 'active' : ''}"
-          onclick="toggleLoop('${track.id}')"
-        >
-          ${track.loopEnabled ? 'ON' : 'OFF'}
-        </button>
-
       </div>
 
       <div class="section">
-
-        <label>Loop Start %</label>
-
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value="${track.loopStartPercent || 0}"
-          oninput="setLoopStart('${track.id}', this.value)"
-        >
-
-      </div>
-
-      <div class="section">
-
-        <label>Loop End %</label>
-
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value="${track.loopEndPercent || 100}"
-          oninput="setLoopEnd('${track.id}', this.value)"
-        >
-
-      </div>
-
-      <div class="section">
-
         <label>Scene</label>
 
         <input
           type="text"
-          placeholder="Scene 4 - Church Riot"
+          placeholder="Scene 3 - Stadium"
           value="${track.scene}"
           oninput="setScene('${track.id}', this.value)"
         >
-
       </div>
 
       <div class="section">
-
         <label>Notes</label>
 
         <textarea
           placeholder="Cue notes..."
           oninput="setNotes('${track.id}', this.value)"
         >${track.notes}</textarea>
-
       </div>
 
     `;
 
     container.appendChild(div);
 
-    setTimeout(()=>{
+    setTimeout(() => {
 
-      if(track.wavesurfer){
+      if (track.wavesurfer) {
         track.wavesurfer.destroy();
       }
 
       track.wavesurfer = WaveSurfer.create({
-
-        container:`#wave-${track.id}`,
-
-        waveColor:'#555',
-
-        progressColor:'#32d46d',
-
-        cursorColor:'#fff',
-
-        height:90,
-
-        responsive:true,
-
-        normalize:true,
-
-        barWidth:2
-
+        container: `#wave-${track.id}`,
+        waveColor: '#666',
+        progressColor: '#32d46d',
+        cursorColor: '#fff',
+        height: 90,
+        barWidth: 2
       });
 
-      if(track.audio.src){
+      if (track.audio.src) {
         track.wavesurfer.load(track.audio.src);
       }
 
-    },100);
+    }, 50);
 
   });
-
 }
 
-function uploadFile(event,id){
+function uploadFile(event, id) {
 
   const file = event.target.files[0];
 
-  if(!file) return;
+  if (!file) return;
 
-  const track = tracks.find(t=>t.id==id);
+  const track = tracks.find(t => t.id == id);
 
-  const url = URL.createObjectURL(file);
-
-  track.audio.src = url;
+  track.audio.src = URL.createObjectURL(file);
 
   track.name = file.name.replace(/\.[^/.]+$/, '');
 
   renderTracks();
 }
 
-async function togglePlay(id){
+async function togglePlay(id) {
 
-  const track = tracks.find(t=>t.id==id);
+  const track = tracks.find(t => t.id == id);
 
-  if(!track.audio.src){
+  if (!track.audio.src) {
     alert('Upload audio first.');
     return;
   }
 
-  if(track.playing){
+  if (track.playing) {
 
     stopTrack(id);
 
@@ -570,14 +444,13 @@ async function togglePlay(id){
 
     renderTracks();
   }
-
 }
 
-function stopTrack(id){
+function stopTrack(id) {
 
-  const track = tracks.find(t=>t.id==id);
+  const track = tracks.find(t => t.id == id);
 
-  fadeAudio(track.audio,0,()=>{
+  fadeAudio(track.audio, 0, () => {
 
     track.audio.pause();
 
@@ -588,175 +461,137 @@ function stopTrack(id){
     track.audio.volume = track.volume;
 
     renderTracks();
-
   });
-
 }
 
-function stopAll(){
+function stopAll() {
 
-  tracks.forEach(track=>{
+  tracks.forEach(track => {
 
-    if(track.playing){
+    if (!track.playing) return;
 
-      fadeAudio(track.audio,0,()=>{
+    fadeAudio(track.audio, 0, () => {
 
-        track.audio.pause();
+      track.audio.pause();
 
-        track.audio.currentTime = 0;
+      track.audio.currentTime = 0;
 
-        track.playing = false;
+      track.playing = false;
 
-        track.audio.volume = track.volume;
+      track.audio.volume = track.volume;
 
-        renderTracks();
+      renderTracks();
 
-      });
-
-    }
+    });
 
   });
-
 }
 
-function fadeAudio(audio,target,callback){
+function fadeAudio(audio, target, callback) {
 
-  const fade = setInterval(()=>{
+  const interval = setInterval(() => {
 
-    if(audio.volume < target){
+    if (audio.volume < target) {
 
       audio.volume += 0.02;
 
-      if(audio.volume >= target){
-
+      if (audio.volume >= target) {
         audio.volume = target;
-
-        clearInterval(fade);
-
+        clearInterval(interval);
       }
 
     } else {
 
       audio.volume -= 0.02;
 
-      if(audio.volume <= target){
+      if (audio.volume <= target) {
 
         audio.volume = target;
 
-        clearInterval(fade);
+        clearInterval(interval);
 
-        if(callback) callback();
-
+        if (callback) callback();
       }
-
     }
 
-  },40);
-
+  }, 40);
 }
 
-function seekTrack(id,value){
+function seekTrack(id, value) {
 
-  const track = tracks.find(t=>t.id==id);
+  const track = tracks.find(t => t.id == id);
 
-  if(!track.audio.duration) return;
+  if (!track.audio.duration) return;
 
-  const time =
-    (value / 100) * track.audio.duration;
+  const time = (value / 100) * track.audio.duration;
 
   track.audio.currentTime = time;
 
-  if(track.wavesurfer){
+  if (track.wavesurfer) {
     track.wavesurfer.seekTo(value / 100);
   }
-
 }
 
-function changeVolume(id,value){
+function changeVolume(id, value) {
 
-  const track = tracks.find(t=>t.id==id);
+  const track = tracks.find(t => t.id == id);
 
-  track.volume = value;
+  track.volume = parseFloat(value);
 
-  track.audio.volume = value;
+  track.audio.volume = track.volume;
 }
 
-function toggleLoop(id){
+function setLoopStart(id) {
 
-  const track = tracks.find(t=>t.id==id);
+  const track = tracks.find(t => t.id == id);
+
+  track.loopStart = track.audio.currentTime;
+}
+
+function setLoopEnd(id) {
+
+  const track = tracks.find(t => t.id == id);
+
+  track.loopEnd = track.audio.currentTime;
+}
+
+function toggleLoop(id) {
+
+  const track = tracks.find(t => t.id == id);
 
   track.loopEnabled = !track.loopEnabled;
 
   renderTracks();
 }
 
-function setLoopStart(id,value){
-
-  const track = tracks.find(t=>t.id==id);
-
-  track.loopStartPercent = value;
-
-  if(track.audio.duration){
-
-    track.loopStart =
-      (value / 100) * track.audio.duration;
-  }
-
+function setScene(id, value) {
+  tracks.find(t => t.id == id).scene = value;
 }
 
-function setLoopEnd(id,value){
-
-  const track = tracks.find(t=>t.id==id);
-
-  track.loopEndPercent = value;
-
-  if(track.audio.duration){
-
-    track.loopEnd =
-      (value / 100) * track.audio.duration;
-  }
-
+function setNotes(id, value) {
+  tracks.find(t => t.id == id).notes = value;
 }
 
-function setScene(id,value){
+setInterval(() => {
 
-  const track = tracks.find(t=>t.id==id);
+  tracks.forEach(track => {
 
-  track.scene = value;
-}
-
-function setNotes(id,value){
-
-  const track = tracks.find(t=>t.id==id);
-
-  track.notes = value;
-}
-
-setInterval(()=>{
-
-  tracks.forEach(track=>{
-
-    if(
+    if (
       track.playing &&
       track.loopEnabled &&
-      track.loopEnd &&
+      track.loopEnd !== null &&
       track.audio.currentTime >= track.loopEnd
-    ){
-
+    ) {
       track.audio.currentTime = track.loopStart;
     }
 
   });
 
-},100);
+}, 100);
 
-function addTrack(){
-  createTrack();
-}
-
-createTrack('Rain Ambience');
-createTrack('Tension Drone');
-createTrack('Church Bell');
+addTrack('Rain Ambience');
+addTrack('Crowd Chant');
+addTrack('Church Bell');
 
 </script>
 
