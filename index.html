@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Offside Sound · by Arvin</title>
+<title>Offside Sound v4 · by Arvin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
@@ -91,9 +91,10 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .scene-preview-dot.on{background:var(--green)}
 .scene-preview-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .scene-preview-vol{color:var(--muted);flex-shrink:0}
-.scene-fire-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border2)}
+.scene-btn.update:hover{background:rgba(255,193,7,0.12);color:var(--amber)}
+.scene-fire-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--border2)}
 .scene-btn{background:transparent;border:none;color:var(--muted2);font-size:9px;letter-spacing:1px;padding:7px;cursor:pointer;font-family:var(--mono);font-weight:600;text-transform:uppercase;transition:all .12s}
-.scene-btn:first-child{border-right:1px solid var(--border2)}
+.scene-btn:not(:last-child){border-right:1px solid var(--border2)}
 .scene-btn.fire:hover{background:var(--green2);color:#fff}
 .scene-btn.xfade:hover{background:#1a3040;color:var(--blue)}
 .scene-fade-dur{display:flex;align-items:center;gap:5px;padding:5px 10px;border-top:1px solid var(--border2);font-size:9px;color:var(--muted)}
@@ -269,7 +270,7 @@ input[type=range].amber-r::-webkit-slider-thumb{background:var(--amber)}
 <div class="topbar">
   <div class="brand">
     <span class="brand-name">OFFSIDE SOUND</span>
-    <span class="brand-sub">Created by Arvin</span>
+    <span class="brand-sub">v4 · Created by Arvin</span>
   </div>
   <div class="topbar-center">
     <div class="master-row">
@@ -282,7 +283,7 @@ input[type=range].amber-r::-webkit-slider-thumb{background:var(--amber)}
     <button class="btn btn-ghost" onclick="addTrack()">+ TRACK</button>
     <button class="btn btn-amber" onclick="saveScene()">SAVE SCENE</button>
     <button class="btn-stopall" id="stopall-btn" onclick="stopAllFade()">
-      ↓ FADE ALL
+      <span id="stopall-lbl">↓ FADE ALL</span>
       <div class="stopall-progress" id="stopall-progress"></div>
     </button>
   </div>
@@ -710,39 +711,51 @@ function stopTrack(id){
 
 // ── Fade All Out (the stop-all with fade) ──
 let stopAllTimer=null;
-function stopAllFade(){
-  // if already fading, hard-stop immediately
-  if(stopAllTimer!==null){
-    clearInterval(stopAllTimer); stopAllTimer=null;
-    tracks.forEach(t=>{ clearAutoStop(t); if(t.ws){t.ws.stop();t.ws.setVolume(t.volume*masterVol);} t.playing=false; patchPlay(t); });
-    updateStatus();
-    const btn=document.getElementById('stopall-btn');
-    const prog=document.getElementById('stopall-progress');
-    btn.classList.remove('fading'); btn.textContent='↓ FADE ALL';
-    prog.style.width='0'; prog.style.transition='';
-    return;
-  }
 
-  const FADE_DURATION=2000; // ms
+function resetStopBtn(){
+  const btn=document.getElementById('stopall-btn');
+  const lbl=document.getElementById('stopall-lbl');
+  const prog=document.getElementById('stopall-progress');
+  if(btn) btn.classList.remove('fading');
+  if(lbl) lbl.textContent='↓ FADE ALL';
+  if(prog){ prog.style.transition='none'; prog.style.width='0'; }
+}
+
+function hardStopAll(){
+  if(stopAllTimer!==null){ clearInterval(stopAllTimer); stopAllTimer=null; }
+  tracks.forEach(t=>{ clearAutoStop(t); if(t.ws){ t.ws.stop(); t.ws.setVolume(t.volume*masterVol); } t.playing=false; patchPlay(t); });
+  updateStatus();
+  resetStopBtn();
+}
+
+function stopAllFade(){
+  // second click during fade = hard stop
+  if(stopAllTimer!==null){ hardStopAll(); return; }
+
+  const FADE_DURATION=2000;
   const playing=tracks.filter(t=>t.playing&&t.ws);
   if(!playing.length) return;
 
-  // snapshot current volumes
-  const startVols={}; playing.forEach(t=>{ startVols[t.id]=t.ws.getVolume(); });
+  const startVols={};
+  playing.forEach(t=>{ startVols[t.id]=t.ws.getVolume(); });
 
   const btn=document.getElementById('stopall-btn');
+  const lbl=document.getElementById('stopall-lbl');
   const prog=document.getElementById('stopall-progress');
-  btn.classList.add('fading'); btn.textContent='■ HARD STOP';
-  prog.style.transition=`width ${FADE_DURATION}ms linear`;
-  prog.style.width='100%';
+  if(btn) btn.classList.add('fading');
+  if(lbl) lbl.textContent='■ HARD STOP';
+  if(prog){
+    prog.style.transition='none'; prog.style.width='0';
+    requestAnimationFrame(()=>{
+      prog.style.transition=`width ${FADE_DURATION}ms linear`;
+      prog.style.width='100%';
+    });
+  }
 
   const startTime=Date.now();
   stopAllTimer=setInterval(()=>{
-    const elapsed=Date.now()-startTime;
-    const ratio=Math.min(elapsed/FADE_DURATION,1);
-    playing.forEach(t=>{
-      if(t.ws) t.ws.setVolume(startVols[t.id]*(1-ratio)*masterVol);
-    });
+    const ratio=Math.min((Date.now()-startTime)/FADE_DURATION,1);
+    playing.forEach(t=>{ if(t.ws) t.ws.setVolume(startVols[t.id]*(1-ratio)*masterVol); });
     if(ratio>=1){
       clearInterval(stopAllTimer); stopAllTimer=null;
       playing.forEach(t=>{
@@ -751,8 +764,7 @@ function stopAllFade(){
         t.playing=false; patchPlay(t);
       });
       updateStatus();
-      btn.classList.remove('fading'); btn.textContent='↓ FADE ALL';
-      prog.style.transition=''; prog.style.width='0';
+      resetStopBtn();
     }
   },30);
 }
@@ -915,35 +927,105 @@ function saveScene(){
 
 function fireScene(sid, xfade=false){
   const s=scenes.find(s=>s.id===sid); if(!s) return;
-  const fadeDur=(xfade?s.fadeDur:0)*1000;
+  const fadeDur=(xfade ? Math.max(0.5, s.fadeDur) : 0)*1000;
 
-  s.snapshot.forEach(snap=>{
-    const t=tracks.find(t=>t.id===snap.id); if(!t) return;
-    if(xfade && fadeDur>0){
-      // fade out current, then apply new state
-      const startVol=t.volume;
-      const startTime=Date.now();
-      clearInterval(t.fadeTimer);
+  // Build a lookup of what the scene wants per track id
+  const snapMap={};
+  s.snapshot.forEach(sn=>{ snapMap[sn.id]=sn; });
+
+  tracks.forEach(t=>{
+    clearInterval(t.fadeTimer);
+    const snap=snapMap[t.id];
+
+    if(!snap){
+      // Track not in this scene at all — fade out if playing
+      if(t.playing && t.ws && xfade && fadeDur>0){
+        const startV=t.ws.getVolume();
+        const st=Date.now();
+        t.fadeTimer=setInterval(()=>{
+          const r=Math.min((Date.now()-st)/fadeDur,1);
+          t.ws?.setVolume(startV*(1-r)*masterVol);
+          if(r>=1){ clearInterval(t.fadeTimer); t.ws?.pause(); t.playing=false; t.ws?.setVolume(t.volume*masterVol); patchPlay(t); updateStatus(); }
+        },30);
+      } else if(t.playing && t.ws){
+        t.ws.pause(); t.playing=false; patchPlay(t); updateStatus();
+      }
+      return;
+    }
+
+    const wasPlaying=t.playing;
+    const willPlay=snap.playing;
+
+    if(!xfade || fadeDur<=0){
+      applySnap(t,snap); return;
+    }
+
+    if(wasPlaying && willPlay){
+      // Continuing track — smoothly adjust volume, never interrupt
+      const startV=t.volume;
+      const targetV=snap.volume;
+      applySnapMeta(t,snap); // update loop/speed silently
+      if(Math.abs(startV-targetV)<0.005){
+        t.volume=targetV; t.ws?.setVolume(targetV*masterVol); syncVolUI(t);
+      } else {
+        const st=Date.now();
+        t.fadeTimer=setInterval(()=>{
+          const r=Math.min((Date.now()-st)/fadeDur,1);
+          // ease in-out curve for smoother feel
+          const ease=r<0.5?2*r*r:(4-2*r)*r-1;
+          t.volume=startV+(targetV-startV)*ease;
+          t.ws?.setVolume(t.volume*masterVol);
+          syncVolUI(t);
+          if(r>=1){ clearInterval(t.fadeTimer); t.volume=targetV; t.ws?.setVolume(targetV*masterVol); syncVolUI(t); }
+        },30);
+      }
+    } else if(wasPlaying && !willPlay){
+      // Fade out then stop
+      const startV=t.ws?.getVolume()??t.volume;
+      const st=Date.now();
       t.fadeTimer=setInterval(()=>{
-        const ratio=Math.min((Date.now()-startTime)/fadeDur,1);
-        const v=startVol*(1-ratio);
-        t.ws?.setVolume(v*masterVol);
-        if(ratio>=1){
+        const r=Math.min((Date.now()-st)/fadeDur,1);
+        t.ws?.setVolume(startV*(1-r)*masterVol);
+        if(r>=1){
           clearInterval(t.fadeTimer);
-          applySnap(t,snap);
-          // fade in
-          const t2=Date.now();
-          t.fadeTimer=setInterval(()=>{
-            const r2=Math.min((Date.now()-t2)/fadeDur,1);
-            t.ws?.setVolume(snap.volume*r2*masterVol);
-            if(r2>=1){ t.volume=snap.volume; clearInterval(t.fadeTimer); syncVolUI(t); }
-          },30);
+          t.ws?.pause(); t.playing=false;
+          t.volume=snap.volume; t.ws?.setVolume(t.volume*masterVol);
+          syncVolUI(t); patchPlay(t); updateStatus();
+          applySnapMeta(t,snap);
         }
       },30);
-    } else {
-      applySnap(t,snap);
+    } else if(!wasPlaying && willPlay){
+      // Fade in from silence
+      applySnapMeta(t,snap);
+      if(t.ws){
+        seekToStart(t,snap);
+        t.ws.setVolume(0);
+        t.ws.play().then(()=>{
+          const targetV=snap.volume;
+          const st=Date.now();
+          t.fadeTimer=setInterval(()=>{
+            const r=Math.min((Date.now()-st)/fadeDur,1);
+            t.volume=targetV*r;
+            t.ws?.setVolume(t.volume*masterVol);
+            syncVolUI(t);
+            if(r>=1){ clearInterval(t.fadeTimer); t.volume=targetV; syncVolUI(t); }
+          },30);
+        }).catch(()=>{});
+      }
     }
   });
+}
+
+// Seek to loop start (or beginning) before playing
+function seekToStart(t, snap){
+  if(!t.ws) return;
+  const dur=t.ws.getDuration()||1;
+  const ls=snap.loopStart??t.loopStart;
+  if(snap.loopEnabled && ls!==null && ls!==undefined){
+    t.ws.seekTo(ls/dur);
+  } else {
+    t.ws.seekTo(0);
+  }
 }
 
 function applySnap(t,snap){
@@ -955,8 +1037,47 @@ function applySnap(t,snap){
     t.ws.setPlaybackRate(t.speed);
   }
   syncVolUI(t);
-  if(snap.playing && !t.playing && t.ws) t.ws.play();
+  if(snap.playing && !t.playing && t.ws){
+    seekToStart(t, snap);
+    t.ws.play();
+  }
   if(!snap.playing && t.playing && t.ws) t.ws.pause();
+}
+
+// Update non-audio metadata only (loop settings, speed) without interrupting playback
+function applySnapMeta(t,snap){
+  t.speed=snap.speed; t.loopEnabled=snap.loopEnabled;
+  t.loopStart=snap.loopStart; t.loopEnd=snap.loopEnd;
+  t.loopCount=snap.loopCount; t.loopPlays=0;
+  if(t.ws) t.ws.setPlaybackRate(t.speed);
+}
+
+function updateScene(sid){
+  const s=scenes.find(s=>s.id===sid); if(!s) return;
+  s.snapshot=tracks.map(t=>({
+    id:t.id, name:t.name, volume:t.volume, speed:t.speed,
+    playing:t.playing, loopEnabled:t.loopEnabled,
+    loopStart:t.loopStart, loopEnd:t.loopEnd, loopCount:t.loopCount,
+    cues:JSON.parse(JSON.stringify(t.cues)),
+  }));
+  // Patch just the preview rows in the existing card (no full re-render)
+  const card=document.getElementById(`scene-card-${sid}`);
+  if(card){
+    const preview=card.querySelector('.scene-preview');
+    if(preview) preview.innerHTML=s.snapshot.slice(0,4).map(sn=>`
+      <div class="scene-preview-row">
+        <div class="scene-preview-dot${sn.playing?' on':''}"></div>
+        <span class="scene-preview-name">${esc(sn.name)}</span>
+        <span class="scene-preview-vol">${Math.round(sn.volume*100)}%${sn.loopEnabled?' ⟳':''}</span>
+      </div>`).join('')+(s.snapshot.length>4?`<div style="font-size:8px;color:var(--muted);margin-top:1px">+${s.snapshot.length-4} more tracks</div>`:'');
+    // Flash the update button
+    const btn=card.querySelector('.scene-btn.update');
+    if(btn){
+      const orig=btn.textContent;
+      btn.textContent='✓ SAVED'; btn.style.color='var(--green)';
+      setTimeout(()=>{ btn.textContent=orig; btn.style.color=''; },1400);
+    }
+  }
 }
 
 function deleteScene(sid){
@@ -996,7 +1117,7 @@ function renderScenes(){
   const addBtn='<button class="btn-add-scene" onclick="saveScene()">+ Save current state as scene</button>';
   if(!scenes.length){ body.innerHTML=addBtn; return; }
   body.innerHTML=scenes.map((s,i)=>`
-    <div class="scene-card">
+    <div class="scene-card" id="scene-card-${s.id}">
       <div class="scene-card-header">
         <div class="scene-move-btns" style="display:flex;gap:2px;flex-shrink:0">
           <button class="scene-move-btn" onclick="moveScene('${s.id}',-1)" title="Move left">◀</button>
@@ -1022,9 +1143,10 @@ function renderScenes(){
           oninput="scenes.find(s=>s.id==='${s.id}').fadeDur=parseFloat(this.value)||2" title="Crossfade duration (seconds)">
         <span>SEC</span>
       </div>
-      <div class="scene-fire-row">
+      <div class="scene-fire-row" style="grid-template-columns:1fr 1fr 1fr">
         <button class="scene-btn fire" onclick="fireScene('${s.id}',false)">▶ FIRE</button>
         <button class="scene-btn xfade" onclick="fireScene('${s.id}',true)">⇄ XFADE</button>
+        <button class="scene-btn update" onclick="updateScene('${s.id}')" title="Overwrite this scene with current track state" style="border-left:1px solid var(--border2);color:var(--amber)">↑ UPDATE</button>
       </div>
     </div>`).join('')+addBtn;
 }
@@ -1044,16 +1166,7 @@ document.addEventListener('keydown',e=>{
   const n=parseInt(e.key);
   if(!isNaN(n)&&n>=1&&n<=9){ const t=tracks[n-1]; if(t) togglePlay(t.id); return; }
   if(e.key==='s'||e.key==='S') stopAllFade();
-  if(e.key==='Escape') {
-    // hard stop
-    if(stopAllTimer){ clearInterval(stopAllTimer); stopAllTimer=null; }
-    tracks.forEach(t=>{ clearAutoStop(t); if(t.ws){ t.ws.stop(); t.ws.setVolume(t.volume*masterVol); } t.playing=false; patchPlay(t); });
-    const btn=document.getElementById('stopall-btn');
-    const prog=document.getElementById('stopall-progress');
-    if(btn){ btn.classList.remove('fading'); btn.textContent='↓ FADE ALL'; }
-    if(prog){ prog.style.transition=''; prog.style.width='0'; }
-    updateStatus();
-  }
+  if(e.key==='Escape'){ hardStopAll(); }
 });
 
 // ════════════════════════════════════════════════════
