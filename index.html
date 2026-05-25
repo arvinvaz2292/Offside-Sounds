@@ -1,4 +1,3 @@
-Offside Sound App — Theatre Stable Version
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +7,8 @@ Offside Sound App — Theatre Stable Version
 
 <title>Offside Sound App</title>
 
-<script src="https://unpkg.com/wavesurfer.js@6"></script>
+<!-- Stable WaveSurfer -->
+<script src="https://unpkg.com/wavesurfer.js@6/dist/wavesurfer.min.js"></script>
 
 <style>
 
@@ -92,11 +92,6 @@ button:active{
 }
 
 .scene-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
   margin-bottom:14px;
 }
 
@@ -117,19 +112,30 @@ button:active{
   margin-top:10px;
 }
 
+.scene-note:focus,
+.track-title:focus,
+.scene-title:focus{
+  outline:none;
+}
+
+.scene-tracks{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  margin-top:18px;
+}
+
 .track{
   background:#121212;
   border:1px solid #222;
   border-radius:28px;
   padding:20px;
   transition:0.25s;
-  margin-top:18px;
 }
 
 .track.playing-track{
   border:2px solid #32d46d;
   box-shadow:0 0 25px rgba(50,212,109,0.35);
-  order:-1;
 }
 
 .track-title{
@@ -178,6 +184,9 @@ label{
 input[type="file"]{
   width:100%;
   color:white;
+  background:#111;
+  padding:10px;
+  border-radius:12px;
 }
 
 input[type="range"]{
@@ -306,7 +315,10 @@ input[type="range"]{
 
 </div>
 
-<div class="tracks" id="tracks"></div>
+<div
+  class="tracks"
+  id="tracks"
+></div>
 
 <div class="footer">
 
@@ -315,11 +327,11 @@ input[type="range"]{
   <ol>
     <li>Upload audio files.</li>
     <li>Play multiple tracks simultaneously.</li>
-    <li>STOP fades tracks out smoothly over 2 seconds.</li>
-    <li>STOP ALL fades everything safely.</li>
-    <li>Playing tracks automatically move to the top.</li>
-    <li>Use scene headings and notes during theatre cues.</li>
-    <li>Designed for stable Chrome/iPad playback.</li>
+    <li>STOP fades out over 2 seconds.</li>
+    <li>STOP ALL fades all tracks safely.</li>
+    <li>Playing tracks move to top.</li>
+    <li>Add scene headings + production notes.</li>
+    <li>Built for stable theatre playback.</li>
   </ol>
 
 </div>
@@ -327,33 +339,40 @@ input[type="range"]{
 <script>
 
 const tracks = [];
+
 let currentScene = null;
 
 function addScene(name='New Scene'){
 
-  const sceneId = 'scene-' + Date.now();
+  const sceneId =
+    'scene-' + Date.now();
 
-  const container = document.getElementById('tracks');
+  const container =
+    document.getElementById('tracks');
 
-  const div = document.createElement('div');
+  const div =
+    document.createElement('div');
 
   div.className = 'scene';
+
   div.id = sceneId;
 
   div.innerHTML = `
 
     <div class="scene-header">
+
       <div
         class="scene-title"
         contenteditable="true"
       >
         ${name}
       </div>
+
     </div>
 
     <textarea
       class="scene-note"
-      placeholder="Scene notes, cues, lighting instructions, actor reminders..."
+      placeholder="Scene notes, cues, actor timings..."
     ></textarea>
 
     <div
@@ -372,12 +391,16 @@ function addScene(name='New Scene'){
 function createTrack(name='New Track'){
 
   if(!currentScene){
+
     addScene('Scene 1');
+
   }
 
-  const id = Date.now() + Math.random();
+  const id =
+    Date.now() + Math.random();
 
-  const audio = new Audio();
+  const audio =
+    new Audio();
 
   audio.preload = 'auto';
 
@@ -407,7 +430,9 @@ function createTrack(name='New Track'){
 function createTrackDOM(track){
 
   const container =
-    document.getElementById(`${track.scene}-tracks`);
+    document.getElementById(
+      `${track.scene}-tracks`
+    );
 
   const div =
     document.createElement('div');
@@ -563,27 +588,35 @@ function createTrackDOM(track){
 
 function initializeWaveform(track){
 
-  track.waveSurfer = WaveSurfer.create({
+  try{
 
-    container:`#waveform-${track.id}`,
-    waveColor:'#666',
-    progressColor:'#32d46d',
-    cursorColor:'#fff',
-    height:80,
-    responsive:true,
-    barWidth:2,
-    normalize:true
+    track.waveSurfer = WaveSurfer.create({
 
-  });
+      container:`#waveform-${track.id}`,
+      waveColor:'#666',
+      progressColor:'#32d46d',
+      cursorColor:'#fff',
+      height:80,
+      responsive:true,
+      barWidth:2,
+      normalize:true
 
-  track.waveSurfer.on('seek', position => {
+    });
 
-    if(!track.audio.duration) return;
+    track.waveSurfer.on('seek', position => {
 
-    track.audio.currentTime =
-      position * track.audio.duration;
+      if(!track.audio.duration) return;
 
-  });
+      track.audio.currentTime =
+        position * track.audio.duration;
+
+    });
+
+  } catch(err){
+
+    console.log(err);
+
+  }
 
 }
 
@@ -663,7 +696,8 @@ function setupAudio(track){
 
 function uploadFile(event,id){
 
-  const file = event.target.files[0];
+  const file =
+    event.target.files[0];
 
   if(!file) return;
 
@@ -675,7 +709,11 @@ function uploadFile(event,id){
 
   track.audio.src = url;
 
-  track.waveSurfer.load(url);
+  if(track.waveSurfer){
+
+    track.waveSurfer.load(url);
+
+  }
 
   track.name =
     file.name.replace(/\.[^/.]+$/, '');
@@ -696,6 +734,7 @@ async function fadePlay(id){
     alert('Upload audio first.');
 
     return;
+
   }
 
   clearInterval(track.fadeInterval);
@@ -717,7 +756,8 @@ async function fadePlay(id){
 
   track.fadeInterval = setInterval(() => {
 
-    let volume = track.audio.volume;
+    let volume =
+      track.audio.volume;
 
     volume += 0.025;
 
@@ -751,7 +791,8 @@ function fadeStop(id){
 
   track.fadeInterval = setInterval(() => {
 
-    let volume = track.audio.volume;
+    let volume =
+      track.audio.volume;
 
     volume -= 0.025;
 
@@ -781,38 +822,7 @@ function stopAll(){
 
     if(!track.playing) return;
 
-    clearInterval(track.fadeInterval);
-
-    const targetVolume =
-      parseFloat(
-        document.getElementById(
-          `volume-${track.id}`
-        ).value
-      );
-
-    track.fadeInterval = setInterval(() => {
-
-      let volume = track.audio.volume;
-
-      volume -= 0.025;
-
-      if(volume <= 0){
-
-        clearInterval(track.fadeInterval);
-
-        track.audio.pause();
-
-        track.audio.currentTime = 0;
-
-        track.audio.volume = targetVolume;
-
-        return;
-
-      }
-
-      track.audio.volume = volume;
-
-    },50);
+    fadeStop(track.id);
 
   });
 
@@ -949,7 +959,8 @@ function updateTrackUI(track){
       `track-${track.id}`
     );
 
-  const parent = div.parentNode;
+  const parent =
+    div.parentNode;
 
   const loopBtn =
     document.getElementById(
