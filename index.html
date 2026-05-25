@@ -7,8 +7,9 @@
 
 <title>Offside Sound App</title>
 
-<script src="https://unpkg.com/wavesurfer.js@7"></script>
-<script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
+<!-- WAVESURFER v6 -->
+<script src="https://unpkg.com/wavesurfer.js@6"></script>
+<script src="https://unpkg.com/wavesurfer.js@6/dist/plugin/wavesurfer.regions.min.js"></script>
 
 <style>
 
@@ -277,12 +278,12 @@ textarea{
 
   <ol>
     <li>Upload audio files.</li>
-    <li>Press PLAY to fade tracks in over 3 seconds.</li>
-    <li>Press STOP to fade tracks out over 3 seconds.</li>
-    <li>Create draggable loop regions on the waveform.</li>
-    <li>Enable LOOP to repeat the selected region.</li>
-    <li>Playing tracks move to the top automatically.</li>
-    <li>Add scene headings and cue notes.</li>
+    <li>PLAY fades in over 3 seconds.</li>
+    <li>STOP fades out over 3 seconds.</li>
+    <li>Create loop regions directly on waveform.</li>
+    <li>Drag loop edges visually.</li>
+    <li>Playing tracks move to the top.</li>
+    <li>Add scene headings and notes.</li>
     <li>Designed for theatre playback on iPad.</li>
   </ol>
 
@@ -318,6 +319,8 @@ function createTrack(name='New Track'){
 
     waveSurfer:null,
 
+    region:null,
+
     scene:'',
 
     notes:''
@@ -331,9 +334,11 @@ function createTrack(name='New Track'){
 
 function renderTracks(){
 
+  // PLAYING TRACKS TO TOP
   tracks.sort((a,b)=> b.playing - a.playing);
 
-  const container = document.getElementById('tracks');
+  const container =
+    document.getElementById('tracks');
 
   container.innerHTML = '';
 
@@ -341,7 +346,8 @@ function renderTracks(){
 
     const div = document.createElement('div');
 
-    div.className = track.playing
+    div.className =
+      track.playing
       ? 'track playing-track'
       : 'track';
 
@@ -476,9 +482,6 @@ function renderTracks(){
         track.waveSurfer.destroy();
       }
 
-      const regions =
-        WaveSurfer.Regions.create();
-
       track.waveSurfer = WaveSurfer.create({
 
         container:`#waveform-${track.id}`,
@@ -497,7 +500,9 @@ function renderTracks(){
 
         normalize:true,
 
-        plugins:[regions]
+        plugins:[
+          WaveSurfer.regions.create({})
+        ]
 
       });
 
@@ -505,66 +510,38 @@ function renderTracks(){
         track.waveSurfer.load(track.audio.src);
       }
 
-      // CLICK WAVEFORM TO SEEK
-      track.waveSurfer.on('interaction', () => {
+      // SEEK AUDIO
+      track.waveSurfer.on('seek', (progress) => {
 
-        track.audio.currentTime =
-          track.waveSurfer.getCurrentTime();
+        if(track.audio.duration){
 
-      });
-
-      // UPDATE CURRENT TIME
-      track.waveSurfer.on('timeupdate', (time) => {
-
-        const minutes =
-          Math.floor(time / 60)
-            .toString()
-            .padStart(2,'0');
-
-        const seconds =
-          Math.floor(time % 60)
-            .toString()
-            .padStart(2,'0');
-
-        document.getElementById(
-          `time-${track.id}`
-        ).innerText =
-          `${minutes}:${seconds}`;
-
-      });
-
-      // RECREATE LOOP REGION
-      track.waveSurfer.on('ready', () => {
-
-        if(
-          track.loopStart !== null &&
-          track.loopEnd !== null
-        ){
-
-          regions.addRegion({
-
-            start:track.loopStart,
-
-            end:track.loopEnd,
-
-            color:'rgba(50,212,109,0.25)',
-
-            drag:true,
-
-            resize:true
-
-          });
+          track.audio.currentTime =
+            progress * track.audio.duration;
 
         }
 
       });
 
-      // REGION UPDATED
-      regions.on('region-updated', (region) => {
+      // UPDATE TIME DISPLAY
+      track.waveSurfer.on('audioprocess', () => {
 
-        track.loopStart = region.start;
+        const time =
+          track.audio.currentTime;
 
-        track.loopEnd = region.end;
+        const minutes =
+          Math.floor(time / 60)
+          .toString()
+          .padStart(2,'0');
+
+        const seconds =
+          Math.floor(time % 60)
+          .toString()
+          .padStart(2,'0');
+
+        document.getElementById(
+          `time-${track.id}`
+        ).innerText =
+          `${minutes}:${seconds}`;
 
       });
 
@@ -580,9 +557,11 @@ function uploadFile(event,id){
 
   if(!file) return;
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
-  const fileURL = URL.createObjectURL(file);
+  const fileURL =
+    URL.createObjectURL(file);
 
   track.audio.src = fileURL;
 
@@ -596,13 +575,17 @@ function uploadFile(event,id){
 
 async function togglePlay(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   if(!track.audio.src){
+
     alert('Upload audio first.');
+
     return;
   }
 
+  // STOP
   if(track.playing){
 
     fadeVolume(id,0,()=>{
@@ -621,6 +604,7 @@ async function togglePlay(id){
 
   } else {
 
+    // PLAY
     track.audio.volume = 0;
 
     await track.audio.play();
@@ -637,7 +621,8 @@ async function togglePlay(id){
 
 function stopTrack(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   fadeVolume(id,0,()=>{
 
@@ -683,7 +668,8 @@ function stopAll(){
 
 function fadeVolume(id,target,callback){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   clearInterval(track.fadeInterval);
 
@@ -691,9 +677,11 @@ function fadeVolume(id,target,callback){
 
   const intervalTime = 50;
 
-  const steps = duration / intervalTime;
+  const steps =
+    duration / intervalTime;
 
-  const startVolume = track.audio.volume;
+  const startVolume =
+    track.audio.volume;
 
   const volumeChange =
     (target - startVolume) / steps;
@@ -702,7 +690,7 @@ function fadeVolume(id,target,callback){
 
     track.audio.volume += volumeChange;
 
-    // FADE IN COMPLETE
+    // FADE IN
     if(
       volumeChange > 0 &&
       track.audio.volume >= target
@@ -713,9 +701,10 @@ function fadeVolume(id,target,callback){
       clearInterval(track.fadeInterval);
 
       if(callback) callback();
+
     }
 
-    // FADE OUT COMPLETE
+    // FADE OUT
     if(
       volumeChange < 0 &&
       track.audio.volume <= target
@@ -726,6 +715,7 @@ function fadeVolume(id,target,callback){
       clearInterval(track.fadeInterval);
 
       if(callback) callback();
+
     }
 
   }, intervalTime);
@@ -734,22 +724,28 @@ function fadeVolume(id,target,callback){
 
 function changeVolume(id,volume){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   track.audio.volume = volume;
 }
 
 function createLoopRegion(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   if(!track.waveSurfer) return;
+
+  // DELETE OLD REGION
+  track.waveSurfer.clearRegions();
 
   const current =
     track.audio.currentTime;
 
+  // CREATE REGION
   const region =
-    track.waveSurfer.regions.addRegion({
+    track.waveSurfer.addRegion({
 
       start: current,
 
@@ -763,31 +759,46 @@ function createLoopRegion(id){
 
     });
 
+  track.region = region;
+
   track.loopStart = region.start;
 
   track.loopEnd = region.end;
+
+  // UPDATE REGION
+  region.on('update-end', () => {
+
+    track.loopStart = region.start;
+
+    track.loopEnd = region.end;
+
+  });
 
 }
 
 function toggleLoop(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
-  track.loopEnabled = !track.loopEnabled;
+  track.loopEnabled =
+    !track.loopEnabled;
 
   renderTracks();
 }
 
 function setScene(id,value){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   track.scene = value;
 }
 
 function setNotes(id,value){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   track.notes = value;
 }
@@ -806,14 +817,6 @@ setInterval(() => {
 
       track.audio.currentTime =
         track.loopStart;
-
-      if(track.waveSurfer){
-
-        track.waveSurfer.setTime(
-          track.loopStart
-        );
-
-      }
 
     }
 
