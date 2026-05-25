@@ -1,15 +1,14 @@
+Offside Sound App — Theatre Stable Version
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8" />
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>Offside Sound App</title>
 
-<script src="https://unpkg.com/wavesurfer.js"></script>
+<script src="https://unpkg.com/wavesurfer.js@6"></script>
 
 <style>
 
@@ -46,7 +45,8 @@ h1{
 
 .top-buttons{
   display:flex;
-  gap:12px;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
 button{
@@ -59,7 +59,8 @@ button:active{
   transform:scale(0.97);
 }
 
-.add-btn{
+.add-btn,
+.scene-btn{
   background:white;
   color:black;
   padding:14px 20px;
@@ -78,9 +79,42 @@ button:active{
 }
 
 .tracks{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(360px,1fr));
+  display:flex;
+  flex-direction:column;
   gap:20px;
+}
+
+.scene{
+  background:#0d0d0d;
+  border:1px solid #1f1f1f;
+  border-radius:28px;
+  padding:24px;
+}
+
+.scene-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.scene-title{
+  font-size:30px;
+  font-weight:bold;
+}
+
+.scene-note{
+  width:100%;
+  background:#151515;
+  border:none;
+  border-radius:18px;
+  padding:16px;
+  color:white;
+  resize:vertical;
+  min-height:90px;
+  margin-top:10px;
 }
 
 .track{
@@ -89,11 +123,13 @@ button:active{
   border-radius:28px;
   padding:20px;
   transition:0.25s;
+  margin-top:18px;
 }
 
 .track.playing-track{
   border:2px solid #32d46d;
   box-shadow:0 0 25px rgba(50,212,109,0.35);
+  order:-1;
 }
 
 .track-title{
@@ -110,25 +146,21 @@ button:active{
 
 .play-btn{
   flex:1;
-  background:#333;
-  color:white;
+  background:#32d46d;
+  color:black;
   padding:22px;
   border-radius:22px;
   font-size:24px;
   font-weight:bold;
 }
 
-.play-btn.playing{
-  background:#32d46d;
-  color:black;
-}
-
 .stop-btn{
+  flex:1;
   background:#a31420;
   color:white;
-  padding:0 24px;
+  padding:22px;
   border-radius:22px;
-  font-size:18px;
+  font-size:24px;
   font-weight:bold;
 }
 
@@ -197,20 +229,6 @@ input[type="range"]{
   color:black;
 }
 
-.fade-buttons{
-  display:flex;
-  gap:10px;
-}
-
-.fade-btn{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  background:#222;
-  color:white;
-  font-weight:bold;
-}
-
 .time-display{
   margin-top:10px;
   color:#888;
@@ -241,7 +259,8 @@ input[type="range"]{
     font-size:32px;
   }
 
-  .play-btn{
+  .play-btn,
+  .stop-btn{
     font-size:20px;
     padding:18px;
   }
@@ -262,11 +281,24 @@ input[type="range"]{
 
   <div class="top-buttons">
 
-    <button class="add-btn" onclick="addTrack()">
+    <button
+      class="scene-btn"
+      onclick="addScene()"
+    >
+      + Add Scene
+    </button>
+
+    <button
+      class="add-btn"
+      onclick="addTrack()"
+    >
       + Add Track
     </button>
 
-    <button class="stop-all-btn" onclick="stopAll()">
+    <button
+      class="stop-all-btn"
+      onclick="stopAll()"
+    >
       STOP ALL
     </button>
 
@@ -283,10 +315,11 @@ input[type="range"]{
   <ol>
     <li>Upload audio files.</li>
     <li>Play multiple tracks simultaneously.</li>
-    <li>Use waveform to scrub audio.</li>
-    <li>Create seamless theatre loops.</li>
-    <li>Fade sounds live during performance.</li>
-    <li>Designed for stable iPad playback.</li>
+    <li>STOP fades tracks out smoothly over 2 seconds.</li>
+    <li>STOP ALL fades everything safely.</li>
+    <li>Playing tracks automatically move to the top.</li>
+    <li>Use scene headings and notes during theatre cues.</li>
+    <li>Designed for stable Chrome/iPad playback.</li>
   </ol>
 
 </div>
@@ -294,8 +327,53 @@ input[type="range"]{
 <script>
 
 const tracks = [];
+let currentScene = null;
 
-function createTrack(name = 'New Track') {
+function addScene(name='New Scene'){
+
+  const sceneId = 'scene-' + Date.now();
+
+  const container = document.getElementById('tracks');
+
+  const div = document.createElement('div');
+
+  div.className = 'scene';
+  div.id = sceneId;
+
+  div.innerHTML = `
+
+    <div class="scene-header">
+      <div
+        class="scene-title"
+        contenteditable="true"
+      >
+        ${name}
+      </div>
+    </div>
+
+    <textarea
+      class="scene-note"
+      placeholder="Scene notes, cues, lighting instructions, actor reminders..."
+    ></textarea>
+
+    <div
+      class="scene-tracks"
+      id="${sceneId}-tracks"
+    ></div>
+
+  `;
+
+  container.appendChild(div);
+
+  currentScene = sceneId;
+
+}
+
+function createTrack(name='New Track'){
+
+  if(!currentScene){
+    addScene('Scene 1');
+  }
 
   const id = Date.now() + Math.random();
 
@@ -304,6 +382,7 @@ function createTrack(name = 'New Track') {
   audio.preload = 'auto';
 
   const track = {
+
     id,
     name,
     audio,
@@ -311,22 +390,27 @@ function createTrack(name = 'New Track') {
     loopEnabled:false,
     loopStart:0,
     loopEnd:null,
+    waveSurfer:null,
     fadeInterval:null,
-    waveSurfer:null
+    scene:currentScene
+
   };
 
   tracks.push(track);
 
   createTrackDOM(track);
 
-  setupAudioEvents(track);
+  setupAudio(track);
+
 }
 
 function createTrackDOM(track){
 
-  const container = document.getElementById('tracks');
+  const container =
+    document.getElementById(`${track.scene}-tracks`);
 
-  const div = document.createElement('div');
+  const div =
+    document.createElement('div');
 
   div.className = 'track';
 
@@ -334,7 +418,11 @@ function createTrackDOM(track){
 
   div.innerHTML = `
 
-    <div class="track-title" id="title-${track.id}">
+    <div
+      class="track-title"
+      id="title-${track.id}"
+      contenteditable="true"
+    >
       ${track.name}
     </div>
 
@@ -391,7 +479,10 @@ function createTrackDOM(track){
         id="seek-${track.id}"
       >
 
-      <div class="time-display" id="time-${track.id}">
+      <div
+        class="time-display"
+        id="time-${track.id}"
+      >
         0:00 / 0:00
       </div>
 
@@ -409,30 +500,6 @@ function createTrackDOM(track){
         value="1"
         id="volume-${track.id}"
       >
-
-    </div>
-
-    <div class="section">
-
-      <label>Fade Controls</label>
-
-      <div class="fade-buttons">
-
-        <button
-          class="fade-btn"
-          id="fadein-${track.id}"
-        >
-          Fade In
-        </button>
-
-        <button
-          class="fade-btn"
-          id="fadeout-${track.id}"
-        >
-          Fade Out
-        </button>
-
-      </div>
 
     </div>
 
@@ -488,9 +555,10 @@ function createTrackDOM(track){
 
   container.appendChild(div);
 
-  setupTrackEvents(track);
+  setupEvents(track);
 
   initializeWaveform(track);
+
 }
 
 function initializeWaveform(track){
@@ -504,8 +572,7 @@ function initializeWaveform(track){
     height:80,
     responsive:true,
     barWidth:2,
-    normalize:true,
-    interact:true
+    normalize:true
 
   });
 
@@ -517,20 +584,21 @@ function initializeWaveform(track){
       position * track.audio.duration;
 
   });
+
 }
 
-function setupTrackEvents(track){
+function setupEvents(track){
 
   document
     .getElementById(`play-${track.id}`)
     .addEventListener('click', () => {
-      togglePlay(track.id);
+      fadePlay(track.id);
     });
 
   document
     .getElementById(`stop-${track.id}`)
     .addEventListener('click', () => {
-      stopTrack(track.id);
+      fadeStop(track.id);
     });
 
   document
@@ -552,18 +620,6 @@ function setupTrackEvents(track){
     });
 
   document
-    .getElementById(`fadein-${track.id}`)
-    .addEventListener('click', () => {
-      fadeVolume(track.id, 1);
-    });
-
-  document
-    .getElementById(`fadeout-${track.id}`)
-    .addEventListener('click', () => {
-      fadeVolume(track.id, 0);
-    });
-
-  document
     .getElementById(`setloop-${track.id}`)
     .addEventListener('click', () => {
       setLoopRegion(track.id);
@@ -577,7 +633,7 @@ function setupTrackEvents(track){
 
 }
 
-function setupAudioEvents(track){
+function setupAudio(track){
 
   track.audio.addEventListener('play', () => {
 
@@ -595,14 +651,6 @@ function setupAudioEvents(track){
 
   });
 
-  track.audio.addEventListener('ended', () => {
-
-    track.playing = false;
-
-    updateTrackUI(track);
-
-  });
-
   track.audio.addEventListener('timeupdate', () => {
 
     updateSeek(track);
@@ -613,64 +661,21 @@ function setupAudioEvents(track){
 
 }
 
-function updateTrackUI(track){
-
-  const trackDiv =
-    document.getElementById(`track-${track.id}`);
-
-  const playBtn =
-    document.getElementById(`play-${track.id}`);
-
-  if(track.playing){
-
-    trackDiv.classList.add('playing-track');
-
-    playBtn.classList.add('playing');
-
-    playBtn.innerText = 'PAUSE';
-
-  } else {
-
-    trackDiv.classList.remove('playing-track');
-
-    playBtn.classList.remove('playing');
-
-    playBtn.innerText = 'PLAY';
-
-  }
-
-  const loopBtn =
-    document.getElementById(`toggleloop-${track.id}`);
-
-  if(track.loopEnabled){
-
-    loopBtn.classList.add('active');
-
-    loopBtn.innerText = 'ON';
-
-  } else {
-
-    loopBtn.classList.remove('active');
-
-    loopBtn.innerText = 'OFF';
-
-  }
-
-}
-
 function uploadFile(event,id){
 
   const file = event.target.files[0];
 
   if(!file) return;
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
-  const fileURL = URL.createObjectURL(file);
+  const url =
+    URL.createObjectURL(file);
 
-  track.audio.src = fileURL;
+  track.audio.src = url;
 
-  track.waveSurfer.load(fileURL);
+  track.waveSurfer.load(url);
 
   track.name =
     file.name.replace(/\.[^/.]+$/, '');
@@ -678,11 +683,13 @@ function uploadFile(event,id){
   document.getElementById(
     `title-${track.id}`
   ).innerText = track.name;
+
 }
 
-async function togglePlay(id){
+async function fadePlay(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   if(!track.audio.src){
 
@@ -691,46 +698,121 @@ async function togglePlay(id){
     return;
   }
 
-  if(track.playing){
+  clearInterval(track.fadeInterval);
 
-    track.audio.pause();
+  const targetVolume =
+    parseFloat(
+      document.getElementById(
+        `volume-${track.id}`
+      ).value
+    );
 
-  } else {
+  if(!track.playing){
 
-    try{
+    track.audio.volume = 0;
 
-      await track.audio.play();
-
-    } catch(err){
-
-      console.log(err);
-
-    }
+    await track.audio.play();
 
   }
 
+  track.fadeInterval = setInterval(() => {
+
+    let volume = track.audio.volume;
+
+    volume += 0.025;
+
+    if(volume >= targetVolume){
+
+      volume = targetVolume;
+
+      clearInterval(track.fadeInterval);
+
+    }
+
+    track.audio.volume = volume;
+
+  },50);
+
 }
 
-function stopTrack(id){
+function fadeStop(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
-  track.audio.pause();
+  clearInterval(track.fadeInterval);
 
-  track.audio.currentTime = 0;
+  const targetVolume =
+    parseFloat(
+      document.getElementById(
+        `volume-${track.id}`
+      ).value
+    );
 
-  updateSeek(track);
+  track.fadeInterval = setInterval(() => {
+
+    let volume = track.audio.volume;
+
+    volume -= 0.025;
+
+    if(volume <= 0){
+
+      clearInterval(track.fadeInterval);
+
+      track.audio.pause();
+
+      track.audio.currentTime = 0;
+
+      track.audio.volume = targetVolume;
+
+      return;
+
+    }
+
+    track.audio.volume = volume;
+
+  },50);
+
 }
 
 function stopAll(){
 
   tracks.forEach(track => {
 
-    track.audio.pause();
+    if(!track.playing) return;
 
-    track.audio.currentTime = 0;
+    clearInterval(track.fadeInterval);
 
-    updateSeek(track);
+    const targetVolume =
+      parseFloat(
+        document.getElementById(
+          `volume-${track.id}`
+        ).value
+      );
+
+    track.fadeInterval = setInterval(() => {
+
+      let volume = track.audio.volume;
+
+      volume -= 0.025;
+
+      if(volume <= 0){
+
+        clearInterval(track.fadeInterval);
+
+        track.audio.pause();
+
+        track.audio.currentTime = 0;
+
+        track.audio.volume = targetVolume;
+
+        return;
+
+      }
+
+      track.audio.volume = volume;
+
+    },50);
 
   });
 
@@ -738,14 +820,17 @@ function stopAll(){
 
 function seekTrack(id,value){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   if(!track.audio.duration) return;
 
   const time =
-    (value / 100) * track.audio.duration;
+    (value / 100)
+    * track.audio.duration;
 
   track.audio.currentTime = time;
+
 }
 
 function updateSeek(track){
@@ -759,17 +844,13 @@ function updateSeek(track){
     `seek-${track.id}`
   ).value = progress;
 
-  track.waveSurfer.seekTo(progress / 100);
-
-  const current =
-    formatTime(track.audio.currentTime);
-
-  const total =
-    formatTime(track.audio.duration);
-
   document.getElementById(
     `time-${track.id}`
-  ).innerText = `${current} / ${total}`;
+  ).innerText =
+    formatTime(track.audio.currentTime)
+    + ' / '
+    + formatTime(track.audio.duration);
+
 }
 
 function formatTime(seconds){
@@ -783,80 +864,39 @@ function formatTime(seconds){
       .padStart(2,'0');
 
   return `${mins}:${secs}`;
+
 }
 
 function changeVolume(id,volume){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   track.audio.volume = volume;
-}
-
-function fadeVolume(id,target){
-
-  const track = tracks.find(t => t.id == id);
-
-  clearInterval(track.fadeInterval);
-
-  track.fadeInterval = setInterval(() => {
-
-    let current = track.audio.volume;
-
-    if(target === 0){
-
-      current -= 0.02;
-
-      if(current <= 0){
-
-        current = 0;
-
-        clearInterval(track.fadeInterval);
-
-      }
-
-    } else {
-
-      current += 0.02;
-
-      if(current >= 1){
-
-        current = 1;
-
-        clearInterval(track.fadeInterval);
-
-      }
-
-    }
-
-    track.audio.volume = current;
-
-    document.getElementById(
-      `volume-${track.id}`
-    ).value = current;
-
-  },50);
 
 }
 
 function setLoopRegion(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
   if(!track.audio.duration){
 
     alert('Load audio first.');
 
     return;
+
   }
 
-  const startPercent =
+  const start =
     parseFloat(
       document.getElementById(
         `loop-start-${track.id}`
       ).value
     );
 
-  const endPercent =
+  const end =
     parseFloat(
       document.getElementById(
         `loop-end-${track.id}`
@@ -864,11 +904,11 @@ function setLoopRegion(id){
     );
 
   track.loopStart =
-    (startPercent / 100)
+    (start / 100)
     * track.audio.duration;
 
   track.loopEnd =
-    (endPercent / 100)
+    (end / 100)
     * track.audio.duration;
 
   alert('Loop region set.');
@@ -877,11 +917,14 @@ function setLoopRegion(id){
 
 function toggleLoop(id){
 
-  const track = tracks.find(t => t.id == id);
+  const track =
+    tracks.find(t => t.id == id);
 
-  track.loopEnabled = !track.loopEnabled;
+  track.loopEnabled =
+    !track.loopEnabled;
 
   updateTrackUI(track);
+
 }
 
 function handleLoop(track){
@@ -899,11 +942,55 @@ function handleLoop(track){
 
 }
 
+function updateTrackUI(track){
+
+  const div =
+    document.getElementById(
+      `track-${track.id}`
+    );
+
+  const parent = div.parentNode;
+
+  const loopBtn =
+    document.getElementById(
+      `toggleloop-${track.id}`
+    );
+
+  if(track.playing){
+
+    div.classList.add('playing-track');
+
+    parent.prepend(div);
+
+  } else {
+
+    div.classList.remove('playing-track');
+
+  }
+
+  if(track.loopEnabled){
+
+    loopBtn.classList.add('active');
+
+    loopBtn.innerText = 'ON';
+
+  } else {
+
+    loopBtn.classList.remove('active');
+
+    loopBtn.innerText = 'OFF';
+
+  }
+
+}
+
 function addTrack(){
 
   createTrack();
 
 }
+
+addScene('Opening');
 
 createTrack('Rain Ambience');
 createTrack('Tension Drone');
