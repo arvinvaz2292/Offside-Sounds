@@ -59,56 +59,63 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .app-body{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 62px - 36px);overflow:hidden}
 
 /* ── SIDEBAR ── */
-.sidebar{background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.sidebar-header{padding:14px 16px 10px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:8px;flex-shrink:0}
-.sidebar-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted2);flex:1}
-.scene-count-pill{font-size:9px;background:var(--s3);border:1px solid var(--border);color:var(--muted2);padding:2px 8px;border-radius:12px;font-weight:600}
+.sidebar{background:linear-gradient(180deg,#1a0f08 0%,#120a06 50%,#0d0805 100%);border-right:1px solid #3a2410;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:.5}
+.sidebar-header{padding:14px 16px 10px;border-bottom:1px solid rgba(255,193,7,.08);display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(255,193,7,.03)}
+.sidebar-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);flex:1;font-weight:600;opacity:.85}
+.scene-count-pill{font-size:9px;background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.3);color:var(--amber);padding:2px 8px;border-radius:12px;font-weight:600}
 .scene-list{flex:1;overflow-y:auto;padding:10px}
 .scene-list::-webkit-scrollbar{width:4px}
-.scene-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.scene-list::-webkit-scrollbar-thumb{background:rgba(255,193,7,.2);border-radius:2px}
 
-.scene-card{border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:8px;transition:border-color .2s,box-shadow .2s;background:var(--s2)}
-.scene-card:hover{border-color:var(--muted)}
-.scene-card.active{border-color:var(--green);box-shadow:0 0 0 1px var(--green2),0 0 24px rgba(0,230,118,.12)}
-.scene-card-top{display:flex;align-items:center;padding:9px 11px;gap:7px;border-bottom:1px solid var(--border2)}
-.scene-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .2s}
+.scene-card{border-radius:10px;border:1px solid #2a1d10;overflow:hidden;margin-bottom:8px;transition:border-color .2s,box-shadow .2s,transform .15s;background:rgba(26,15,8,.6);backdrop-filter:blur(2px)}
+.scene-card:hover{border-color:rgba(255,193,7,.35);transform:translateY(-1px)}
+.scene-card.active{border-color:var(--green);box-shadow:0 0 0 1px var(--green2),0 0 28px rgba(0,230,118,.15)}
+.scene-card-top{display:flex;align-items:center;padding:9px 10px;gap:7px;border-bottom:1px solid rgba(255,193,7,.08);background:rgba(255,193,7,.04)}
+.scene-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,193,7,.3);flex-shrink:0;transition:background .2s}
 .scene-card.active .scene-dot{background:var(--green);box-shadow:0 0 8px var(--green)}
-.scene-name{font-size:13px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;letter-spacing:.3px}
+.scene-name{font-size:13px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;letter-spacing:.3px;color:#f3e3c4}
 .scene-card.active .scene-name{color:var(--green)}
-.scene-name-input{font-family:var(--mono);font-size:13px;font-weight:600;background:transparent;border:none;border-bottom:1px solid var(--green);color:var(--text);outline:none;width:100%}
-.scene-del{background:transparent;border:none;color:var(--muted);font-size:12px;width:22px;height:22px;border-radius:4px;cursor:pointer;transition:all .12s;flex-shrink:0}
-.scene-del:hover{color:var(--red);background:var(--s3)}
+.scene-name-input{font-family:var(--mono);font-size:13px;font-weight:600;background:transparent;border:none;border-bottom:1px solid var(--green);color:#f3e3c4;outline:none;width:100%}
+
+/* scene icon buttons (up/down/dup/del) */
+.scene-card-icons{display:flex;gap:1px;flex-shrink:0}
+.scene-icon{background:transparent;border:none;color:rgba(255,193,7,.5);font-size:10px;width:20px;height:20px;border-radius:4px;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;padding:0}
+.scene-icon:hover:not(:disabled){color:var(--amber);background:rgba(255,193,7,.12)}
+.scene-icon:disabled{opacity:.25;cursor:default}
+.scene-icon.del{color:rgba(255,68,68,.5)}
+.scene-icon.del:hover{color:var(--red);background:rgba(255,68,68,.15)}
 
 .scene-preview{padding:6px 11px 4px;display:flex;flex-direction:column;gap:3px}
-.sp-row{font-size:10px;color:var(--muted2);display:flex;align-items:center;gap:6px}
-.sp-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.sp-row{font-size:10px;color:rgba(243,227,196,.65);display:flex;align-items:center;gap:6px}
+.sp-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,193,7,.25);flex-shrink:0}
 .sp-dot.on{background:var(--green)}
 .sp-dot.staged{background:var(--amber)}
 .sp-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sp-vol{color:var(--muted);font-size:9px;flex-shrink:0;font-weight:600}
-.sp-more{font-size:9px;color:var(--muted);margin-top:2px;font-style:italic}
+.sp-vol{color:rgba(255,193,7,.5);font-size:9px;flex-shrink:0;font-weight:600}
+.sp-more{font-size:9px;color:rgba(255,193,7,.4);margin-top:2px;font-style:italic}
 
-.scene-notes-zone{padding:6px 11px;border-top:1px solid var(--border2);background:var(--s1)}
-.scene-notes{width:100%;background:transparent;border:none;color:var(--text2);font-family:var(--mono);font-size:10px;line-height:1.6;resize:none;outline:none;min-height:36px;max-height:120px}
-.scene-notes::placeholder{color:var(--muted)}
-.scene-notes:focus{color:var(--text)}
+.scene-notes-zone{padding:6px 11px;border-top:1px solid rgba(255,193,7,.08);background:rgba(0,0,0,.18)}
+.scene-notes{width:100%;background:transparent;border:none;color:rgba(243,227,196,.72);font-family:var(--mono);font-size:10px;line-height:1.6;resize:none;outline:none;min-height:36px;max-height:120px}
+.scene-notes::placeholder{color:rgba(255,193,7,.3)}
+.scene-notes:focus{color:#f3e3c4}
 
-.scene-fade-row{display:flex;align-items:center;gap:5px;padding:5px 11px;border-top:1px solid var(--border2);font-size:9px;color:var(--muted);letter-spacing:1px}
-.scene-fade-row input{width:38px;background:var(--s3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:10px;padding:3px 5px;outline:none;text-align:center}
+.scene-fade-row{display:flex;align-items:center;gap:5px;padding:5px 11px;border-top:1px solid rgba(255,193,7,.08);font-size:9px;color:rgba(255,193,7,.55);letter-spacing:1px}
+.scene-fade-row input{width:38px;background:rgba(0,0,0,.3);border:1px solid rgba(255,193,7,.15);border-radius:4px;color:#f3e3c4;font-family:var(--mono);font-size:10px;padding:3px 5px;outline:none;text-align:center}
 .scene-fade-row input:focus{border-color:var(--blue)}
 
-.scene-actions{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border2)}
-.sa-btn{background:transparent;border:none;color:var(--muted2);font-size:10px;letter-spacing:1.2px;padding:9px 6px;cursor:pointer;font-family:var(--mono);font-weight:600;text-transform:uppercase;transition:all .12s}
-.sa-btn:not(:last-child){border-right:1px solid var(--border2)}
+.scene-actions{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid rgba(255,193,7,.08)}
+.sa-btn{background:transparent;border:none;color:rgba(243,227,196,.6);font-size:10px;letter-spacing:1.2px;padding:9px 6px;cursor:pointer;font-family:var(--mono);font-weight:600;text-transform:uppercase;transition:all .12s}
+.sa-btn:not(:last-child){border-right:1px solid rgba(255,193,7,.08)}
 .sa-btn.fire:hover{background:var(--green2);color:#fff}
 .sa-btn.xfade:hover{background:rgba(64,196,255,.15);color:var(--blue)}
-.sa-btn.update:hover{background:var(--amber-soft);color:var(--amber)}
+.sa-btn.update:hover{background:rgba(255,193,7,.15);color:var(--amber)}
 
-.sidebar-footer{border-top:1px solid var(--border);padding:10px;flex-shrink:0;display:flex;flex-direction:column;gap:7px}
-.btn-add-scene{background:var(--s2);border:1px dashed var(--border);color:var(--muted2);font-size:10px;padding:9px;border-radius:8px;letter-spacing:1px;cursor:pointer;font-family:var(--mono);transition:all .14s;width:100%;text-align:center;font-weight:600}
-.btn-add-scene:hover{border-color:var(--amber);color:var(--amber)}
+.sidebar-footer{border-top:1px solid rgba(255,193,7,.1);padding:10px;flex-shrink:0;display:flex;flex-direction:column;gap:7px;background:rgba(255,193,7,.03)}
+.btn-add-scene{background:rgba(26,15,8,.6);border:1px dashed rgba(255,193,7,.3);color:var(--amber);font-size:10px;padding:9px;border-radius:8px;letter-spacing:1px;cursor:pointer;font-family:var(--mono);transition:all .14s;width:100%;text-align:center;font-weight:600;opacity:.85}
+.btn-add-scene:hover{border-color:var(--amber);opacity:1;background:rgba(255,193,7,.08)}
 .persist-row{display:flex;gap:6px}
-.btn-persist{flex:1;font-size:9px;letter-spacing:1px;padding:7px;border-radius:6px;text-align:center;font-family:var(--mono);font-weight:600;text-transform:uppercase;cursor:pointer;background:var(--s3);border:1px solid var(--border);color:var(--muted2);transition:all .12s;position:relative}
+.btn-persist{flex:1;font-size:9px;letter-spacing:1px;padding:7px;border-radius:6px;text-align:center;font-family:var(--mono);font-weight:600;text-transform:uppercase;cursor:pointer;background:rgba(26,15,8,.6);border:1px solid #2a1d10;color:rgba(255,193,7,.6);transition:all .12s;position:relative}
 .btn-export:hover{border-color:var(--blue);color:var(--blue)}
 .btn-import:hover{border-color:var(--amber);color:var(--amber)}
 .btn-import input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
@@ -142,6 +149,54 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .cat-divider.SFX span{color:var(--cat-sfx);border-color:rgba(255,193,7,.4);background:rgba(255,193,7,.08)}
 .cat-divider.AMB span{color:var(--cat-amb);border-color:rgba(0,230,118,.4);background:rgba(0,230,118,.08)}
 .cat-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* ═══ GROUPS ═══ */
+.grp-section{margin-bottom:8px}
+.grp-section-label{padding:14px 0 6px;display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;color:#c89bff}
+.grp-section-label span:first-child{padding:3px 9px;border-radius:11px;border:1px solid rgba(200,155,255,.4);background:rgba(200,155,255,.08)}
+.grp-section-label::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+.group-bar{background:linear-gradient(90deg,rgba(200,155,255,.10) 0%,rgba(200,155,255,.04) 30%,var(--s1) 100%);border:1px solid rgba(200,155,255,.3);border-radius:12px;display:flex;align-items:center;gap:9px;padding:10px 13px;margin-bottom:7px;transition:border-color .2s,box-shadow .2s;flex-wrap:wrap}
+.group-bar:hover{border-color:rgba(200,155,255,.5)}
+.group-bar.is-playing{border-color:var(--green);box-shadow:0 0 0 1px var(--green2),0 0 30px rgba(0,230,118,.1)}
+.grp-icon{font-size:16px;color:#c89bff;flex-shrink:0}
+.grp-info{flex:1;min-width:120px;overflow:hidden}
+.grp-name{font-family:var(--display);font-size:18px;letter-spacing:.5px;line-height:1.1;color:#e8d5ff;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grp-name:hover{color:var(--green)}
+.grp-meta{font-size:9px;color:rgba(200,155,255,.6);letter-spacing:.5px;margin-top:2px}
+.grp-play{background:rgba(200,155,255,.1);border:1px solid rgba(200,155,255,.4);color:#c89bff;width:38px;height:38px;border-radius:7px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.grp-play:hover{background:rgba(200,155,255,.2);color:#fff;border-color:#c89bff}
+.grp-play.on{background:var(--green);color:#000;border-color:var(--green)}
+.grp-stop{background:var(--s2);border:1px solid var(--border);color:var(--muted2);width:38px;height:38px;border-radius:7px;font-size:13px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.grp-stop:hover{border-color:var(--red);color:var(--red)}
+.grp-vol-wrap{display:flex;align-items:center;gap:7px;flex:1;min-width:140px}
+.grp-vol-lbl{font-size:8px;letter-spacing:2px;color:rgba(200,155,255,.6);font-weight:600}
+.grp-vol-wrap input[type=range]{flex:1;height:4px}
+.grp-vol-wrap input[type=range]::-webkit-slider-thumb{background:#c89bff}
+.grp-vol-pct{font-size:12px;font-weight:600;color:#c89bff;min-width:38px;text-align:right;font-variant-numeric:tabular-nums}
+.grp-fade{background:transparent;border:1px solid rgba(200,155,255,.3);color:#c89bff;width:30px;height:30px;border-radius:6px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.grp-fade:hover{background:rgba(200,155,255,.15);border-color:#c89bff}
+.grp-del{background:transparent;border:1px solid transparent;color:var(--muted);font-size:13px;width:28px;height:28px;border-radius:5px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.grp-del:hover{border-color:var(--red);color:var(--red)}
+
+/* Group badge on collapsed track */
+.tc-grp-wrap{position:relative;flex-shrink:0}
+.tc-grp-btn{background:rgba(200,155,255,.1);border:1px solid rgba(200,155,255,.4);color:#c89bff;font-size:9px;font-weight:600;letter-spacing:.5px;padding:3px 7px;border-radius:5px;cursor:pointer;display:none;align-items:center;height:24px}
+.tc-grp-btn:hover{background:rgba(200,155,255,.2)}
+.tc-grp-plus{background:transparent;border:1px dashed rgba(200,155,255,.3);color:rgba(200,155,255,.5);font-size:9px;font-weight:600;letter-spacing:.5px;padding:3px 7px;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;height:24px;transition:all .12s}
+.tc-grp-plus:hover{border-color:#c89bff;color:#c89bff;background:rgba(200,155,255,.1)}
+
+/* Group popup */
+.grp-popup{display:none;position:absolute;top:calc(100% + 5px);right:0;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:6px;z-index:300;flex-direction:column;gap:3px;min-width:160px;max-width:240px;box-shadow:0 8px 28px rgba(0,0,0,.6)}
+.grp-popup.open{display:flex}
+.grp-pop-title{font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;font-weight:600;padding:3px 6px}
+.grp-pop-btn{background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:10px;padding:6px 10px;border-radius:5px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.grp-pop-btn:hover{border-color:#c89bff;color:#c89bff}
+.grp-pop-btn.remove{border-color:rgba(255,68,68,.3);color:var(--red)}
+.grp-pop-btn.remove:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.grp-pop-btn.new{border-style:dashed;color:var(--amber);border-color:rgba(255,193,7,.3)}
+.grp-pop-btn.new:hover{border-color:var(--amber);background:rgba(255,193,7,.1)}
+.grp-pop-divider{height:1px;background:var(--border);margin:3px 0}
 
 /* ═══ TRACK ITEM ═══ */
 /* Single track element that toggles between collapsed/expanded via class */
@@ -263,6 +318,27 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 
 .exp-divider{height:1px;background:var(--border2);margin:0 15px}
 
+/* FX panel — only shown on BGM tracks */
+.exp-fx{display:none;background:linear-gradient(180deg,rgba(64,196,255,.04) 0%,transparent 100%);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:11px 15px}
+.track-item.has-fx .exp-fx{display:block}
+.exp-fx-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.exp-fx-title{font-size:10px;letter-spacing:2px;color:var(--cat-bgm);text-transform:uppercase;font-weight:600}
+.exp-fx-reset{background:transparent;border:1px solid var(--border);color:var(--muted2);font-size:9px;padding:3px 8px;border-radius:5px;cursor:pointer;font-family:var(--mono);letter-spacing:.5px;transition:all .12s;font-weight:600}
+.exp-fx-reset:hover{border-color:var(--cat-bgm);color:var(--cat-bgm)}
+.exp-fx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:9px}
+.fx-knob{background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:5px}
+.fx-knob-lbl{font-size:8px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;font-weight:600}
+.fx-knob input[type=range]{width:100%}
+.fx-knob input[type=range]::-webkit-slider-thumb{background:var(--cat-bgm)}
+.fx-knob-val{font-size:9px;color:var(--cat-bgm);font-variant-numeric:tabular-nums;font-weight:600}
+.exp-fx-reverb{display:flex;flex-direction:column;gap:6px;background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:9px 10px}
+.fx-reverb-row{display:flex;align-items:center;gap:8px}
+.fx-rev-lbl{font-size:9px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;font-weight:600;width:54px;flex-shrink:0}
+.fx-reverb-row input[type=range]{flex:1}
+.fx-reverb-row input[type=range]::-webkit-slider-thumb{background:var(--cat-bgm)}
+.fx-size-sel{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--mono);font-size:10px;padding:4px 7px;outline:none;cursor:pointer}
+.fx-size-sel:focus{border-color:var(--cat-bgm)}
+
 .exp-loop{background:var(--s2);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:11px 15px}
 .exp-loop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
 .exp-loop-title{font-size:10px;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;font-weight:600}
@@ -340,6 +416,7 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
       <input type="file" accept=".mp3,.wav,.m4a,.aac,audio/*" multiple onchange="uploadMulti(event)">
     </label>
     <button class="btn btn-ghost" onclick="addTrack()">+ TRACK</button>
+    <button class="btn btn-ghost" onclick="createGroup()">+ GROUP</button>
     <button class="btn btn-amber" onclick="saveScene()">SAVE SCENE</button>
     <div class="cat-fade-group">
       <button class="cat-fade-btn BGM" onclick="fadeCategory('BGM')" title="Fade out all BGM">↓BGM</button>
@@ -418,7 +495,7 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 // ════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════
-let tracks=[], scenes=[], masterVol=1, uid=0, activeSceneId=null;
+let tracks=[], scenes=[], groups=[], masterVol=1, uid=0, gid=0, activeSceneId=null;
 const seekDragging={};
 const expandedIds=new Set();
 const CAT_ORDER=['BGM','SFX','AMB'];
@@ -430,6 +507,141 @@ const CAT_ACCENTS={
 };
 let catC={BGM:0,SFX:0,AMB:0};
 
+function effectiveVol(t){
+  const g=groupOfTrack(t);
+  return t.volume * (g?g.volume:1) * masterVol;
+}
+
+// Group lookup helpers
+function gById(id){ return groups.find(g=>g.id===id); }
+function groupOfTrack(t){ return groups.find(g=>g.trackIds.includes(t.id))||null; }
+function mkGroup(name='New Group'){ return {id:'g'+(++gid), name, volume:1, fadeTimer:null, el:null, trackIds:[]}; }
+
+// ════════════════════════════════════════════════
+// FX — Shared Web Audio context and reverb impulse generator
+// ════════════════════════════════════════════════
+let _audioCtx=null;
+function getAudioCtx(){
+  if(!_audioCtx){
+    _audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  }
+  if(_audioCtx.state==='suspended') _audioCtx.resume().catch(()=>{});
+  return _audioCtx;
+}
+
+// Cached synthetic impulse responses (per size)
+const _impulseCache={};
+function getImpulse(size='medium'){
+  if(_impulseCache[size]) return _impulseCache[size];
+  const ctx=getAudioCtx();
+  const cfg={small:{dur:0.8,decay:2.5},medium:{dur:1.8,decay:1.8},large:{dur:3.5,decay:1.3},hall:{dur:5.5,decay:1.0}}[size]||{dur:1.8,decay:1.8};
+  const sampleRate=ctx.sampleRate;
+  const length=Math.floor(sampleRate*cfg.dur);
+  const buf=ctx.createBuffer(2,length,sampleRate);
+  for(let ch=0;ch<2;ch++){
+    const data=buf.getChannelData(ch);
+    for(let i=0;i<length;i++){
+      const t=i/length;
+      // exponential decay × random noise — classic reverb tail
+      data[i]=(Math.random()*2-1)*Math.pow(1-t,cfg.decay);
+    }
+  }
+  _impulseCache[size]=buf;
+  return buf;
+}
+
+// Build FX chain for a single track. Called after WaveSurfer's media element exists.
+// Chain: media → lowEQ → midEQ → highEQ → (dry + wet via convolver) → destination
+function attachFX(t){
+  if(!t.ws || t.fxChain) return;
+  const mediaEl = t.ws.getMediaElement?.();
+  if(!mediaEl) return;
+  const ctx=getAudioCtx();
+  try{
+    const src = ctx.createMediaElementSource(mediaEl);
+    const lowEQ = ctx.createBiquadFilter();
+    lowEQ.type='lowshelf'; lowEQ.frequency.value=250; lowEQ.gain.value=t.fx.low;
+    const midEQ = ctx.createBiquadFilter();
+    midEQ.type='peaking'; midEQ.frequency.value=1000; midEQ.Q.value=0.7; midEQ.gain.value=t.fx.mid;
+    const highEQ = ctx.createBiquadFilter();
+    highEQ.type='highshelf'; highEQ.frequency.value=4000; highEQ.gain.value=t.fx.high;
+
+    const dryGain = ctx.createGain();
+    const wetGain = ctx.createGain();
+    const convolver = ctx.createConvolver();
+    convolver.buffer = getImpulse(t.fx.size);
+
+    dryGain.gain.value = 1 - t.fx.wet;
+    wetGain.gain.value = t.fx.wet;
+
+    // Wire it up
+    src.connect(lowEQ); lowEQ.connect(midEQ); midEQ.connect(highEQ);
+    highEQ.connect(dryGain); dryGain.connect(ctx.destination);
+    highEQ.connect(convolver); convolver.connect(wetGain); wetGain.connect(ctx.destination);
+
+    t.fxChain={src,lowEQ,midEQ,highEQ,dryGain,wetGain,convolver};
+  }catch(e){
+    // MediaElementSource throws if called twice on the same element — that's fine,
+    // means we've already wired it up (e.g. on a previous WS re-init).
+    console.warn('FX attach failed:',e.message);
+  }
+}
+
+function applyFX(t){
+  if(!t.fxChain) return;
+  t.fxChain.lowEQ.gain.value = t.fx.low;
+  t.fxChain.midEQ.gain.value = t.fx.mid;
+  t.fxChain.highEQ.gain.value = t.fx.high;
+  t.fxChain.dryGain.gain.value = 1 - t.fx.wet;
+  t.fxChain.wetGain.gain.value = t.fx.wet;
+  // size change requires new impulse
+  if(t.fxChain.convolver.buffer !== getImpulse(t.fx.size)){
+    t.fxChain.convolver.buffer = getImpulse(t.fx.size);
+  }
+}
+
+function setFXParam(id, param, value){
+  const t=tById(id); if(!t) return;
+  t.fx[param] = (param==='size') ? value : parseFloat(value);
+  applyFX(t);
+  // Update readout
+  const el = t.el?.querySelector(`[data-fx="${param}-val"]`);
+  if(el){
+    if(param==='low'||param==='mid'||param==='high'){
+      el.textContent = (t.fx[param]>0?'+':'') + t.fx[param].toFixed(1) + ' dB';
+    } else if(param==='wet'){
+      el.textContent = Math.round(t.fx.wet*100) + '%';
+    }
+  }
+  autoSave();
+}
+
+function resetFX(id){
+  const t=tById(id); if(!t) return;
+  t.fx={low:0,mid:0,high:0,wet:0,size:'medium'};
+  applyFX(t);
+  refreshFXUI(t);
+  autoSave();
+}
+
+function refreshFXUI(t){
+  if(!t.el) return;
+  const updateRange=(p,v)=>{
+    const r=t.el.querySelector(`[data-fx="${p}"]`); if(r) r.value=v;
+    const lab=t.el.querySelector(`[data-fx="${p}-val"]`);
+    if(lab){
+      if(p==='low'||p==='mid'||p==='high') lab.textContent=(v>0?'+':'')+v.toFixed(1)+' dB';
+      else if(p==='wet') lab.textContent=Math.round(v*100)+'%';
+    }
+  };
+  updateRange('low',t.fx.low);
+  updateRange('mid',t.fx.mid);
+  updateRange('high',t.fx.high);
+  updateRange('wet',t.fx.wet);
+  const sizeEl=t.el.querySelector('[data-fx="size"]');
+  if(sizeEl) sizeEl.value=t.fx.size;
+}
+
 function mkTrack(name='New Track',cat='AMB'){
   const idx=catC[cat]++%CAT_ACCENTS[cat].length;
   return{id:++uid,name,cat,src:null,filename:null,
@@ -438,10 +650,315 @@ function mkTrack(name='New Track',cat='AMB'){
     autoStop:0,autoStopTimer:null,fadeTimer:null,
     cues:[],ws:null,region:null,_rp:null,
     accent:CAT_ACCENTS[cat][idx],order:uid,
+    fx:{low:0,mid:0,high:0,wet:0,size:'medium'}, // EQ in dB; wet 0-1; size = small/medium/large/hall
+    fxChain:null, // Web Audio nodes once attached
     el:null}; // the persistent DOM element for this track
 }
-function effectiveVol(t){return t.volume*masterVol;}
 function tById(id){return tracks.find(t=>t.id===id);}
+
+// ════════════════════════════════════════════════
+// GROUPS — operations
+// ════════════════════════════════════════════════
+function createGroup(){
+  const name=prompt('Group name:',`Group ${groups.length+1}`);
+  if(!name) return;
+  const g=mkGroup(name.trim()||`Group ${groups.length+1}`);
+  groups.push(g);
+  buildGroupElement(g);
+  layoutTracks();
+  showToast(`Created group "${g.name}"`);
+  autoSave();
+}
+
+function createGroupFromTrack(trackId){
+  const name=prompt('Group name:',`Group ${groups.length+1}`);
+  if(!name) return;
+  const g=mkGroup(name.trim()||`Group ${groups.length+1}`);
+  groups.push(g);
+  buildGroupElement(g);
+  addTrackToGroup(trackId, g.id);
+}
+
+function deleteGroup(id){
+  const g=gById(id); if(!g) return;
+  if(!confirm(`Delete group "${g.name}"? Tracks will remain.`)) return;
+  clearInterval(g.fadeTimer);
+  // Refresh audio on member tracks (no more group attenuation)
+  g.trackIds.map(tById).filter(Boolean).forEach(t=>{
+    if(t.ws) t.ws.setVolume(effectiveVol(t));
+  });
+  if(g.el) g.el.remove();
+  groups=groups.filter(x=>x.id!==id);
+  layoutTracks();
+  autoSave();
+}
+
+function renameGroup(id){
+  const g=gById(id); if(!g) return;
+  const name=prompt('Rename group:',g.name);
+  if(name===null) return;
+  g.name=name.trim()||g.name;
+  refreshGroupDisplay(g);
+  autoSave();
+}
+
+function addTrackToGroup(trackId, groupId){
+  const t=tById(trackId), g=gById(groupId);
+  if(!t||!g) return;
+  // Remove from any other group first
+  groups.forEach(x=>{
+    const idx=x.trackIds.indexOf(trackId);
+    if(idx>=0){ x.trackIds.splice(idx,1); refreshGroupDisplay(x); }
+  });
+  g.trackIds.push(trackId);
+  refreshGroupDisplay(g);
+  // Refresh audio volume to apply group attenuation
+  if(t.ws) t.ws.setVolume(effectiveVol(t));
+  // Refresh the track UI to show its group badge
+  refreshTrackGroupBadge(t);
+  layoutTracks();
+  autoSave();
+}
+
+function removeTrackFromGroup(trackId){
+  const g=groups.find(x=>x.trackIds.includes(trackId));
+  if(!g) return;
+  g.trackIds=g.trackIds.filter(id=>id!==trackId);
+  refreshGroupDisplay(g);
+  const t=tById(trackId);
+  if(t){
+    if(t.ws) t.ws.setVolume(effectiveVol(t));
+    refreshTrackGroupBadge(t);
+  }
+  layoutTracks();
+  autoSave();
+}
+
+// Play/pause toggle for entire group — fires all members nearly simultaneously
+async function groupTogglePlay(id){
+  const g=gById(id); if(!g) return;
+  const members=g.trackIds.map(tById).filter(t=>t && t.src);
+  if(!members.length){ showToast('Group is empty or tracks lack audio'); return; }
+  // If any are playing, pause all. Otherwise sync-start.
+  const anyPlaying=members.some(t=>t.playing);
+  if(anyPlaying){
+    members.forEach(t=>{ if(t.ws && t.playing) t.ws.pause(); });
+    return;
+  }
+  // Ensure every member has a WaveSurfer ready (auto-expand if needed)
+  let needLayout=false;
+  members.forEach(t=>{
+    if(!t.ws && !isTrackExpanded(t)){
+      expandedIds.add(t.id);
+      needLayout=true;
+    }
+  });
+  if(needLayout) layoutTracks();
+  // Init any missing WS instances
+  members.forEach(t=>{ if(!t.ws) initWS(t); });
+  // Wait for all to be ready
+  await Promise.all(members.map(t=>new Promise(res=>{
+    if(t.ws && t.ws.getDuration()>0) return res();
+    if(t.ws){ t.ws.once('ready',res); setTimeout(res,3500); }
+    else res();
+  })));
+  // Snap all to time 0 then fire play in the same tick
+  members.forEach(t=>{ if(t.ws) t.ws.seekTo(0); });
+  members.forEach(t=>{ if(t.ws) t.ws.play().catch(()=>{}); });
+  refreshGroupDisplay(g);
+}
+
+function groupStop(id){
+  const g=gById(id); if(!g) return;
+  g.trackIds.map(tById).filter(Boolean).forEach(t=>{
+    clearAutoStop(t); clearInterval(t.fadeTimer);
+    if(t.ws){ t.ws.stop(); t.ws.setVolume(effectiveVol(t)); }
+    t.playing=false; t.loopPlays=0;
+    refreshPlayUI(t);
+  });
+  updateStatus();
+  refreshGroupDisplay(g);
+}
+
+// Snap all members' playback positions to the first member's current time
+function groupResync(id){
+  const g=gById(id); if(!g) return;
+  const members=g.trackIds.map(tById).filter(t=>t?.ws);
+  if(members.length<2){ showToast('Need ≥2 tracks with audio to sync'); return; }
+  const leader=members[0];
+  const leaderTime=leader.ws.getCurrentTime();
+  members.slice(1).forEach(t=>{
+    const dur=t.ws.getDuration()||1;
+    t.ws.seekTo(Math.min(leaderTime,dur)/dur);
+  });
+  showToast(`Synced to "${leader.name}"`);
+}
+
+function setGroupVolume(id,v){
+  const g=gById(id); if(!g) return;
+  g.volume=parseFloat(v);
+  // Re-apply effective volume on every member
+  g.trackIds.map(tById).filter(Boolean).forEach(t=>{
+    if(t.ws) t.ws.setVolume(effectiveVol(t));
+  });
+  const vp=g.el?.querySelector('[data-grole="vol-pct"]');
+  if(vp) vp.textContent=Math.round(g.volume*100)+'%';
+  autoSave();
+}
+
+// Time-based fade for an entire group's group-volume
+function groupFade(id,dir){
+  const g=gById(id); if(!g) return;
+  clearInterval(g.fadeTimer);
+  const FADE_MS=2000;
+  const members=g.trackIds.map(tById).filter(t=>t?.ws);
+  if(!members.length) return;
+  let target, startVol;
+  if(dir==='in'){
+    // Fade group vol from 0 (or current if higher) up to 1 — but only update audio,
+    // remember the saved group volume position
+    target = g.volume<=0.01 ? 1 : g.volume;
+    if(g.volume<=0.01){ g.volume=1; }
+    startVol=0;
+  } else {
+    target=0;
+    startVol=g.volume;
+  }
+  // We'll fade an internal multiplier without touching g.volume for fade-out
+  // so the slider can return to it when fading back in.
+  if(dir==='out'){
+    // Save current as the "remembered" level; fade audio to 0 but keep slider position
+    let cur=startVol;
+    const t0=Date.now();
+    g.fadeTimer=setInterval(()=>{
+      const r=Math.min((Date.now()-t0)/FADE_MS,1);
+      cur=startVol*(1-r);
+      // Apply directly via setVolume on each member with cur as group multiplier
+      members.forEach(t=>{
+        if(t.ws) t.ws.setVolume(t.volume * cur * masterVol);
+      });
+      if(r>=1){
+        clearInterval(g.fadeTimer);
+        // Don't change g.volume — slider stays where user set it.
+        // But silence is currently audible. We need a marker: when next Fade In happens,
+        // it should start from 0 and fade up to g.volume. We track this with a __faded flag.
+        g.__faded=true;
+        members.forEach(t=>{ if(t.ws) t.ws.setVolume(0); });
+      }
+    },30);
+    refreshGroupDisplay(g);
+  } else {
+    // Fade in: start audio from 0 → up to g.volume
+    let cur=0;
+    g.__faded=false;
+    const t0=Date.now();
+    g.fadeTimer=setInterval(()=>{
+      const r=Math.min((Date.now()-t0)/FADE_MS,1);
+      cur=g.volume*r;
+      members.forEach(t=>{
+        if(t.ws) t.ws.setVolume(t.volume * cur * masterVol);
+      });
+      if(r>=1){
+        clearInterval(g.fadeTimer);
+        // Restore proper effectiveVol on each
+        members.forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
+      }
+    },30);
+    refreshGroupDisplay(g);
+  }
+}
+
+// ────── Group DOM ──────
+function buildGroupElement(g){
+  const el=document.createElement('div');
+  el.className='group-bar';
+  el.id=`grp-${g.id}`;
+  el.innerHTML=`
+    <div class="grp-icon">⛬</div>
+    <div class="grp-info">
+      <div class="grp-name" ondblclick="renameGroup('${g.id}')" data-grole="name" title="Double-click to rename"></div>
+      <div class="grp-meta" data-grole="meta"></div>
+    </div>
+    <button class="grp-play" data-grole="play" onclick="groupTogglePlay('${g.id}')" title="Play / pause all members in sync">▶</button>
+    <button class="grp-stop" onclick="groupStop('${g.id}')" title="Stop all members">■</button>
+    <div class="grp-vol-wrap">
+      <span class="grp-vol-lbl">GRP</span>
+      <input type="range" min="0" max="1" step="0.01" value="${g.volume}" data-grole="vol-slider" oninput="setGroupVolume('${g.id}',this.value)">
+      <span class="grp-vol-pct" data-grole="vol-pct">${Math.round(g.volume*100)}%</span>
+    </div>
+    <button class="grp-fade" onclick="groupFade('${g.id}','in')" title="Fade in group">↑</button>
+    <button class="grp-fade" onclick="groupFade('${g.id}','out')" title="Fade out group">↓</button>
+    <button class="grp-fade" onclick="groupResync('${g.id}')" title="Re-sync all members to first track" style="font-size:13px">↻</button>
+    <button class="grp-del" onclick="deleteGroup('${g.id}')" title="Delete group">✕</button>`;
+  g.el=el;
+  refreshGroupDisplay(g);
+  return el;
+}
+
+function refreshGroupDisplay(g){
+  if(!g.el) return;
+  const nm=g.el.querySelector('[data-grole="name"]'); if(nm) nm.textContent=g.name;
+  const members=g.trackIds.map(tById).filter(Boolean);
+  const playing=members.filter(t=>t.playing).length;
+  const meta=g.el.querySelector('[data-grole="meta"]');
+  if(meta) meta.textContent=`${members.length} track${members.length!==1?'s':''}${playing>0?` · ${playing} playing`:''}`;
+  const vp=g.el.querySelector('[data-grole="vol-pct"]'); if(vp) vp.textContent=Math.round(g.volume*100)+'%';
+  const vs=g.el.querySelector('[data-grole="vol-slider"]'); if(vs && parseFloat(vs.value)!==g.volume) vs.value=g.volume;
+  const pb=g.el.querySelector('[data-grole="play"]');
+  if(pb){ pb.textContent=playing>0?'⏸':'▶'; pb.classList.toggle('on',playing>0); }
+  g.el.classList.toggle('is-playing',playing>0);
+}
+
+// Update the small group badge on a track (shown when it's in a group)
+function refreshTrackGroupBadge(t){
+  if(!t.el) return;
+  const g=groupOfTrack(t);
+  const badgeC=t.el.querySelector('[data-role="grp-badge-c"]');
+  const addC=t.el.querySelector('[data-role="grp-add-c"]');
+  if(g){
+    if(badgeC){
+      badgeC.textContent=g.name.length>8?g.name.slice(0,8)+'…':g.name;
+      badgeC.style.display='inline-flex';
+      badgeC.title='In group: '+g.name+' (click to manage)';
+    }
+    if(addC) addC.style.display='none';
+  } else {
+    if(badgeC) badgeC.style.display='none';
+    if(addC) addC.style.display='inline-flex';
+  }
+}
+
+// Open group-assign popup for a track
+function toggleGroupPop(trackId, event){
+  if(event) event.stopPropagation();
+  const t=tById(trackId); if(!t) return;
+  document.querySelectorAll('.grp-popup.open').forEach(p=>p.classList.remove('open'));
+  const pop=t.el?.querySelector('[data-role="grp-pop-c"]');
+  if(!pop) return;
+  const current=groupOfTrack(t);
+  let html='';
+  if(current){
+    html+=`<div class="grp-pop-title">In: <strong style="color:var(--text)">${esc(current.name)}</strong></div>
+           <button class="grp-pop-btn remove" onclick="removeTrackFromGroup(${t.id});closeGroupPops()">− Remove from group</button>`;
+    const others=groups.filter(g=>g.id!==current.id);
+    if(others.length){ html+='<div class="grp-pop-divider"></div><div class="grp-pop-title">Move to</div>'; }
+    others.forEach(g=>{
+      html+=`<button class="grp-pop-btn" onclick="addTrackToGroup(${t.id},'${g.id}');closeGroupPops()">${esc(g.name)} <span style="color:var(--muted);font-size:9px">(${g.trackIds.length})</span></button>`;
+    });
+  } else {
+    html+='<div class="grp-pop-title">Add to group</div>';
+    if(!groups.length){
+      html+='<div style="font-size:10px;color:var(--muted);padding:4px 6px;font-style:italic">No groups yet</div>';
+    }
+    groups.forEach(g=>{
+      html+=`<button class="grp-pop-btn" onclick="addTrackToGroup(${t.id},'${g.id}');closeGroupPops()">${esc(g.name)} <span style="color:var(--muted);font-size:9px">(${g.trackIds.length})</span></button>`;
+    });
+  }
+  html+=`<div class="grp-pop-divider"></div><button class="grp-pop-btn new" onclick="createGroupFromTrack(${t.id});closeGroupPops()">+ New group…</button>`;
+  pop.innerHTML=html;
+  pop.classList.add('open');
+}
+function closeGroupPops(){ document.querySelectorAll('.grp-popup.open').forEach(p=>p.classList.remove('open')); }
 
 // ════════════════════════════════════════════════
 // MASTER
@@ -503,7 +1020,7 @@ function uploadSingle(event,id){
   const f=event.target.files[0]; if(!f) return;
   const t=tById(id); if(!t) return;
   if(t.src) URL.revokeObjectURL(t.src);
-  if(t.ws){ t.ws.destroy(); t.ws=null; t._rp=null; t.region=null; }
+  if(t.ws){ t.ws.destroy(); t.ws=null; t._rp=null; t.region=null; t.fxChain=null; }
   t.src=URL.createObjectURL(f);
   t.filename=f.name;
   t.name=f.name.replace(/\.[^/.]+$/,'');
@@ -539,6 +1056,11 @@ function buildTrackElement(t){
 <div class="collapsed-view">
   <span class="tc-name" data-role="name-c" ondblclick="renameStart(${t.id})" title="Double-click to rename"></span>
   <span class="tc-cat ${t.cat}" data-role="cat-c" onclick="toggleCatPop(${t.id},event)"></span>
+  <div class="tc-grp-wrap">
+    <button class="tc-grp-btn" data-role="grp-badge-c" onclick="toggleGroupPop(${t.id},event)" style="display:none" title="Group"></button>
+    <button class="tc-grp-plus" data-role="grp-add-c" onclick="toggleGroupPop(${t.id},event)" title="Add to group">G+</button>
+    <div class="grp-popup" data-role="grp-pop-c"></div>
+  </div>
   <div class="tc-vol-wrap">
     <input type="range" data-role="vol-c" min="0" max="1" step="0.01" value="${t.volume}" oninput="onVol(${t.id},this.value)">
     <span class="tc-vol-pct" data-role="volpct-c"></span>
@@ -631,6 +1153,47 @@ function buildTrackElement(t){
     </div>
   </div>
 
+  <!-- FX panel: shown for BGM tracks only via .show-fx class -->
+  <div class="exp-fx" data-role="fx-panel">
+    <div class="exp-fx-head">
+      <span class="exp-fx-title">FX · EQ + Reverb</span>
+      <button class="exp-fx-reset" onclick="resetFX(${t.id})" title="Reset FX">Reset</button>
+    </div>
+    <div class="exp-fx-grid">
+      <div class="fx-knob">
+        <div class="fx-knob-lbl">LOW</div>
+        <input type="range" data-fx="low" min="-18" max="18" step="0.5" value="0" oninput="setFXParam(${t.id},'low',this.value)">
+        <div class="fx-knob-val" data-fx="low-val">0.0 dB</div>
+      </div>
+      <div class="fx-knob">
+        <div class="fx-knob-lbl">MID</div>
+        <input type="range" data-fx="mid" min="-18" max="18" step="0.5" value="0" oninput="setFXParam(${t.id},'mid',this.value)">
+        <div class="fx-knob-val" data-fx="mid-val">0.0 dB</div>
+      </div>
+      <div class="fx-knob">
+        <div class="fx-knob-lbl">HIGH</div>
+        <input type="range" data-fx="high" min="-18" max="18" step="0.5" value="0" oninput="setFXParam(${t.id},'high',this.value)">
+        <div class="fx-knob-val" data-fx="high-val">0.0 dB</div>
+      </div>
+    </div>
+    <div class="exp-fx-reverb">
+      <div class="fx-reverb-row">
+        <span class="fx-rev-lbl">REVERB</span>
+        <input type="range" data-fx="wet" min="0" max="1" step="0.01" value="0" oninput="setFXParam(${t.id},'wet',this.value)">
+        <span class="fx-knob-val" data-fx="wet-val">0%</span>
+      </div>
+      <div class="fx-reverb-row">
+        <span class="fx-rev-lbl">SIZE</span>
+        <select class="fx-size-sel" data-fx="size" onchange="setFXParam(${t.id},'size',this.value)">
+          <option value="small">Small Room</option>
+          <option value="medium" selected>Medium Room</option>
+          <option value="large">Large Room</option>
+          <option value="hall">Hall</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <div class="exp-divider"></div>
 
   <div class="exp-loop">
@@ -716,6 +1279,11 @@ function refreshTrackDisplay(t){
   rebuildCatPopup(t);
   // Accent
   t.el.style.setProperty('--accent',t.accent);
+  // Show FX panel only on BGM tracks
+  t.el.classList.toggle('has-fx', t.cat==='BGM');
+  refreshFXUI(t);
+  // Group badge
+  refreshTrackGroupBadge(t);
 }
 
 function refreshPlayUI(t){
@@ -723,6 +1291,8 @@ function refreshPlayUI(t){
   t.el.classList.toggle('is-playing',t.playing);
   const pc=role(t,'play-c'); if(pc){ pc.textContent=t.playing?'⏸':'▶'; pc.classList.toggle('on',t.playing); }
   const pe=role(t,'play-e'); if(pe){ pe.textContent=t.playing?'⏸  PAUSE':'▶  PLAY'; pe.classList.toggle('is-playing',t.playing); }
+  // Cascade to group bar if this track belongs to one
+  const g=groupOfTrack(t); if(g) refreshGroupDisplay(g);
 }
 
 // Show/hide the + ADD TO SCENE and − REMOVE FROM SCENE buttons based on scene state
@@ -818,10 +1388,26 @@ function layoutTracks(){
     }
   });
 
-  // Rebuild inactive pool with category dividers
-  // (we need to manage dividers; tracks themselves are not destroyed)
-  // First remove all dividers (cheap)
-  inactivePool.querySelectorAll('.cat-divider').forEach(d=>d.remove());
+  // Rebuild inactive pool with group bars first, then category dividers + tracks
+  // Remove all dividers and group bars (cheap)
+  inactivePool.querySelectorAll('.cat-divider, .grp-section').forEach(d=>d.remove());
+
+  // Group section: list all groups with their bars at the top of the inactive pool
+  if(groups.length){
+    const grpSec=document.createElement('div');
+    grpSec.className='grp-section';
+    const lbl=document.createElement('div');
+    lbl.className='grp-section-label';
+    lbl.innerHTML=`<span>GROUPS</span> <span style="color:var(--muted);font-size:9px;letter-spacing:1px;font-weight:400">Stems / busses</span>`;
+    grpSec.appendChild(lbl);
+    groups.forEach(g=>{
+      if(!g.el) buildGroupElement(g);
+      grpSec.appendChild(g.el);
+      refreshGroupDisplay(g);
+    });
+    inactivePool.appendChild(grpSec);
+  }
+
   // Walk through cats and append divider + tracks
   CAT_ORDER.forEach(cat=>{
     const items=inactiveByCat[cat];
@@ -832,7 +1418,7 @@ function layoutTracks(){
     inactivePool.appendChild(div);
     items.forEach(t=>{
       // Destroy WS for inactive tracks to free memory (only if not playing)
-      if(t.ws && !t.playing){ t.ws.destroy(); t.ws=null; t.region=null; t._rp=null; }
+      if(t.ws && !t.playing){ t.ws.destroy(); t.ws=null; t.region=null; t._rp=null; t.fxChain=null; }
       inactivePool.appendChild(t.el); // MOVE element here
     });
   });
@@ -883,6 +1469,8 @@ function setCat(id,cat){
   refreshTrackDisplay(t);
   document.querySelectorAll('.cat-popup.open').forEach(p=>p.classList.remove('open'));
   layoutTracks();
+  // If track became BGM and WS is alive, attach FX (no-op if already attached)
+  if(cat==='BGM' && t.ws) attachFX(t);
   autoSave();
 }
 
@@ -904,6 +1492,8 @@ function initWS(t){
     ws.setVolume(effectiveVol(t));
     const tdur=role(t,'tdur'); if(tdur) tdur.textContent=fmtT(ws.getDuration());
     if(rp && t.loopStart!==null && t.loopEnd!==null) mkRegion(t);
+    // Attach Web Audio FX chain for BGM tracks (one-time per audio element)
+    if(t.cat==='BGM') attachFX(t);
   });
   ws.on('timeupdate',cur=>{
     const tcur=role(t,'tcur'); if(tcur) tcur.textContent=fmtT(cur);
@@ -1019,6 +1609,11 @@ function deleteTrack(id){
   if(t.ws) t.ws.destroy();
   if(t.src) URL.revokeObjectURL(t.src);
   if(t.el) t.el.remove();
+  // Remove from any group
+  groups.forEach(g=>{
+    const idx=g.trackIds.indexOf(id);
+    if(idx>=0){ g.trackIds.splice(idx,1); refreshGroupDisplay(g); }
+  });
   tracks=tracks.filter(t=>t.id!==id);
   expandedIds.delete(id);
   layoutTracks();
@@ -1361,6 +1956,28 @@ function deleteScene(sid){
   renderScenes(); updateNotesBanner(); layoutTracks(); autoSave();
 }
 
+function moveScene(sid,dir){
+  const i=scenes.findIndex(s=>s.id===sid); if(i<0) return;
+  const j=i+dir; if(j<0||j>=scenes.length) return;
+  [scenes[i],scenes[j]]=[scenes[j],scenes[i]];
+  renderScenes(); autoSave();
+}
+
+function duplicateScene(sid){
+  const s=scenes.find(s=>s.id===sid); if(!s) return;
+  const copy={
+    id:'s'+Date.now(),
+    name:s.name+' (copy)',
+    notes:s.notes||'',
+    fadeDur:s.fadeDur,
+    snapshot:JSON.parse(JSON.stringify(s.snapshot)),
+  };
+  const i=scenes.findIndex(x=>x.id===sid);
+  scenes.splice(i+1,0,copy); // insert right after original
+  renderScenes(); autoSave();
+  showToast(`Duplicated "${s.name}"`);
+}
+
 function renameScene(sid){
   const s=scenes.find(s=>s.id===sid); if(!s) return;
   const el=document.querySelector(`#sc-${sid} .scene-name`); if(!el) return;
@@ -1535,12 +2152,17 @@ function renderScenes(){
     list.innerHTML='<div style="font-size:10px;color:var(--muted);padding:16px;text-align:center;font-style:italic">No scenes yet.<br>Set up your tracks then click<br>"Save current state as scene".</div>';
     return;
   }
-  list.innerHTML=scenes.map(s=>`
+  list.innerHTML=scenes.map((s,i)=>`
     <div class="scene-card${activeSceneId===s.id?' active':''}" id="sc-${s.id}">
       <div class="scene-card-top">
         <div class="scene-dot"></div>
         <div class="scene-name" ondblclick="renameScene('${s.id}')" title="Double-click to rename">${esc(s.name)}</div>
-        <button class="scene-del" onclick="deleteScene('${s.id}')" title="Delete">✕</button>
+        <div class="scene-card-icons">
+          <button class="scene-icon" onclick="moveScene('${s.id}',-1)" ${i===0?'disabled':''} title="Move up">▲</button>
+          <button class="scene-icon" onclick="moveScene('${s.id}',1)" ${i===scenes.length-1?'disabled':''} title="Move down">▼</button>
+          <button class="scene-icon" onclick="duplicateScene('${s.id}')" title="Duplicate">⎘</button>
+          <button class="scene-icon del" onclick="deleteScene('${s.id}')" title="Delete">✕</button>
+        </div>
       </div>
       <div class="scene-preview">${buildPreviewHTML(s)}</div>
       <div class="scene-notes-zone">
@@ -1575,8 +2197,9 @@ function migrateScenes(scenesArr){
 function stateToJSON(){
   return JSON.stringify({
     version:6,
-    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename})),
-    scenes,activeSceneId,masterVol,uid,
+    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename,fx:t.fx})),
+    groups:groups.map(g=>({id:g.id,name:g.name,volume:g.volume,trackIds:g.trackIds})),
+    scenes,activeSceneId,masterVol,uid,gid,
     expandedIds:[...expandedIds],
   });
 }
@@ -1612,6 +2235,8 @@ function deserializeTracks(arr){
       cues:td.cues||[],
       autoStop:td.autoStop||0,
       filename:td.filename||null,
+      fx: td.fx ? {low:td.fx.low||0,mid:td.fx.mid||0,high:td.fx.high||0,wet:td.fx.wet||0,size:td.fx.size||'medium'} : {low:0,mid:0,high:0,wet:0,size:'medium'},
+      fxChain:null,
       src:null, ws:null, _rp:null, region:null,
       playing:false, fadeTimer:null, autoStopTimer:null, loopPlays:0,
       el:null,
@@ -1628,12 +2253,15 @@ function importState(event){
       const data=JSON.parse(e.target.result);
       if(!data.tracks) throw new Error('Invalid file');
       tracks.forEach(t=>{ if(t.ws) t.ws.destroy(); if(t.el) t.el.remove(); });
-      tracks=[]; scenes=[]; expandedIds.clear();
-      uid=data.uid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
+      groups.forEach(g=>{ if(g.el) g.el.remove(); });
+      tracks=[]; scenes=[]; groups=[]; expandedIds.clear();
+      uid=data.uid||0; gid=data.gid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
       tracks=deserializeTracks(data.tracks);
       scenes=migrateScenes(data.scenes);
+      groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null}));
       (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
       tracks.forEach(t=>buildTrackElement(t));
+      groups.forEach(g=>buildGroupElement(g));
       const msl=document.getElementById('master-slider'); if(msl) msl.value=masterVol;
       document.getElementById('master-val').textContent=Math.round(masterVol*100)+'%';
       layoutTracks(); renderScenes(); updateNotesBanner();
@@ -1649,11 +2277,13 @@ function loadAutoSave(){
     const raw=localStorage.getItem('offside_v6'); if(!raw) return false;
     const data=JSON.parse(raw);
     if(!data.tracks||!data.tracks.length) return false;
-    uid=data.uid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
+    uid=data.uid||0; gid=data.gid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
     tracks=deserializeTracks(data.tracks);
     scenes=migrateScenes(data.scenes);
+    groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null}));
     (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
     tracks.forEach(t=>buildTrackElement(t));
+    groups.forEach(g=>buildGroupElement(g));
     const msl=document.getElementById('master-slider'); if(msl) msl.value=masterVol;
     document.getElementById('master-val').textContent=Math.round(masterVol*100)+'%';
     document.getElementById('st-master').textContent=Math.round(masterVol*100)+'%';
@@ -1677,6 +2307,8 @@ document.addEventListener('click',e=>{
     document.querySelectorAll('.cat-popup.open').forEach(p=>p.classList.remove('open'));
   if(!e.target.closest('.exp-speed'))
     document.querySelectorAll('.exp-speed.open').forEach(s=>s.classList.remove('open'));
+  if(!e.target.closest('.tc-grp-wrap'))
+    document.querySelectorAll('.grp-popup.open').forEach(p=>p.classList.remove('open'));
 });
 
 // ════════════════════════════════════════════════
