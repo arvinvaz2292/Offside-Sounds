@@ -186,17 +186,17 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .tc-grp-plus{background:transparent;border:1px dashed rgba(200,155,255,.3);color:rgba(200,155,255,.5);font-size:9px;font-weight:600;letter-spacing:.5px;padding:3px 7px;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;height:24px;transition:all .12s}
 .tc-grp-plus:hover{border-color:#c89bff;color:#c89bff;background:rgba(200,155,255,.1)}
 
-/* Group popup */
-.grp-popup{display:none;position:absolute;top:calc(100% + 5px);right:0;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:6px;z-index:300;flex-direction:column;gap:3px;min-width:160px;max-width:240px;box-shadow:0 8px 28px rgba(0,0,0,.6)}
-.grp-popup.open{display:flex}
-.grp-pop-title{font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;font-weight:600;padding:3px 6px}
-.grp-pop-btn{background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:10px;padding:6px 10px;border-radius:5px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:6px}
-.grp-pop-btn:hover{border-color:#c89bff;color:#c89bff}
+/* Group popup (rendered floating on document.body to escape track-item overflow:hidden) */
+.grp-popup-floating{position:fixed;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:6px;z-index:9999;display:flex;flex-direction:column;gap:3px;min-width:180px;max-width:260px;box-shadow:0 12px 36px rgba(0,0,0,.7);animation:popIn .12s ease both}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.grp-pop-title{font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;font-weight:600;padding:4px 7px}
+.grp-pop-btn{background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:10px;padding:7px 11px;border-radius:5px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:6px;font-weight:600;letter-spacing:.3px}
+.grp-pop-btn:hover{border-color:#c89bff;color:#c89bff;background:rgba(200,155,255,.08)}
 .grp-pop-btn.remove{border-color:rgba(255,68,68,.3);color:var(--red)}
 .grp-pop-btn.remove:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .grp-pop-btn.new{border-style:dashed;color:var(--amber);border-color:rgba(255,193,7,.3)}
 .grp-pop-btn.new:hover{border-color:var(--amber);background:rgba(255,193,7,.1)}
-.grp-pop-divider{height:1px;background:var(--border);margin:3px 0}
+.grp-pop-divider{height:1px;background:var(--border);margin:4px 0}
 
 /* ═══ TRACK ITEM ═══ */
 /* Single track element that toggles between collapsed/expanded via class */
@@ -781,13 +781,33 @@ function refreshTrackGroupBadge(t){
   }
 }
 
-// Open group-assign popup for a track
+// Open group-assign popup for a track.
+// We render the popup as a floating element on document.body so it escapes
+// the track-item's overflow:hidden clipping.
+let _activeGrpPopup=null;
+function closeGroupPops(){
+  if(_activeGrpPopup){ _activeGrpPopup.remove(); _activeGrpPopup=null; }
+}
 function toggleGroupPop(trackId, event){
   if(event) event.stopPropagation();
   const t=tById(trackId); if(!t) return;
-  document.querySelectorAll('.grp-popup.open').forEach(p=>p.classList.remove('open'));
-  const pop=t.el?.querySelector('[data-role="grp-pop-c"]');
-  if(!pop) return;
+  // If popup already open for this track, just close
+  if(_activeGrpPopup && _activeGrpPopup.dataset.trackId==String(trackId)){
+    closeGroupPops(); return;
+  }
+  closeGroupPops();
+  // Find the trigger button position
+  const trigger = t.el?.querySelector('[data-role="grp-add-c"]:not([style*="display:none"])')
+    || t.el?.querySelector('[data-role="grp-badge-c"]:not([style*="display:none"])')
+    || t.el?.querySelector('[data-role="grp-add-c"]')
+    || t.el?.querySelector('[data-role="grp-badge-c"]');
+  if(!trigger) return;
+  const rect = trigger.getBoundingClientRect();
+
+  // Build popup
+  const pop=document.createElement('div');
+  pop.className='grp-popup-floating';
+  pop.dataset.trackId=trackId;
   const current=groupOfTrack(t);
   let html='';
   if(current){
@@ -809,9 +829,20 @@ function toggleGroupPop(trackId, event){
   }
   html+=`<div class="grp-pop-divider"></div><button class="grp-pop-btn new" onclick="createGroupFromTrack(${t.id});closeGroupPops()">+ New group…</button>`;
   pop.innerHTML=html;
-  pop.classList.add('open');
+  document.body.appendChild(pop);
+
+  // Position it below the trigger, but flip up if it would go off the bottom
+  const popH = pop.offsetHeight;
+  const popW = pop.offsetWidth;
+  let top = rect.bottom + 6;
+  let left = rect.right - popW; // align right edge
+  if(top + popH > window.innerHeight - 10) top = rect.top - popH - 6; // flip up
+  if(left < 10) left = 10;
+  if(left + popW > window.innerWidth - 10) left = window.innerWidth - popW - 10;
+  pop.style.top = top+'px';
+  pop.style.left = left+'px';
+  _activeGrpPopup = pop;
 }
-function closeGroupPops(){ document.querySelectorAll('.grp-popup.open').forEach(p=>p.classList.remove('open')); }
 
 // ════════════════════════════════════════════════
 // MASTER
@@ -912,7 +943,6 @@ function buildTrackElement(t){
   <div class="tc-grp-wrap">
     <button class="tc-grp-btn" data-role="grp-badge-c" onclick="toggleGroupPop(${t.id},event)" style="display:none" title="Group"></button>
     <button class="tc-grp-plus" data-role="grp-add-c" onclick="toggleGroupPop(${t.id},event)" title="Add to group">G+</button>
-    <div class="grp-popup" data-role="grp-pop-c"></div>
   </div>
   <div class="tc-vol-wrap">
     <input type="range" data-role="vol-c" min="0" max="1" step="0.01" value="${t.volume}" oninput="onVol(${t.id},this.value)">
@@ -2110,9 +2140,13 @@ document.addEventListener('click',e=>{
     document.querySelectorAll('.cat-popup.open').forEach(p=>p.classList.remove('open'));
   if(!e.target.closest('.exp-speed'))
     document.querySelectorAll('.exp-speed.open').forEach(s=>s.classList.remove('open'));
-  if(!e.target.closest('.tc-grp-wrap'))
-    document.querySelectorAll('.grp-popup.open').forEach(p=>p.classList.remove('open'));
+  if(!e.target.closest('.tc-grp-wrap') && !e.target.closest('.grp-popup-floating'))
+    closeGroupPops();
 });
+
+// Close floating popups on scroll or resize so they don't float in the wrong place
+window.addEventListener('scroll', closeGroupPops, true);
+window.addEventListener('resize', closeGroupPops);
 
 // ════════════════════════════════════════════════
 // UTIL
