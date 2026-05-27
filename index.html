@@ -318,26 +318,6 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 
 .exp-divider{height:1px;background:var(--border2);margin:0 15px}
 
-/* FX panel — only shown on BGM tracks */
-.exp-fx{display:none;background:linear-gradient(180deg,rgba(64,196,255,.04) 0%,transparent 100%);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:11px 15px}
-.track-item.has-fx .exp-fx{display:block}
-.exp-fx-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
-.exp-fx-title{font-size:10px;letter-spacing:2px;color:var(--cat-bgm);text-transform:uppercase;font-weight:600}
-.exp-fx-reset{background:transparent;border:1px solid var(--border);color:var(--muted2);font-size:9px;padding:3px 8px;border-radius:5px;cursor:pointer;font-family:var(--mono);letter-spacing:.5px;transition:all .12s;font-weight:600}
-.exp-fx-reset:hover{border-color:var(--cat-bgm);color:var(--cat-bgm)}
-.exp-fx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:9px}
-.fx-knob{background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:5px}
-.fx-knob-lbl{font-size:8px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;font-weight:600}
-.fx-knob input[type=range]{width:100%}
-.fx-knob input[type=range]::-webkit-slider-thumb{background:var(--cat-bgm)}
-.fx-knob-val{font-size:9px;color:var(--cat-bgm);font-variant-numeric:tabular-nums;font-weight:600}
-.exp-fx-reverb{display:flex;flex-direction:column;gap:6px;background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:9px 10px}
-.fx-reverb-row{display:flex;align-items:center;gap:8px}
-.fx-rev-lbl{font-size:9px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;font-weight:600;width:54px;flex-shrink:0}
-.fx-reverb-row input[type=range]{flex:1}
-.fx-reverb-row input[type=range]::-webkit-slider-thumb{background:var(--cat-bgm)}
-.fx-size-sel{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--mono);font-size:10px;padding:4px 7px;outline:none;cursor:pointer}
-.fx-size-sel:focus{border-color:var(--cat-bgm)}
 
 .exp-loop{background:var(--s2);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:11px 15px}
 .exp-loop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
@@ -517,131 +497,6 @@ function gById(id){ return groups.find(g=>g.id===id); }
 function groupOfTrack(t){ return groups.find(g=>g.trackIds.includes(t.id))||null; }
 function mkGroup(name='New Group'){ return {id:'g'+(++gid), name, volume:1, fadeTimer:null, el:null, trackIds:[]}; }
 
-// ════════════════════════════════════════════════
-// FX — Shared Web Audio context and reverb impulse generator
-// ════════════════════════════════════════════════
-let _audioCtx=null;
-function getAudioCtx(){
-  if(!_audioCtx){
-    _audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  }
-  if(_audioCtx.state==='suspended') _audioCtx.resume().catch(()=>{});
-  return _audioCtx;
-}
-
-// Cached synthetic impulse responses (per size)
-const _impulseCache={};
-function getImpulse(size='medium'){
-  if(_impulseCache[size]) return _impulseCache[size];
-  const ctx=getAudioCtx();
-  const cfg={small:{dur:0.8,decay:2.5},medium:{dur:1.8,decay:1.8},large:{dur:3.5,decay:1.3},hall:{dur:5.5,decay:1.0}}[size]||{dur:1.8,decay:1.8};
-  const sampleRate=ctx.sampleRate;
-  const length=Math.floor(sampleRate*cfg.dur);
-  const buf=ctx.createBuffer(2,length,sampleRate);
-  for(let ch=0;ch<2;ch++){
-    const data=buf.getChannelData(ch);
-    for(let i=0;i<length;i++){
-      const t=i/length;
-      // exponential decay × random noise — classic reverb tail
-      data[i]=(Math.random()*2-1)*Math.pow(1-t,cfg.decay);
-    }
-  }
-  _impulseCache[size]=buf;
-  return buf;
-}
-
-// Build FX chain for a single track. Called after WaveSurfer's media element exists.
-// Chain: media → lowEQ → midEQ → highEQ → (dry + wet via convolver) → destination
-function attachFX(t){
-  if(!t.ws || t.fxChain) return;
-  const mediaEl = t.ws.getMediaElement?.();
-  if(!mediaEl) return;
-  const ctx=getAudioCtx();
-  try{
-    const src = ctx.createMediaElementSource(mediaEl);
-    const lowEQ = ctx.createBiquadFilter();
-    lowEQ.type='lowshelf'; lowEQ.frequency.value=250; lowEQ.gain.value=t.fx.low;
-    const midEQ = ctx.createBiquadFilter();
-    midEQ.type='peaking'; midEQ.frequency.value=1000; midEQ.Q.value=0.7; midEQ.gain.value=t.fx.mid;
-    const highEQ = ctx.createBiquadFilter();
-    highEQ.type='highshelf'; highEQ.frequency.value=4000; highEQ.gain.value=t.fx.high;
-
-    const dryGain = ctx.createGain();
-    const wetGain = ctx.createGain();
-    const convolver = ctx.createConvolver();
-    convolver.buffer = getImpulse(t.fx.size);
-
-    dryGain.gain.value = 1 - t.fx.wet;
-    wetGain.gain.value = t.fx.wet;
-
-    // Wire it up
-    src.connect(lowEQ); lowEQ.connect(midEQ); midEQ.connect(highEQ);
-    highEQ.connect(dryGain); dryGain.connect(ctx.destination);
-    highEQ.connect(convolver); convolver.connect(wetGain); wetGain.connect(ctx.destination);
-
-    t.fxChain={src,lowEQ,midEQ,highEQ,dryGain,wetGain,convolver};
-  }catch(e){
-    // MediaElementSource throws if called twice on the same element — that's fine,
-    // means we've already wired it up (e.g. on a previous WS re-init).
-    console.warn('FX attach failed:',e.message);
-  }
-}
-
-function applyFX(t){
-  if(!t.fxChain) return;
-  t.fxChain.lowEQ.gain.value = t.fx.low;
-  t.fxChain.midEQ.gain.value = t.fx.mid;
-  t.fxChain.highEQ.gain.value = t.fx.high;
-  t.fxChain.dryGain.gain.value = 1 - t.fx.wet;
-  t.fxChain.wetGain.gain.value = t.fx.wet;
-  // size change requires new impulse
-  if(t.fxChain.convolver.buffer !== getImpulse(t.fx.size)){
-    t.fxChain.convolver.buffer = getImpulse(t.fx.size);
-  }
-}
-
-function setFXParam(id, param, value){
-  const t=tById(id); if(!t) return;
-  t.fx[param] = (param==='size') ? value : parseFloat(value);
-  applyFX(t);
-  // Update readout
-  const el = t.el?.querySelector(`[data-fx="${param}-val"]`);
-  if(el){
-    if(param==='low'||param==='mid'||param==='high'){
-      el.textContent = (t.fx[param]>0?'+':'') + t.fx[param].toFixed(1) + ' dB';
-    } else if(param==='wet'){
-      el.textContent = Math.round(t.fx.wet*100) + '%';
-    }
-  }
-  autoSave();
-}
-
-function resetFX(id){
-  const t=tById(id); if(!t) return;
-  t.fx={low:0,mid:0,high:0,wet:0,size:'medium'};
-  applyFX(t);
-  refreshFXUI(t);
-  autoSave();
-}
-
-function refreshFXUI(t){
-  if(!t.el) return;
-  const updateRange=(p,v)=>{
-    const r=t.el.querySelector(`[data-fx="${p}"]`); if(r) r.value=v;
-    const lab=t.el.querySelector(`[data-fx="${p}-val"]`);
-    if(lab){
-      if(p==='low'||p==='mid'||p==='high') lab.textContent=(v>0?'+':'')+v.toFixed(1)+' dB';
-      else if(p==='wet') lab.textContent=Math.round(v*100)+'%';
-    }
-  };
-  updateRange('low',t.fx.low);
-  updateRange('mid',t.fx.mid);
-  updateRange('high',t.fx.high);
-  updateRange('wet',t.fx.wet);
-  const sizeEl=t.el.querySelector('[data-fx="size"]');
-  if(sizeEl) sizeEl.value=t.fx.size;
-}
-
 function mkTrack(name='New Track',cat='AMB'){
   const idx=catC[cat]++%CAT_ACCENTS[cat].length;
   return{id:++uid,name,cat,src:null,filename:null,
@@ -650,8 +505,6 @@ function mkTrack(name='New Track',cat='AMB'){
     autoStop:0,autoStopTimer:null,fadeTimer:null,
     cues:[],ws:null,region:null,_rp:null,
     accent:CAT_ACCENTS[cat][idx],order:uid,
-    fx:{low:0,mid:0,high:0,wet:0,size:'medium'}, // EQ in dB; wet 0-1; size = small/medium/large/hall
-    fxChain:null, // Web Audio nodes once attached
     el:null}; // the persistent DOM element for this track
 }
 function tById(id){return tracks.find(t=>t.id===id);}
@@ -1020,7 +873,7 @@ function uploadSingle(event,id){
   const f=event.target.files[0]; if(!f) return;
   const t=tById(id); if(!t) return;
   if(t.src) URL.revokeObjectURL(t.src);
-  if(t.ws){ t.ws.destroy(); t.ws=null; t._rp=null; t.region=null; t.fxChain=null; }
+  if(t.ws){ t.ws.destroy(); t.ws=null; t._rp=null; t.region=null; }
   t.src=URL.createObjectURL(f);
   t.filename=f.name;
   t.name=f.name.replace(/\.[^/.]+$/,'');
@@ -1153,47 +1006,6 @@ function buildTrackElement(t){
     </div>
   </div>
 
-  <!-- FX panel: shown for BGM tracks only via .show-fx class -->
-  <div class="exp-fx" data-role="fx-panel">
-    <div class="exp-fx-head">
-      <span class="exp-fx-title">FX · EQ + Reverb</span>
-      <button class="exp-fx-reset" onclick="resetFX(${t.id})" title="Reset FX">Reset</button>
-    </div>
-    <div class="exp-fx-grid">
-      <div class="fx-knob">
-        <div class="fx-knob-lbl">LOW</div>
-        <input type="range" data-fx="low" min="-18" max="18" step="0.5" value="0" oninput="setFXParam(${t.id},'low',this.value)">
-        <div class="fx-knob-val" data-fx="low-val">0.0 dB</div>
-      </div>
-      <div class="fx-knob">
-        <div class="fx-knob-lbl">MID</div>
-        <input type="range" data-fx="mid" min="-18" max="18" step="0.5" value="0" oninput="setFXParam(${t.id},'mid',this.value)">
-        <div class="fx-knob-val" data-fx="mid-val">0.0 dB</div>
-      </div>
-      <div class="fx-knob">
-        <div class="fx-knob-lbl">HIGH</div>
-        <input type="range" data-fx="high" min="-18" max="18" step="0.5" value="0" oninput="setFXParam(${t.id},'high',this.value)">
-        <div class="fx-knob-val" data-fx="high-val">0.0 dB</div>
-      </div>
-    </div>
-    <div class="exp-fx-reverb">
-      <div class="fx-reverb-row">
-        <span class="fx-rev-lbl">REVERB</span>
-        <input type="range" data-fx="wet" min="0" max="1" step="0.01" value="0" oninput="setFXParam(${t.id},'wet',this.value)">
-        <span class="fx-knob-val" data-fx="wet-val">0%</span>
-      </div>
-      <div class="fx-reverb-row">
-        <span class="fx-rev-lbl">SIZE</span>
-        <select class="fx-size-sel" data-fx="size" onchange="setFXParam(${t.id},'size',this.value)">
-          <option value="small">Small Room</option>
-          <option value="medium" selected>Medium Room</option>
-          <option value="large">Large Room</option>
-          <option value="hall">Hall</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
   <div class="exp-divider"></div>
 
   <div class="exp-loop">
@@ -1279,9 +1091,6 @@ function refreshTrackDisplay(t){
   rebuildCatPopup(t);
   // Accent
   t.el.style.setProperty('--accent',t.accent);
-  // Show FX panel only on BGM tracks
-  t.el.classList.toggle('has-fx', t.cat==='BGM');
-  refreshFXUI(t);
   // Group badge
   refreshTrackGroupBadge(t);
 }
@@ -1418,7 +1227,7 @@ function layoutTracks(){
     inactivePool.appendChild(div);
     items.forEach(t=>{
       // Destroy WS for inactive tracks to free memory (only if not playing)
-      if(t.ws && !t.playing){ t.ws.destroy(); t.ws=null; t.region=null; t._rp=null; t.fxChain=null; }
+      if(t.ws && !t.playing){ t.ws.destroy(); t.ws=null; t.region=null; t._rp=null; }
       inactivePool.appendChild(t.el); // MOVE element here
     });
   });
@@ -1469,8 +1278,6 @@ function setCat(id,cat){
   refreshTrackDisplay(t);
   document.querySelectorAll('.cat-popup.open').forEach(p=>p.classList.remove('open'));
   layoutTracks();
-  // If track became BGM and WS is alive, attach FX (no-op if already attached)
-  if(cat==='BGM' && t.ws) attachFX(t);
   autoSave();
 }
 
@@ -1492,8 +1299,6 @@ function initWS(t){
     ws.setVolume(effectiveVol(t));
     const tdur=role(t,'tdur'); if(tdur) tdur.textContent=fmtT(ws.getDuration());
     if(rp && t.loopStart!==null && t.loopEnd!==null) mkRegion(t);
-    // Attach Web Audio FX chain for BGM tracks (one-time per audio element)
-    if(t.cat==='BGM') attachFX(t);
   });
   ws.on('timeupdate',cur=>{
     const tcur=role(t,'tcur'); if(tcur) tcur.textContent=fmtT(cur);
@@ -2197,7 +2002,7 @@ function migrateScenes(scenesArr){
 function stateToJSON(){
   return JSON.stringify({
     version:6,
-    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename,fx:t.fx})),
+    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename})),
     groups:groups.map(g=>({id:g.id,name:g.name,volume:g.volume,trackIds:g.trackIds})),
     scenes,activeSceneId,masterVol,uid,gid,
     expandedIds:[...expandedIds],
@@ -2235,8 +2040,6 @@ function deserializeTracks(arr){
       cues:td.cues||[],
       autoStop:td.autoStop||0,
       filename:td.filename||null,
-      fx: td.fx ? {low:td.fx.low||0,mid:td.fx.mid||0,high:td.fx.high||0,wet:td.fx.wet||0,size:td.fx.size||'medium'} : {low:0,mid:0,high:0,wet:0,size:'medium'},
-      fxChain:null,
       src:null, ws:null, _rp:null, region:null,
       playing:false, fadeTimer:null, autoStopTimer:null, loopPlays:0,
       el:null,
