@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Offside Sound v6 · by Arvin</title>
+<title>Offside Sound · Theatre Playback</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
@@ -25,7 +25,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
 /* ── TOPBAR ── */
 .topbar{position:sticky;top:0;z-index:500;height:62px;background:rgba(7,10,13,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:14px}
-.brand-name{font-family:var(--display);font-size:30px;letter-spacing:3px;line-height:1;flex-shrink:0}
+.brand-name{font-family:var(--display);font-size:24px;letter-spacing:2.5px;line-height:1;flex-shrink:0;white-space:nowrap}
 
 /* Project pill in topbar */
 .project-pill{display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 12px;border-radius:18px;cursor:pointer;transition:all .14s;max-width:240px;flex-shrink:0}
@@ -36,7 +36,18 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
 /* Project picker overlay */
 .project-picker{position:fixed;inset:0;background:rgba(8,11,15,.95);backdrop-filter:blur(8px);z-index:9000;display:none;align-items:center;justify-content:center;padding:20px}
-.project-picker.open{display:flex}
+.project-picker.open{display:flex;animation:ppFadeIn .55s ease both}
+.project-picker.open .pp-card{animation:ppCardIn .7s cubic-bezier(.2,.85,.3,1) both}
+.project-picker.open .pp-brand-name{animation:ppBrandIn .9s cubic-bezier(.2,.85,.3,1) both;animation-delay:.1s}
+.project-picker.open .pp-brand-sub{animation:ppSubIn .7s ease both;animation-delay:.45s}
+.project-picker.open .pp-card-title{animation:ppFadeUp .6s ease both;animation-delay:.5s}
+.project-picker.open .pp-projects{animation:ppFadeUp .6s ease both;animation-delay:.6s}
+.project-picker.open .pp-card-actions{animation:ppFadeUp .6s ease both;animation-delay:.7s}
+@keyframes ppFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes ppCardIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes ppBrandIn{from{opacity:0;transform:scale(.85);letter-spacing:10px}to{opacity:1;transform:none;letter-spacing:3px}}
+@keyframes ppSubIn{from{opacity:0}to{opacity:1}}
+@keyframes ppFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pp-card{background:var(--s1);border:1px solid var(--border);border-radius:18px;width:100%;max-width:540px;max-height:calc(100vh - 40px);overflow:auto;box-shadow:0 24px 60px rgba(0,0,0,.7)}
 .pp-card-head{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 24px 8px}
 .pp-brand-name{font-family:var(--display);font-size:32px;letter-spacing:3px;line-height:1;color:var(--text)}
@@ -173,6 +184,22 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .notes-banner-lbl{font-size:9px;letter-spacing:2.5px;color:var(--amber);text-transform:uppercase;margin-bottom:6px;font-weight:600;display:flex;align-items:center;gap:10px}
 .notes-banner-lbl::after{content:'';flex:1;height:1px;background:rgba(255,193,7,.25)}
 .notes-banner-text{font-size:13px;color:var(--text);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+
+/* Missing-files banner (shown after switching to a project) */
+.missing-files-banner{margin:14px 18px 0;background:rgba(255,171,0,.06);border:1px solid rgba(255,171,0,.3);border-radius:10px;padding:0;display:none;overflow:hidden}
+.missing-files-banner.visible{display:block}
+.mfb-head{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(255,171,0,.06);border-bottom:1px solid rgba(255,171,0,.15)}
+.mfb-icon{font-size:14px;color:var(--amber)}
+.mfb-title{font-size:11px;letter-spacing:1.5px;color:var(--amber);font-weight:600;text-transform:uppercase}
+.mfb-count{font-size:11px;color:var(--amber);background:rgba(255,171,0,.12);padding:2px 9px;border-radius:10px;font-family:var(--mono);font-weight:600}
+.mfb-upload-btn{margin-left:auto;background:var(--amber);color:#000;border:none;font-size:11px;font-weight:600;letter-spacing:1px;padding:6px 12px;border-radius:6px;cursor:pointer;font-family:var(--mono);position:relative;transition:background .12s}
+.mfb-upload-btn:hover{background:#ffd600}
+.mfb-upload-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.mfb-close{background:transparent;border:1px solid transparent;color:var(--muted);font-size:11px;width:26px;height:26px;border-radius:5px;cursor:pointer;transition:all .12s}
+.mfb-close:hover{border-color:var(--red);color:var(--red)}
+.mfb-list{padding:10px 14px;display:flex;flex-wrap:wrap;gap:6px;max-height:140px;overflow-y:auto}
+.mfb-file{font-family:var(--mono);font-size:10px;color:var(--text2);background:var(--s2);border:1px solid var(--border);border-radius:5px;padding:4px 9px;letter-spacing:.3px}
+.mfb-file.found{color:var(--green);border-color:rgba(0,230,118,.3);background:rgba(0,230,118,.06)}
 
 /* pool headers */
 .pool-header{padding:14px 18px 6px;display:flex;align-items:center;gap:10px;user-select:none}
@@ -485,10 +512,22 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .btn-blue:hover{background:var(--blue);color:#000}
 .btn-purple{background:transparent;border:1px solid #c89bff;color:#c89bff}
 .btn-purple:hover{background:#c89bff;color:#000}
+.btn-help{width:36px;padding:0;font-weight:600;font-size:14px;border-radius:50%!important}
+
+/* Upload menu — pops from the UPLOAD button */
+.upload-wrap-v2{position:relative;display:inline-flex}
+.upload-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:4px;flex-direction:column;gap:2px;min-width:140px;z-index:400;box-shadow:0 8px 28px rgba(0,0,0,.6)}
+.upload-menu.open{display:flex}
+.upload-menu-item{background:var(--s3);border:1px solid transparent;color:var(--text2);font-family:var(--mono);font-size:11px;padding:9px 12px;border-radius:5px;cursor:pointer;position:relative;transition:all .12s;font-weight:600;letter-spacing:.3px}
+.upload-menu-item:hover{border-color:var(--green);color:var(--green);background:rgba(0,230,118,.06)}
+.upload-menu-item input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
 
 /* Generic modal overlay (used for scene preview + mixer) */
 .modal-overlay{position:fixed;inset:0;background:rgba(8,11,15,.85);backdrop-filter:blur(6px);z-index:8500;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
+.modal-overlay.open{display:flex;animation:modalFade .2s ease both}
+.modal-overlay.open .modal-card{animation:modalCardIn .25s cubic-bezier(.2,.85,.3,1) both}
+@keyframes modalFade{from{opacity:0}to{opacity:1}}
+@keyframes modalCardIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
 .modal-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;width:100%;max-width:560px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.7);overflow:hidden}
 .modal-card-wide{max-width:920px}
 .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border2);background:rgba(255,255,255,.02);flex-shrink:0}
@@ -572,6 +611,18 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .mxr-fader-val{font-size:11px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
 .mxr-empty{text-align:center;padding:30px;color:var(--muted);font-style:italic;font-size:11px}
 
+/* Readme body */
+.readme-body{font-size:13px;line-height:1.65;color:var(--text2)}
+.readme-body h3{font-family:var(--display);font-size:18px;letter-spacing:1px;color:var(--text);margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border2)}
+.readme-body h3:first-child{margin-top:0}
+.readme-body p{margin:0 0 10px}
+.readme-body ul{margin:0 0 12px;padding-left:22px}
+.readme-body li{margin-bottom:4px}
+.readme-body strong{color:var(--text);font-weight:600}
+.readme-body em{color:var(--amber);font-style:normal}
+.readme-intro{background:rgba(64,196,255,.06);border:1px solid rgba(64,196,255,.2);border-radius:8px;padding:12px 14px;margin-bottom:18px!important;color:var(--text)}
+.readme-foot{font-size:10px;color:var(--muted);font-style:italic;text-align:center;margin-top:24px!important;padding-top:14px;border-top:1px solid var(--border2);letter-spacing:.5px}
+
 /* add-track button in pool header */
 .pool-add-btn{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--muted2);font-size:10px;font-weight:600;letter-spacing:1px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:var(--mono);transition:all .12s}
 .pool-add-btn:hover{border-color:var(--green);color:var(--green)}
@@ -649,7 +700,7 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 
 <!-- ══ TOPBAR ══ -->
 <div class="topbar">
-  <span class="brand-name">OFFSIDE</span>
+  <span class="brand-name">OFFSIDE SOUND</span>
   <span class="brand-sub">v7 · by Arvin Vaz</span>
   <button class="project-pill" id="project-pill" onclick="openProjectPicker()" title="Switch project">
     <span class="pp-icon">📁</span>
@@ -663,13 +714,23 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
     <span class="asb-name" id="asb-name"></span>
   </div>
   <div class="topbar-right">
-    <label class="btn btn-green upload-wrap">
-      ↑ UPLOAD
-      <input type="file" accept=".mp3,.wav,.m4a,.aac,audio/*" multiple onchange="uploadMulti(event)">
-    </label>
+    <div class="upload-wrap-v2">
+      <button class="btn btn-green" onclick="toggleUploadMenu(event)">↑ UPLOAD ▾</button>
+      <div class="upload-menu" id="upload-menu">
+        <label class="upload-menu-item">
+          <span>📄 Files</span>
+          <input type="file" accept=".mp3,.wav,.m4a,.aac,audio/*" multiple onchange="uploadMulti(event);closeUploadMenu()">
+        </label>
+        <label class="upload-menu-item">
+          <span>📁 Folder</span>
+          <input type="file" webkitdirectory directory multiple onchange="uploadMulti(event);closeUploadMenu()">
+        </label>
+      </div>
+    </div>
     <button class="btn btn-ghost" onclick="createGroup()">+ GROUP</button>
     <button class="btn btn-purple" onclick="openMixer()" title="Global mixer — all tracks at once">▤ MIXER</button>
     <button class="btn btn-blue" onclick="toggleFloatingWindow()" title="Show / hide control panel">⚙ CONTROLS</button>
+    <button class="btn btn-ghost btn-help" onclick="openReadme()" title="How to use Offside Sound">?</button>
     <button class="btn-stopall" id="stopall-btn" onclick="stopAllFade()">
       <span id="stopall-lbl">↓ FADE ALL</span>
       <div class="stopall-progress" id="stopall-progress"></div>
@@ -771,7 +832,7 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
   <div class="pp-card">
     <div class="pp-card-head">
       <div class="pp-brand">
-        <div class="pp-brand-name">OFFSIDE</div>
+        <div class="pp-brand-name">OFFSIDE SOUND</div>
         <div class="pp-brand-sub">Theatre Playback · v7 · by Arvin Vaz</div>
       </div>
       <button class="pp-close" id="pp-close-btn" onclick="closeProjectPicker()" style="display:none" title="Close">✕</button>
@@ -785,6 +846,82 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
       </label>
     </div>
     <div class="pp-card-foot">Each production keeps its own tracks, scenes, groups, and favourites.</div>
+  </div>
+</div>
+
+<!-- ══ README / HELP MODAL ══ -->
+<div class="modal-overlay" id="readme-modal">
+  <div class="modal-card modal-card-wide">
+    <div class="modal-head">
+      <div class="modal-title">
+        <span class="modal-icon">📖</span>
+        <span>Offside Sound — How it works</span>
+      </div>
+      <button class="modal-close" onclick="closeReadme()" title="Close">✕</button>
+    </div>
+    <div class="modal-body readme-body">
+      <p class="readme-intro">Offside Sound is a theatre playback console designed for live operators. Built by Arvin Vaz. Below is everything you need to run a show.</p>
+
+      <h3>🎬 Productions</h3>
+      <p>Each show lives in its own <strong>Production</strong>. The picker on launch lets you choose one or create a new one. Switch between productions any time using the folder pill in the topbar. Each production keeps its own tracks, scenes, groups, and favourites — nothing leaks between shows.</p>
+
+      <h3>🎵 Tracks</h3>
+      <p>Tap <strong>↑ UPLOAD</strong> to add audio. Choose <strong>Files</strong> for individual sounds or <strong>Folder</strong> to pull an entire show folder at once. Tracks auto-categorise into <strong>BGM</strong> (background music), <strong>SFX</strong> (sound effects), or <strong>AMB</strong> (ambience) based on their filename — you can change the category anytime by tapping its badge.</p>
+      <p>Each track has its own waveform, volume slider, play/stop, fade in / fade out (2-second ramp), and optional loop region + cue points. Volume slider behaves as a smooth fade; the ▲▼ buttons above the % give precise ±2% jumps with no fade.</p>
+
+      <h3>🎭 Scenes</h3>
+      <p>A scene is a snapshot of your current playback state: which tracks are playing, at what volumes, with what loops, plus which tracks are <em>staged</em> (ready but not auto-firing). Set up your tracks the way you want, then <strong>+ Save current state as scene</strong> in the sidebar.</p>
+      <p>On each scene card:</p>
+      <ul>
+        <li><strong>▶ FIRE</strong> — hard-cut to this scene</li>
+        <li><strong>⇄ XFADE</strong> — crossfade over the scene's fade duration (default 2s)</li>
+        <li><strong>👁 PREVIEW</strong> — see what's in the scene without playing it</li>
+        <li><strong>↑ UPDATE</strong> — overwrite the scene with your current state</li>
+      </ul>
+      <p>Add the active scene's notes in the textarea below the scene. They show up in a banner above the track area when fired — useful for cue numbers, timings, or reminders.</p>
+
+      <h3>⛬ Groups (stems)</h3>
+      <p>A <strong>Group</strong> plays several stems in sample-accurate sync — drum kit, multitrack song, ambient layers. Tap <strong>+ GROUP</strong> in the topbar, then on each track tap the dashed <strong>G+</strong> button to add it to the group.</p>
+      <p>Inside the group container: one shared seek bar for all stems, individual volume sliders per stem (with mini-waveforms), group volume, fade in/out, and rewind. Hit play on the group and every stem fires at the same instant — no drift. Add a group to a scene just like a track, using the <strong>+ SCENE</strong> button on the group's header.</p>
+
+      <h3>⚙ Controls window</h3>
+      <p>Draggable panel. Contains the <strong>Master</strong> fader, three <strong>category faders</strong> (BGM / SFX / AMB) with their own fade in/out, a <strong>Fade All Tracks</strong> button, and <strong>Favourites</strong>.</p>
+      <p>Favourites are one-shot sounds (door slams, switches, stings) that fire instantly at 50% on tap. They overlap freely. Upload short audio files via the <strong>+ Add</strong> button.</p>
+
+      <h3>▤ Global Mixer</h3>
+      <p>The mixer shows every track and group in your production on one screen, with live volume sliders and play/stop on each row. Useful to see "what's actually happening" or to ride a gain in a hurry. Search box at the top filters by name.</p>
+
+      <h3>⌨ Keyboard shortcuts</h3>
+      <ul>
+        <li><strong>1-9</strong> — trigger play/pause on tracks 1-9</li>
+        <li><strong>Space</strong> — toggle the last-triggered track</li>
+        <li><strong>S</strong> — fade all playing tracks to silence over 2 seconds</li>
+        <li><strong>Esc</strong> — hard stop everything immediately</li>
+      </ul>
+
+      <h3>💾 Saving and backup</h3>
+      <p>Everything auto-saves to your browser's storage every time you make a change. <strong>Export</strong> (sidebar footer) saves the production as a .json file you can email or back up. <strong>Import</strong> creates a new production from a .json file. Audio files don't get included in exports — you'll need to re-upload them, but smart-match restores them by filename.</p>
+
+      <h3>📱 Running a show on iPad</h3>
+      <ul>
+        <li>Use USB-C → 3.5mm DAC adapter (Apple's works) → cable to mixer</li>
+        <li><strong>Auto-Lock: Never</strong> — Settings → Display → Auto-Lock</li>
+        <li><strong>Do Not Disturb: ON</strong> — no notifications mid-show</li>
+        <li><strong>Guided Access</strong> — Settings → Accessibility — locks the iPad to just this app</li>
+        <li>Charge to 100% before doors; have a charger nearby</li>
+        <li>Don't pull-to-refresh the browser tab during a show — you'll lose loaded audio</li>
+        <li>Pre-play your first cue once during pre-show to warm up audio decode</li>
+      </ul>
+
+      <h3>🆘 If something goes wrong</h3>
+      <ul>
+        <li><strong>Fade All</strong> (S key) for a quick controlled silence while you regroup</li>
+        <li><strong>Esc</strong> for a hard stop on everything</li>
+        <li>If the app gets weird, close the tab and reopen it — the session is auto-saved</li>
+      </ul>
+
+      <p class="readme-foot">Built with care by Arvin Vaz · Goa, India · Version 7</p>
+    </div>
   </div>
 </div>
 
@@ -845,6 +982,19 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 
   <!-- TRACK AREA -->
   <main class="track-area" id="track-area">
+    <div class="missing-files-banner" id="missing-files-banner">
+      <div class="mfb-head">
+        <span class="mfb-icon">⚠</span>
+        <span class="mfb-title">Audio files needed</span>
+        <span class="mfb-count" id="mfb-count">0</span>
+        <label class="mfb-upload-btn">
+          ↑ Upload
+          <input type="file" accept="audio/*" multiple onchange="uploadMulti(event)">
+        </label>
+        <button class="mfb-close" onclick="hideMissingFilesBanner()" title="Dismiss">✕</button>
+      </div>
+      <div class="mfb-list" id="mfb-list"></div>
+    </div>
     <div class="notes-banner" id="notes-banner">
       <div class="notes-banner-lbl">Scene Notes</div>
       <div class="notes-banner-text" id="notes-banner-text"></div>
@@ -1762,9 +1912,23 @@ function guessCat(name){
 
 // Smart upload: if a file's name matches a track that's missing its audio source,
 // attach it to that track rather than making a duplicate. Otherwise add as new.
+function toggleUploadMenu(event){
+  if(event) event.stopPropagation();
+  document.getElementById('upload-menu').classList.toggle('open');
+}
+function closeUploadMenu(){
+  const m=document.getElementById('upload-menu');
+  if(m) m.classList.remove('open');
+}
+
 function uploadMulti(event){
-  const files=Array.from(event.target.files); if(!files.length) return;
+  let files=Array.from(event.target.files); if(!files.length) return;
+  // Folder uploads include every file in the folder — keep only audio
+  const AUDIO_RE = /\.(mp3|wav|m4a|aac|ogg|flac|webm|opus|aiff?)$/i;
+  files = files.filter(f=>AUDIO_RE.test(f.name) || f.type.startsWith('audio/'));
+  if(!files.length){ showToast('No audio files found'); event.target.value=''; return; }
   let matched=0, added=0, favRestored=0;
+  const affectedGroups=new Set();
   files.forEach(f=>{
     // First: does this file match a favourite missing its audio?
     const orphanFav=favourites.find(fav=>!fav.src && fav.filename===f.name);
@@ -1778,12 +1942,12 @@ function uploadMulti(event){
     if(orphan){
       orphan.src=URL.createObjectURL(f);
       if(orphan.ws){ orphan.ws.destroy(); orphan.ws=null; orphan._rp=null; orphan.region=null; }
+      // Make sure the orphan has a DOM element (in case it didn't get one at restore)
+      if(!orphan.el) buildTrackElement(orphan);
       const og = groupOfTrack(orphan);
       if(og){
-        // Stem in a group — decode for Web Audio instead of WaveSurfer
+        affectedGroups.add(og.id);
         og.decodeStatus[orphan.id]='decoding';
-        refreshGroupDisplay(og);
-        ensureGroupBuffers(og).then(()=>refreshGroupDisplay(og)).catch(()=>{});
       } else if(isTrackExpanded(orphan)){
         initWS(orphan);
       }
@@ -1800,13 +1964,24 @@ function uploadMulti(event){
     }
   });
   if(favRestored) renderFavourites();
+  // Lay everything out first — this moves stem elements into their group containers
   layoutTracks();
+  // Now decode buffers for any group that got new stems, and refresh their display once done
+  affectedGroups.forEach(gid=>{
+    const g = gById(gid); if(!g) return;
+    refreshGroupDisplay(g);
+    ensureGroupBuffers(g).then(()=>{
+      refreshGroupDisplay(g);
+      layoutGroupMembers(g); // make sure the DOM is still wired correctly
+    }).catch(err=>console.warn('Group decode failed for', g.name, err));
+  });
   const bits=[];
   if(added) bits.push(`${added} new`);
   if(matched) bits.push(`${matched} restored`);
   if(favRestored) bits.push(`${favRestored} fav`);
   showToast('↑ '+(bits.length?bits.join(', '):'nothing added'));
   event.target.value='';
+  refreshMissingFilesBanner();
   autoSave();
 }
 
@@ -3312,6 +3487,16 @@ function closeMixer(){
   if(_mixerRefreshTimer){ clearInterval(_mixerRefreshTimer); _mixerRefreshTimer=null; }
 }
 
+// ════════════════════════════════════════════════
+// README / HELP MODAL
+// ════════════════════════════════════════════════
+function openReadme(){
+  document.getElementById('readme-modal').classList.add('open');
+}
+function closeReadme(){
+  document.getElementById('readme-modal').classList.remove('open');
+}
+
 // Track which scenes each track/group is a member of
 function _sceneTagsFor(itemId, kind){
   return scenes.filter(s=>{
@@ -3655,11 +3840,36 @@ function loadProject(id){
   p.lastOpened = Date.now();
   saveProjectsIndex();
   // Audio missing notice
-  const missing = tracks.filter(t=>t.filename && !t.src).length;
-  const missingFav = favourites.filter(f=>!f.src).length;
-  if(missing>0 || missingFav>0) showToast(`Loaded "${p.name}" — re-upload audio (${missing} track${missing!==1?'s':''}${missingFav?`, ${missingFav} fav`:''}) via ↑ UPLOAD.`);
-  else if(restored) showToast(`Loaded "${p.name}"`);
+  refreshMissingFilesBanner();
+  if(restored) showToast(`Loaded "${p.name}"`);
   return true;
+}
+
+// Show / hide the "audio files needed" banner. Lists every filename a track or
+// favourite is expecting but hasn't received yet. Found ones show in green.
+function refreshMissingFilesBanner(){
+  const banner = document.getElementById('missing-files-banner');
+  if(!banner) return;
+  const needed = [
+    ...tracks.filter(t=>t.filename && !t.src).map(t=>({name:t.filename, found:false})),
+    ...favourites.filter(f=>f.filename && !f.src).map(f=>({name:f.filename, found:false}))
+  ];
+  if(!needed.length){
+    banner.classList.remove('visible');
+    return;
+  }
+  banner.classList.add('visible');
+  const count = document.getElementById('mfb-count');
+  if(count) count.textContent = needed.length;
+  const list = document.getElementById('mfb-list');
+  if(list){
+    list.innerHTML = needed.map(f=>`<span class="mfb-file">${esc(f.name)}</span>`).join('');
+  }
+}
+
+function hideMissingFilesBanner(){
+  const b = document.getElementById('missing-files-banner');
+  if(b) b.classList.remove('visible');
 }
 
 // Create a new empty project and switch to it
@@ -3921,10 +4131,13 @@ document.addEventListener('click',e=>{
     document.querySelectorAll('.exp-speed.open').forEach(s=>s.classList.remove('open'));
   if(!e.target.closest('.tc-grp-wrap') && !e.target.closest('.grp-popup-floating'))
     closeGroupPops();
+  if(!e.target.closest('.upload-wrap-v2'))
+    closeUploadMenu();
   // Tap on modal overlay (outside the card) closes the modal
   if(e.target.classList.contains('modal-overlay')){
     if(e.target.id==='scene-preview-modal') closeScenePreview();
     if(e.target.id==='mixer-modal') closeMixer();
+    if(e.target.id==='readme-modal') closeReadme();
   }
 });
 
