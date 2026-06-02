@@ -623,6 +623,32 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .readme-intro{background:rgba(64,196,255,.06);border:1px solid rgba(64,196,255,.2);border-radius:8px;padding:12px 14px;margin-bottom:18px!important;color:var(--text)}
 .readme-foot{font-size:10px;color:var(--muted);font-style:italic;text-align:center;margin-top:24px!important;padding-top:14px;border-top:1px solid var(--border2);letter-spacing:.5px}
 
+/* Diagnostics modal */
+.diag-verbose-toggle{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;cursor:pointer;user-select:none}
+.diag-verbose-toggle input{width:14px;height:14px;accent-color:var(--green);cursor:pointer}
+.diag-action{background:transparent;border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:1.5px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .12s}
+.diag-action:hover{border-color:var(--blue);color:var(--blue)}
+.diag-action.diag-clear:hover{border-color:var(--red);color:var(--red)}
+.diag-summary{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px;font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.7}
+.diag-summary-row{display:flex;justify-content:space-between;align-items:baseline}
+.diag-summary-label{color:var(--muted2);letter-spacing:.5px}
+.diag-summary-val{color:var(--text);font-weight:600}
+.diag-summary-val.warn{color:var(--amber)}
+.diag-summary-val.err{color:var(--red)}
+.diag-logs{display:flex;flex-direction:column-reverse;gap:1px;background:var(--s2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.diag-log{padding:7px 12px;font-family:var(--mono);font-size:10px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid var(--border2)}
+.diag-log:first-child{border-bottom:none}
+.diag-log.error{background:rgba(255,68,68,.04)}
+.diag-log.warn{background:rgba(255,193,7,.03)}
+.diag-log.info{background:transparent}
+.diag-log-time{color:var(--muted);min-width:60px;flex-shrink:0;font-variant-numeric:tabular-nums;font-size:9px}
+.diag-log-level{font-size:9px;font-weight:700;letter-spacing:1px;min-width:36px;flex-shrink:0;text-transform:uppercase}
+.diag-log.error .diag-log-level{color:var(--red)}
+.diag-log.warn .diag-log-level{color:var(--amber)}
+.diag-log.info .diag-log-level{color:var(--blue)}
+.diag-log-msg{flex:1;word-break:break-word;color:var(--text2);white-space:pre-wrap}
+.diag-empty{padding:30px;text-align:center;color:var(--muted);font-style:italic;font-size:11px}
+
 /* add-track button in pool header */
 .pool-add-btn{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--muted2);font-size:10px;font-weight:600;letter-spacing:1px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:var(--mono);transition:all .12s}
 .pool-add-btn:hover{border-color:var(--green);color:var(--green)}
@@ -717,20 +743,22 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
     <div class="upload-wrap-v2">
       <button class="btn btn-green" onclick="toggleUploadMenu(event)">↑ UPLOAD ▾</button>
       <div class="upload-menu" id="upload-menu">
-        <label class="upload-menu-item">
+        <button type="button" class="upload-menu-item" onclick="pickUpload('files',event)">
           <span>📄 Files</span>
-          <input type="file" accept=".mp3,.wav,.m4a,.aac,audio/*" multiple onchange="uploadMulti(event);closeUploadMenu()">
-        </label>
-        <label class="upload-menu-item">
+        </button>
+        <button type="button" class="upload-menu-item" onclick="pickUpload('folder',event)">
           <span>📁 Folder</span>
-          <input type="file" webkitdirectory directory multiple onchange="uploadMulti(event);closeUploadMenu()">
-        </label>
+        </button>
       </div>
+      <!-- Hidden inputs that the menu buttons trigger via click() -->
+      <input type="file" id="upload-input-files" accept=".mp3,.wav,.m4a,.aac,.ogg,.flac,.aiff,.opus,.webm,audio/*" multiple style="display:none" onchange="uploadMulti(event);closeUploadMenu()">
+      <input type="file" id="upload-input-folder" webkitdirectory directory multiple style="display:none" onchange="uploadMulti(event);closeUploadMenu()">
     </div>
     <button class="btn btn-ghost" onclick="createGroup()">+ GROUP</button>
     <button class="btn btn-purple" onclick="openMixer()" title="Global mixer — all tracks at once">▤ MIXER</button>
     <button class="btn btn-blue" onclick="toggleFloatingWindow()" title="Show / hide control panel">⚙ CONTROLS</button>
     <button class="btn btn-ghost btn-help" onclick="openReadme()" title="How to use Offside Sound">?</button>
+    <button class="btn btn-ghost btn-help" onclick="openDiag()" title="Diagnostics — capture errors for debugging">🔧</button>
     <button class="btn-stopall" id="stopall-btn" onclick="stopAllFade()">
       <span id="stopall-lbl">↓ FADE ALL</span>
       <div class="stopall-progress" id="stopall-progress"></div>
@@ -846,6 +874,32 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
       </label>
     </div>
     <div class="pp-card-foot">Each production keeps its own tracks, scenes, groups, and favourites.</div>
+  </div>
+</div>
+
+<!-- ══ DIAGNOSTICS MODAL ══ -->
+<div class="modal-overlay" id="diag-modal">
+  <div class="modal-card modal-card-wide">
+    <div class="modal-head">
+      <div class="modal-title">
+        <span class="modal-icon">🔧</span>
+        <span>Diagnostics</span>
+        <span class="modal-sub" id="diag-count">0 entries</span>
+      </div>
+      <div class="modal-head-actions">
+        <label class="diag-verbose-toggle">
+          <input type="checkbox" id="diag-verbose" onchange="toggleVerboseLog(this.checked)">
+          <span>Verbose</span>
+        </label>
+        <button class="diag-action" onclick="exportDiagnostics()">↓ Export</button>
+        <button class="diag-action diag-clear" onclick="clearDiagnostics()">Clear</button>
+        <button class="modal-close" onclick="closeDiag()" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="diag-body"></div>
+    <div class="modal-foot">
+      Local to this device. Nothing is uploaded automatically. Tap Export to download a .txt file you can send for support.
+    </div>
   </div>
 </div>
 
@@ -1146,6 +1200,7 @@ async function ensureGroupBuffers(g){
     } catch(e){
       g.decodeStatus[t.id] = 'error';
       console.warn('Decode failed for', t.name, e);
+      diagErr(`Decode failed: ${t.name}`, e?.message || String(e));
     }
   }));
   // Group duration = longest member
@@ -1425,7 +1480,8 @@ function removeTrackFromGroup(trackId){
 async function groupTogglePlay(id){
   const g=gById(id); if(!g) return;
   const members=g.trackIds.map(tById).filter(t=>t && t.src);
-  if(!members.length){ showToast('Group is empty or stems lack audio'); return; }
+  if(!members.length){ showToast('Group is empty or stems lack audio'); diagWarn(`Group play attempted but empty: ${g.name}`); return; }
+  diagInfo(`Group ${g.isPlaying?'pause':'play'}: ${g.name} (${members.length} stems)`);
   // Wake AudioContext
   const ctx = getAudioCtx();
   if(ctx.state==='suspended'){ try{ await ctx.resume(); }catch(_){} }
@@ -1920,29 +1976,60 @@ function closeUploadMenu(){
   const m=document.getElementById('upload-menu');
   if(m) m.classList.remove('open');
 }
+function pickUpload(kind, event){
+  if(event) event.stopPropagation();
+  const id = kind==='folder' ? 'upload-input-folder' : 'upload-input-files';
+  const input = document.getElementById(id);
+  if(!input){ console.warn('Upload input missing:', id); return; }
+  input.value = ''; // allow re-picking the same folder
+  input.click();
+}
 
 function uploadMulti(event){
   let files=Array.from(event.target.files); if(!files.length) return;
+  diagInfo(`Upload started: ${files.length} file(s) selected`);
   // Folder uploads include every file in the folder — keep only audio
   const AUDIO_RE = /\.(mp3|wav|m4a|aac|ogg|flac|webm|opus|aiff?)$/i;
+  const droppedNonAudio = files.length - files.filter(f=>AUDIO_RE.test(f.name) || f.type.startsWith('audio/')).length;
   files = files.filter(f=>AUDIO_RE.test(f.name) || f.type.startsWith('audio/'));
-  if(!files.length){ showToast('No audio files found'); event.target.value=''; return; }
+  if(droppedNonAudio>0) diagInfo(`Filtered out ${droppedNonAudio} non-audio file(s)`);
+  if(!files.length){ showToast('No audio files found'); diagWarn('No audio files in upload'); event.target.value=''; return; }
+
+  // Helper: extract just the filename (no path), normalized
+  const basename = path => (path||'').split(/[\\/]/).pop();
+  const norm = s => (s||'').toLowerCase().trim();
+
   let matched=0, added=0, favRestored=0;
   const affectedGroups=new Set();
+  const unmatched=[];
+
   files.forEach(f=>{
-    // First: does this file match a favourite missing its audio?
-    const orphanFav=favourites.find(fav=>!fav.src && fav.filename===f.name);
+    // Candidate names for matching: try the raw .name, the basename of webkitRelativePath, etc.
+    const candidates = new Set();
+    candidates.add(f.name);
+    candidates.add(basename(f.name));
+    if(f.webkitRelativePath) candidates.add(basename(f.webkitRelativePath));
+    const lowerCandidates = [...candidates].map(norm);
+
+    // Helper: does any candidate match a stored filename (case-insensitive, basename-aware)?
+    const matches = (storedFilename) => {
+      if(!storedFilename) return false;
+      const storedNorm = norm(basename(storedFilename));
+      return lowerCandidates.some(c => c === storedNorm);
+    };
+
+    // First: favourite?
+    const orphanFav=favourites.find(fav=>!fav.src && matches(fav.filename));
     if(orphanFav){
       orphanFav.src=URL.createObjectURL(f);
       favRestored++;
       return;
     }
-    // Look for an empty track with the same filename
-    const orphan=tracks.find(t=>!t.src && t.filename===f.name);
+    // Track waiting for audio?
+    const orphan=tracks.find(t=>!t.src && matches(t.filename));
     if(orphan){
       orphan.src=URL.createObjectURL(f);
       if(orphan.ws){ orphan.ws.destroy(); orphan.ws=null; orphan._rp=null; orphan.region=null; }
-      // Make sure the orphan has a DOM element (in case it didn't get one at restore)
       if(!orphan.el) buildTrackElement(orphan);
       const og = groupOfTrack(orphan);
       if(og){
@@ -1954,32 +2041,41 @@ function uploadMulti(event){
       refreshTrackDisplay(orphan);
       matched++;
     } else {
+      // No match — add as new track (only if not a folder leftover we want to ignore).
+      // Track that we couldn't match this file by name (helps debugging).
       const cat=guessCat(f.name);
-      const t=mkTrack(f.name.replace(/\.[^/.]+$/,''),cat);
+      const t=mkTrack(basename(f.name).replace(/\.[^/.]+$/,''),cat);
       t.src=URL.createObjectURL(f);
-      t.filename=f.name;
+      t.filename=basename(f.name);
       tracks.push(t);
       buildTrackElement(t);
       added++;
+      unmatched.push(basename(f.name));
     }
   });
   if(favRestored) renderFavourites();
-  // Lay everything out first — this moves stem elements into their group containers
   layoutTracks();
-  // Now decode buffers for any group that got new stems, and refresh their display once done
+  // Decode buffers for groups that received new stems
   affectedGroups.forEach(gid=>{
     const g = gById(gid); if(!g) return;
     refreshGroupDisplay(g);
     ensureGroupBuffers(g).then(()=>{
       refreshGroupDisplay(g);
-      layoutGroupMembers(g); // make sure the DOM is still wired correctly
+      layoutGroupMembers(g);
     }).catch(err=>console.warn('Group decode failed for', g.name, err));
   });
   const bits=[];
+  if(matched) bits.push(`${matched} matched`);
   if(added) bits.push(`${added} new`);
-  if(matched) bits.push(`${matched} restored`);
   if(favRestored) bits.push(`${favRestored} fav`);
-  showToast('↑ '+(bits.length?bits.join(', '):'nothing added'));
+  showToast('↑ '+(bits.length?bits.join(', '):'no audio matched'));
+  diagInfo(`Upload done: ${matched} matched, ${added} new, ${favRestored} fav restored`);
+  // If there were unmatched files AND there are still missing tracks, give the user a hint
+  const stillMissing = tracks.filter(t=>t.filename && !t.src).length;
+  if(stillMissing>0 && unmatched.length>0){
+    diagWarn(`${stillMissing} track(s) still missing audio`, tracks.filter(t=>t.filename && !t.src).map(t=>t.filename).join(', '));
+    diagWarn(`Unmatched files added as new tracks`, unmatched.join(', '));
+  }
   event.target.value='';
   refreshMissingFilesBanner();
   autoSave();
@@ -3131,6 +3227,7 @@ function renameScene(sid){
 
 function fireScene(sid,xfade=false){
   const s=scenes.find(s=>s.id===sid); if(!s) return;
+  diagInfo(`Scene ${xfade?'xfade':'fire'}: ${s.name}`);
   activeSceneId=sid;
   const fadeDur=(xfade?Math.max(0.5,s.fadeDur):0)*1000;
   const snapMap={}; s.snapshot.forEach(sn=>{ snapMap[sn.id]=sn; });
@@ -3497,6 +3594,204 @@ function closeReadme(){
   document.getElementById('readme-modal').classList.remove('open');
 }
 
+// ════════════════════════════════════════════════
+// DIAGNOSTICS — local-only event log, exportable as .txt
+// ════════════════════════════════════════════════
+const _diagLog = []; // ring buffer of recent events
+const _DIAG_MAX = 500; // keep last 500 entries
+let _diagVerbose = false;
+
+function _now(){
+  const d = new Date();
+  return d.toISOString();
+}
+
+function diag(level, msg, data){
+  // level: 'info' | 'warn' | 'error'
+  const entry = {
+    ts: _now(),
+    level,
+    msg: typeof msg === 'string' ? msg : JSON.stringify(msg),
+    data: data === undefined ? null : (typeof data === 'string' ? data : (() => {
+      try { return JSON.stringify(data); } catch(_) { return String(data); }
+    })())
+  };
+  _diagLog.push(entry);
+  if(_diagLog.length > _DIAG_MAX) _diagLog.shift();
+  // If the diag modal is open, refresh the view live
+  const modal = document.getElementById('diag-modal');
+  if(modal && modal.classList.contains('open')) renderDiag();
+}
+
+function diagInfo(msg, data){ diag('info', msg, data); }
+function diagWarn(msg, data){ diag('warn', msg, data); }
+function diagErr(msg, data){ diag('error', msg, data); }
+function diagVerbose(msg, data){ if(_diagVerbose) diag('info', '[v] ' + msg, data); }
+
+// Capture global errors
+window.addEventListener('error', e=>{
+  diagErr('Uncaught: ' + (e.message || 'unknown'), {
+    source: e.filename, line: e.lineno, col: e.colno
+  });
+});
+window.addEventListener('unhandledrejection', e=>{
+  diagErr('Unhandled promise rejection', e.reason && e.reason.message ? e.reason.message : String(e.reason));
+});
+
+// Wrap console.warn and console.error so they also reach diag
+(function(){
+  const _w = console.warn.bind(console);
+  const _e = console.error.bind(console);
+  console.warn = function(...args){
+    diagWarn(args.map(a=>typeof a==='string'?a:JSON.stringify(a)).join(' '));
+    _w(...args);
+  };
+  console.error = function(...args){
+    diagErr(args.map(a=>typeof a==='string'?a:JSON.stringify(a)).join(' '));
+    _e(...args);
+  };
+})();
+
+function toggleVerboseLog(on){
+  _diagVerbose = !!on;
+  diagInfo('Verbose logging ' + (_diagVerbose ? 'enabled' : 'disabled'));
+}
+
+function openDiag(){
+  document.getElementById('diag-modal').classList.add('open');
+  renderDiag();
+}
+function closeDiag(){
+  document.getElementById('diag-modal').classList.remove('open');
+}
+function clearDiagnostics(){
+  if(!confirm('Clear all diagnostic logs?')) return;
+  _diagLog.length = 0;
+  renderDiag();
+  diagInfo('Diagnostics cleared by user');
+}
+
+function _diagSummary(){
+  // Snapshot of current app state for the diag panel
+  const ua = navigator.userAgent;
+  const screen = `${window.innerWidth}×${window.innerHeight}`;
+  const missingT = tracks.filter(t=>t.filename && !t.src).length;
+  const missingF = favourites.filter(f=>f.filename && !f.src).length;
+  let storageBytes = 0;
+  try{
+    for(const k in localStorage){
+      if(localStorage.hasOwnProperty(k)) storageBytes += (localStorage.getItem(k) || '').length;
+    }
+  }catch(_){}
+  const storageKB = Math.round(storageBytes/1024);
+  const errors = _diagLog.filter(e=>e.level==='error').length;
+  const warns = _diagLog.filter(e=>e.level==='warn').length;
+  return {
+    project: currentProjectName() || '(none)',
+    tracks: tracks.length,
+    groups: groups.length,
+    scenes: scenes.length,
+    favourites: favourites.length,
+    missingT, missingF,
+    errors, warns,
+    storageKB,
+    screen,
+    ua: ua.substring(0, 100)
+  };
+}
+
+function renderDiag(){
+  const body = document.getElementById('diag-body');
+  if(!body) return;
+  const s = _diagSummary();
+  const count = document.getElementById('diag-count');
+  if(count) count.textContent = `${_diagLog.length} entries`;
+
+  let html = `<div class="diag-summary">
+    <div class="diag-summary-row"><span class="diag-summary-label">Project</span><span class="diag-summary-val">${esc(s.project)}</span></div>
+    <div class="diag-summary-row"><span class="diag-summary-label">Tracks / Groups / Scenes / Favourites</span><span class="diag-summary-val">${s.tracks} / ${s.groups} / ${s.scenes} / ${s.favourites}</span></div>
+    <div class="diag-summary-row"><span class="diag-summary-label">Missing audio (tracks / favs)</span><span class="diag-summary-val ${s.missingT+s.missingF>0?'warn':''}">${s.missingT} / ${s.missingF}</span></div>
+    <div class="diag-summary-row"><span class="diag-summary-label">Errors / Warnings logged</span><span class="diag-summary-val ${s.errors>0?'err':s.warns>0?'warn':''}">${s.errors} / ${s.warns}</span></div>
+    <div class="diag-summary-row"><span class="diag-summary-label">Storage used</span><span class="diag-summary-val">${s.storageKB} KB</span></div>
+    <div class="diag-summary-row"><span class="diag-summary-label">Screen</span><span class="diag-summary-val">${s.screen}</span></div>
+    <div class="diag-summary-row"><span class="diag-summary-label">User-Agent</span><span class="diag-summary-val" style="font-size:9px;font-weight:400;color:var(--muted2)">${esc(s.ua)}…</span></div>
+  </div>`;
+
+  if(!_diagLog.length){
+    html += `<div class="diag-empty">No events logged yet.<br>Use the app — uploads, group plays, scene fires will all be recorded here.</div>`;
+  } else {
+    html += `<div class="diag-logs">`;
+    // Show most recent first
+    _diagLog.forEach(e=>{
+      const t = e.ts.split('T')[1]?.replace('Z','') || '';
+      html += `<div class="diag-log ${e.level}">
+        <span class="diag-log-time">${t.substring(0,8)}</span>
+        <span class="diag-log-level">${e.level}</span>
+        <span class="diag-log-msg">${esc(e.msg)}${e.data?` — ${esc(e.data)}`:''}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  body.innerHTML = html;
+}
+
+function exportDiagnostics(){
+  const s = _diagSummary();
+  const lines = [];
+  lines.push('═══════════════════════════════════════════');
+  lines.push(' OFFSIDE SOUND — DIAGNOSTIC EXPORT');
+  lines.push('═══════════════════════════════════════════');
+  lines.push(`Exported: ${_now()}`);
+  lines.push(`Project: ${s.project}`);
+  lines.push(`Tracks: ${s.tracks}  Groups: ${s.groups}  Scenes: ${s.scenes}  Favourites: ${s.favourites}`);
+  lines.push(`Missing audio — tracks: ${s.missingT}, favourites: ${s.missingF}`);
+  lines.push(`Errors logged: ${s.errors}  Warnings: ${s.warns}`);
+  lines.push(`Storage: ${s.storageKB} KB`);
+  lines.push(`Screen: ${s.screen}`);
+  lines.push(`User-Agent: ${s.ua}`);
+  lines.push('');
+  // Per-project snapshot of what's in this production (no filenames of audio content)
+  lines.push('--- TRACKS (no audio status) ---');
+  tracks.forEach(t=>{
+    lines.push(`  [${t.cat}] ${t.name}  vol=${t.volume}  loop=${t.loopEnabled?'on':'off'}  file=${t.filename||'(none)'}  hasAudio=${!!t.src}`);
+  });
+  lines.push('');
+  lines.push('--- GROUPS ---');
+  groups.forEach(g=>{
+    lines.push(`  ${g.name}  vol=${g.volume}  stems=${g.trackIds.length}  playing=${g.isPlaying}  duration=${g.duration||0}`);
+    g.trackIds.forEach(tid=>{
+      const t = tById(tid);
+      const decodeStat = g.decodeStatus?.[tid] || 'pending';
+      lines.push(`    └── ${t?t.name:'(missing track #'+tid+')'}  decode=${decodeStat}  hasBuffer=${!!g.buffers[tid]}`);
+    });
+  });
+  lines.push('');
+  lines.push('--- SCENES ---');
+  scenes.forEach(s=>{
+    const inc = (s.snapshot||[]).filter(x=>x.included).length;
+    const ginc = (s.groupSnapshot||[]).filter(x=>x.included).length;
+    lines.push(`  ${s.name}  tracks=${inc}  groups=${ginc}  fadeDur=${s.fadeDur}`);
+  });
+  lines.push('');
+  lines.push('--- EVENT LOG ---');
+  _diagLog.forEach(e=>{
+    lines.push(`[${e.ts}] ${e.level.toUpperCase().padEnd(5)} ${e.msg}${e.data?' — '+e.data:''}`);
+  });
+  lines.push('');
+  lines.push('═══ END ═══');
+  const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const projName = (currentProjectName()||'session').replace(/[^a-z0-9_-]/gi,'_');
+  const stamp = new Date().toISOString().replace(/[:.]/g,'-').substring(0,19);
+  a.download = `offside-diag-${projName}-${stamp}.txt`;
+  a.click();
+  diagInfo('Diagnostics exported');
+}
+
+// Log key app events
+diagInfo('App started', `v7 · ${new Date().toISOString()}`);
+
 // Track which scenes each track/group is a member of
 function _sceneTagsFor(itemId, kind){
   return scenes.filter(s=>{
@@ -3803,7 +4098,8 @@ function resetWorkspace(){
 // Load a specific project's data into the workspace
 function loadProject(id){
   const p = projectsIndex.find(p=>p.id===id);
-  if(!p){ showToast('Project not found'); return false; }
+  if(!p){ showToast('Project not found'); diagErr(`Project not found: ${id}`); return false; }
+  diagInfo(`Loading project: ${p.name}`);
   resetWorkspace();
   currentProjectId = id;
   let restored = false;
@@ -4138,6 +4434,7 @@ document.addEventListener('click',e=>{
     if(e.target.id==='scene-preview-modal') closeScenePreview();
     if(e.target.id==='mixer-modal') closeMixer();
     if(e.target.id==='readme-modal') closeReadme();
+    if(e.target.id==='diag-modal') closeDiag();
   }
 });
 
