@@ -74,6 +74,11 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .pp-import-btn:hover{background:rgba(64,196,255,.08)}
 .pp-import-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
 .pp-card-foot{padding:14px 24px 22px;font-size:10px;color:var(--muted);font-style:italic;text-align:center;letter-spacing:.3px}
+.pp-card-tools{padding:0 24px;display:flex;gap:10px;margin-top:10px}
+.pp-tool-btn{flex:1;background:transparent;border:1px solid var(--border);color:var(--muted2);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:1px;padding:9px;border-radius:7px;cursor:pointer;transition:all .14s;text-align:center}
+.pp-tool-btn:hover{border-color:var(--amber);color:var(--amber)}
+.pp-tool-btn:disabled{opacity:.35;cursor:not-allowed}
+.pp-tool-btn:disabled:hover{border-color:var(--border);color:var(--muted2)}
 .brand-sub{font-size:9px;color:var(--muted2);letter-spacing:2.5px;text-transform:uppercase;flex-shrink:0}
 
 .active-scene-badge{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.4);border-radius:18px;flex-shrink:0;min-width:0;max-width:240px}
@@ -1027,7 +1032,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     <button class="btn btn-ghost btn-help" onclick="openReadme()" title="How to use Offside Sound">?</button>
     <button class="btn btn-ghost btn-help" onclick="openSupport()" title="Support this app">♥</button>
     <button class="btn btn-ghost btn-help" onclick="openDiag()" title="Diagnostics — capture errors for debugging">🔧</button>
-    <button class="btn btn-purple" onclick="openFaderLink()" title="Link a fader board device">📱 LINK FADER</button>
+    <button class="btn btn-purple" id="link-fader-btn" onclick="openFaderLink()" title="Link a fader board device">📱 LINK FADER</button>
     <button class="btn-stopall" id="stopall-btn" onclick="stopAllFade()">
       <span id="stopall-lbl">↓ FADE ALL</span>
       <div class="stopall-progress" id="stopall-progress"></div>
@@ -1141,6 +1146,10 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
       <label class="pp-import-btn">↑ Import .json
         <input type="file" accept=".json" onchange="importProjectFile(event)">
       </label>
+    </div>
+    <div class="pp-card-tools" id="pp-card-tools">
+      <button class="pp-tool-btn" onclick="exportFromPicker()" title="Export the current production as a .json backup">↓ Export current</button>
+      <button class="pp-tool-btn" onclick="dedupeFromPicker()" title="Remove duplicate tracks from the current production">⧉ Remove duplicates</button>
     </div>
     <div class="pp-card-foot">Each production keeps its own tracks, scenes, groups, and favourites.</div>
   </div>
@@ -1442,14 +1451,6 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     <div class="scene-list" id="scene-list"></div>
     <div class="sidebar-footer">
       <button class="btn-add-scene" onclick="saveScene()">+ Save current state as scene</button>
-      <div class="persist-row">
-        <button class="btn-persist btn-export" onclick="exportState()">↓ Export</button>
-        <label class="btn-persist btn-import">
-          ↑ Import
-          <input type="file" accept=".json" onchange="importProjectFile(event)">
-        </label>
-      </div>
-      <button class="btn-dedupe" onclick="findDuplicates()">⧉ Remove duplicate tracks</button>
     </div>
   </aside>
 
@@ -4963,6 +4964,18 @@ function exportState(){
   showToast('Session exported');
 }
 
+// Picker versions — these act on the CURRENTLY OPEN production. If no production
+// is open yet (fresh launch, nothing chosen), there's nothing to act on.
+function exportFromPicker(){
+  if(!currentProjectId || !tracks || !scenes){ showToast('Open a production first'); return; }
+  exportState();
+}
+function dedupeFromPicker(){
+  if(!currentProjectId || !tracks){ showToast('Open a production first'); return; }
+  closeProjectPicker();
+  findDuplicates();
+}
+
 // ════════════════════════════════════════════════
 // PROJECTS — multi-show workspaces
 // ════════════════════════════════════════════════
@@ -5170,6 +5183,11 @@ function openProjectPicker(forceNoClose=false){
   document.getElementById('project-picker').classList.add('open');
   const closeBtn = document.getElementById('pp-close-btn');
   if(closeBtn) closeBtn.style.display = (forceNoClose||!currentProjectId) ? 'none' : 'flex';
+  // Export / Remove-duplicates act on the open production, so only show that row
+  // when one is actually loaded (hidden on the fresh-launch "choose a production"
+  // screen where there's nothing to act on yet).
+  const tools = document.getElementById('pp-card-tools');
+  if(tools) tools.style.display = currentProjectId ? 'flex' : 'none';
 }
 
 function closeProjectPicker(){
@@ -6297,6 +6315,10 @@ if(APP_MODE === 'choose'){
   startFaderBoard();
 } else {
   // Full console.
+  // The fader board needs the local sync server, so the LINK FADER button is
+  // only meaningful when served locally. On GitHub (single-device) hide it to
+  // keep the topbar uncluttered.
+  if(!_servedLocally){ const lb=document.getElementById('link-fader-btn'); if(lb) lb.style.display='none'; }
   loadProjectsIndex();
   migrateLegacyData();
   // Always open the picker on launch. User must explicitly choose a production.
