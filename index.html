@@ -179,6 +179,7 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .track-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
 /* notes banner */
+.dup-console-banner{margin:14px 18px 0;background:rgba(255,77,77,.12);border:1px solid rgba(255,77,77,.5);border-radius:10px;padding:12px 16px;color:#ff9a9a;font-family:var(--mono);font-size:13px;line-height:1.6}
 .notes-banner{margin:14px 18px 0;background:var(--amber-soft);border:1px solid rgba(255,193,7,.3);border-radius:10px;padding:12px 16px;display:none}
 .notes-banner.visible{display:block}
 .notes-banner-lbl{font-size:9px;letter-spacing:2.5px;color:var(--amber);text-transform:uppercase;margin-bottom:6px;font-weight:600;display:flex;align-items:center;gap:10px}
@@ -512,6 +513,39 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .btn-blue:hover{background:var(--blue);color:#000}
 .btn-purple{background:transparent;border:1px solid #c89bff;color:#c89bff}
 .btn-purple:hover{background:#c89bff;color:#000}
+
+/* Category assign modal */
+.ca-row{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:9px;margin-bottom:7px}
+.ca-name{flex:1;min-width:0;font-family:var(--mono);font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ca-segs{display:flex;gap:4px;flex-shrink:0;background:var(--s3);border-radius:8px;padding:3px}
+.ca-seg{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;padding:7px 13px;border-radius:6px;cursor:pointer;color:var(--muted2);border:1px solid transparent;transition:all .1s;background:transparent}
+.ca-seg:hover{color:var(--text2)}
+.ca-seg.active.BGM{background:rgba(64,196,255,.18);color:var(--cat-bgm);border-color:rgba(64,196,255,.5)}
+.ca-seg.active.SFX{background:rgba(255,193,7,.18);color:var(--cat-sfx);border-color:rgba(255,193,7,.5)}
+.ca-seg.active.AMB{background:rgba(0,230,118,.18);color:var(--cat-amb);border-color:rgba(0,230,118,.5)}
+.ca-done-btn{background:var(--green);color:#000;border:none;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1.5px;padding:10px 24px;border-radius:8px;cursor:pointer;transition:transform .1s}
+.ca-done-btn:active{transform:scale(.96)}
+.ca-bulk{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:12px;border-bottom:1px solid var(--border2)}
+.ca-bulk-label{font-size:10px;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;margin-right:auto}
+.ca-bulk-btn{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:1px;padding:5px 10px;border-radius:5px;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--muted2)}
+.ca-bulk-btn:hover{border-color:var(--text2);color:var(--text2)}
+
+/* Remove-duplicates button + modal */
+.btn-dedupe{width:100%;background:transparent;border:1px solid var(--border);color:var(--muted2);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1px;padding:8px;border-radius:7px;cursor:pointer;transition:all .12s;margin-top:2px}
+.btn-dedupe:hover{border-color:var(--amber);color:var(--amber)}
+.dd-group{margin-bottom:14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:11px 13px}
+.dd-group-name{font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:.5px;margin-bottom:8px}
+.dd-keep,.dd-remove{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;padding:5px 0}
+.dd-tag{font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:5px;flex-shrink:0;text-transform:uppercase}
+.dd-keep .dd-tag{background:rgba(0,230,118,.16);color:var(--green);border:1px solid rgba(0,230,118,.4)}
+.dd-remove .dd-tag{background:rgba(255,82,82,.14);color:var(--red);border:1px solid rgba(255,82,82,.4)}
+.dd-keep .dd-trk{color:var(--text)}
+.dd-remove .dd-trk{color:var(--muted2);text-decoration:line-through}
+.dd-why{font-size:10px;color:var(--muted);margin-left:auto;flex-shrink:0}
+.dd-confirm-btn{background:var(--red);color:#fff;border:none;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;padding:10px 22px;border-radius:8px;cursor:pointer}
+.dd-confirm-btn:active{transform:scale(.96)}
+.dd-cancel-btn{background:transparent;border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:1px;padding:10px 18px;border-radius:8px;cursor:pointer}
+.dd-none{color:var(--muted);font-family:var(--mono);font-size:13px;text-align:center;padding:18px;line-height:1.6}
 .btn-help{width:36px;padding:0;font-weight:600;font-size:14px;border-radius:50%!important}
 
 /* Upload menu — pops from the UPLOAD button */
@@ -649,6 +683,239 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .diag-log-msg{flex:1;word-break:break-word;color:var(--text2);white-space:pre-wrap}
 .diag-empty{padding:30px;text-align:center;color:var(--muted);font-style:italic;font-size:11px}
 
+/* ═══════════════ ROLE CHOOSER ═══════════════ */
+#role-chooser{display:none;position:fixed;inset:0;z-index:300;
+  background:radial-gradient(circle at 50% -10%, #161b22 0%, var(--bg) 60%);
+  align-items:center;justify-content:center;padding:24px}
+body.choose-mode #role-chooser{display:flex}
+body.choose-mode > .topbar, body.choose-mode > .layout, body.choose-mode > .project-picker{display:none!important}
+.rc-inner{max-width:680px;width:100%;text-align:center}
+.rc-brand{font-family:var(--display);font-size:42px;letter-spacing:4px;color:var(--text)}
+.rc-byline{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted2);margin-top:6px}
+.rc-prompt{font-family:var(--mono);font-size:14px;letter-spacing:1px;color:var(--text2);margin:34px 0 22px}
+.rc-cards{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.rc-card{flex:1;min-width:230px;max-width:300px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.15));
+  border:1px solid var(--border);border-radius:18px;padding:30px 24px;cursor:pointer;transition:all .16s;
+  display:flex;flex-direction:column;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent}
+.rc-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.rc-card:active{transform:translateY(-1px) scale(.99)}
+.rc-card-icon{font-size:46px;line-height:1}
+.rc-card-title{font-family:var(--display);font-size:26px;letter-spacing:2px;color:var(--text)}
+.rc-card:nth-child(1):hover .rc-card-title{color:var(--green)}
+.rc-card:nth-child(2){--accent:#c89bff}
+.rc-card:nth-child(2):hover{border-color:#c89bff}
+.rc-card:nth-child(2):hover .rc-card-title{color:#c89bff}
+.rc-card-desc{font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--muted2)}
+.rc-hint{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:26px;line-height:1.6}
+@media (max-width:560px){
+  .rc-brand{font-size:30px}
+  .rc-cards{flex-direction:column;align-items:center}
+  .rc-card{max-width:100%;width:100%;padding:22px}
+}
+
+/* ═══════════════ FADER BOARD (second device) ═══════════════ */
+#faderboard-root{display:none;position:fixed;inset:0;background:radial-gradient(circle at 50% -10%, #161b22 0%, var(--bg) 60%);z-index:200;flex-direction:column}
+body.faderboard-mode #faderboard-root{display:flex}
+body.faderboard-mode > .topbar,
+body.faderboard-mode > .layout,
+body.faderboard-mode > .project-picker{display:none!important}
+
+/* Topbar */
+.fb-topbar{display:flex;align-items:center;gap:14px;padding:12px 20px;background:rgba(20,26,33,.9);border-bottom:1px solid var(--border);flex-shrink:0}
+.fb-brand-wrap{display:flex;flex-direction:column;line-height:1;flex-shrink:0}
+.fb-brand{font-family:var(--display);font-size:23px;letter-spacing:2.5px;color:var(--text)}
+.fb-byline{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--muted2);margin-top:3px}
+
+/* Scene trigger button (opens the scene module) */
+.fb-scene-trigger{display:flex;align-items:center;gap:10px;background:rgba(200,155,255,.08);border:1px solid rgba(200,155,255,.35);border-radius:10px;padding:8px 16px;cursor:pointer;transition:all .14s;margin-left:6px}
+.fb-scene-trigger:hover{background:rgba(200,155,255,.16);border-color:rgba(200,155,255,.6)}
+.fb-scene-trigger-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:#c89bff;font-weight:700}
+.fb-scene-trigger-name{font-family:var(--display);font-size:18px;letter-spacing:.5px;color:#e8d5ff;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fb-scene-trigger-caret{font-size:11px;color:#c89bff}
+
+.fb-conn{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:.5px;margin-left:auto}
+.fb-conn-dot{width:9px;height:9px;border-radius:50%;background:var(--muted);transition:background .2s}
+.fb-conn-dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
+.fb-conn-dot.bad{background:var(--red);box-shadow:0 0 8px var(--red)}
+
+.fb-viewmode{background:transparent;border:1px solid #c89bff;color:#c89bff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:9px 14px;border-radius:8px;cursor:pointer;transition:all .12s;white-space:nowrap;min-width:64px}
+.fb-viewmode.scene{background:#c89bff;color:#000}
+.fb-stopall{background:transparent;border:1px solid var(--red);color:var(--red);font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1.5px;padding:9px 18px;border-radius:8px;cursor:pointer;transition:all .12s;white-space:nowrap}
+.fb-stopall:hover{background:var(--red);color:#fff}
+.fb-diag-btn{background:transparent;border:1px solid var(--border);color:var(--text2);font-size:14px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .12s}
+.fb-diag-btn:hover{border-color:var(--text2)}
+
+/* Notes banner — shows the active scene's notes (display only) */
+.fb-notes-banner{display:none;margin:8px 14px 0;background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.32);border-radius:10px;padding:9px 14px;flex-shrink:0}
+.fb-notes-banner.visible{display:block}
+.fb-notes-lbl{font-family:var(--mono);font-size:8px;letter-spacing:2.5px;color:var(--amber);text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.fb-notes-text{font-family:var(--mono);font-size:13px;color:#f3e3c4;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:22vh;overflow-y:auto}
+
+/* Favourites — fixed vertical tab on the right edge (one-shot, fires on console) */
+.fb-favs-tab{position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:80;
+  display:flex;flex-direction:column;gap:7px;padding:10px 9px;max-height:86vh;overflow-y:auto;
+  background:linear-gradient(180deg,rgba(20,24,31,.96),rgba(14,17,22,.96));
+  border:1px solid rgba(255,193,7,.3);border-right:none;border-radius:14px 0 0 14px;
+  box-shadow:-6px 0 24px rgba(0,0,0,.4);-webkit-overflow-scrolling:touch;backdrop-filter:blur(6px)}
+.fb-favs-tab:empty{display:none}
+body.fb-has-favs .fb-faders{padding-right:96px}
+@media (max-height: 460px){ body.fb-has-favs .fb-faders{padding-right:80px} }
+.fb-favs-tab-lbl{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--amber);font-weight:700;text-align:center;writing-mode:horizontal-tb;padding-bottom:2px;border-bottom:1px solid rgba(255,193,7,.2);margin-bottom:2px}
+.fb-fav-btn{flex-shrink:0;background:linear-gradient(180deg,rgba(255,193,7,.16),rgba(255,193,7,.07));border:1px solid rgba(255,193,7,.42);color:#f3e3c4;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.3px;padding:12px 14px;border-radius:9px;cursor:pointer;transition:all .1s;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;-webkit-tap-highlight-color:transparent}
+.fb-fav-btn:active{transform:scale(.93);background:var(--amber);color:#000}
+.fb-fav-btn.fav-fired{background:var(--amber);color:#000;box-shadow:0 0 0 3px rgba(255,193,7,.35)}
+.fb-fav-btn.no-audio{opacity:.4}
+@media (max-height: 460px){
+  .fb-favs-tab{padding:6px 6px;gap:5px;max-height:94vh}
+  .fb-fav-btn{padding:9px 11px;font-size:10px;max-width:120px}
+  .fb-notes-banner{padding:6px 12px;margin:5px 12px 0}
+  .fb-notes-text{font-size:11px;max-height:18vh}
+}
+
+/* Scene module (pops down) */
+.fb-scene-module{display:none;background:rgba(24,18,33,.98);border-bottom:1px solid rgba(200,155,255,.3);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.fb-scene-module.open{display:block;animation:fbModIn .2s ease both}
+@keyframes fbModIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.fb-scene-module-inner{display:flex;align-items:stretch;gap:0;padding:18px 24px;position:relative;max-width:760px;margin:0 auto}
+.fb-mod-col{flex:1;display:flex;flex-direction:column;gap:10px;padding:0 22px}
+.fb-mod-dir{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;color:#c89bff;font-weight:700}
+.fb-mod-name{font-family:var(--display);font-size:24px;letter-spacing:.5px;color:#e8d5ff;line-height:1.1;min-height:28px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fb-mod-btns{display:flex;gap:8px}
+.fb-mod-btn{flex:1;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;padding:12px 0;border-radius:8px;cursor:pointer;transition:all .12s;border:1px solid;background:transparent}
+.fb-mod-btn.fire{border-color:var(--green);color:var(--green)}
+.fb-mod-btn.fire:hover{background:var(--green);color:#000}
+.fb-mod-btn.xfade{border-color:#c89bff;color:#c89bff}
+.fb-mod-btn.xfade:hover{background:#c89bff;color:#000}
+.fb-mod-btn:disabled{opacity:.25;cursor:not-allowed;pointer-events:none}
+.fb-mod-divider{width:1px;background:rgba(200,155,255,.2);flex-shrink:0}
+.fb-mod-close{position:absolute;top:10px;right:14px;background:transparent;border:none;color:var(--muted);font-size:16px;cursor:pointer;width:30px;height:30px;border-radius:6px}
+.fb-mod-close:hover{color:var(--red)}
+
+.fb-disconnect-banner{display:none;background:var(--red);color:#fff;font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.5px;padding:12px 20px;text-align:center}
+body.fb-disconnected .fb-disconnect-banner{display:block}
+body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(.6)}
+
+/* Fader strips area */
+.fb-faders{flex:1 1 auto;min-height:0;display:flex;gap:12px;padding:20px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;align-items:stretch}
+.fb-strip{display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.15));border:1px solid var(--border);border-radius:14px;padding:14px 9px;min-width:78px;flex:1;max-width:118px;min-height:0;overflow:hidden}
+.fb-strip.master{border-color:var(--green2);background:linear-gradient(180deg,rgba(0,230,118,.1),rgba(0,0,0,.15))}
+.fb-strip.cat-BGM{border-color:rgba(64,196,255,.35);background:linear-gradient(180deg,rgba(64,196,255,.08),rgba(0,0,0,.15))}
+.fb-strip.cat-SFX{border-color:rgba(255,193,7,.35);background:linear-gradient(180deg,rgba(255,193,7,.08),rgba(0,0,0,.15))}
+.fb-strip.cat-AMB{border-color:rgba(0,230,118,.35);background:linear-gradient(180deg,rgba(0,230,118,.08),rgba(0,0,0,.15))}
+.fb-strip.is-group{border-color:rgba(200,155,255,.45);background:linear-gradient(180deg,rgba(200,155,255,.12),rgba(0,0,0,.15))}
+.fb-strip.is-playing{box-shadow:inset 0 0 0 1px var(--green2),0 0 16px rgba(0,230,118,.12)}
+.fb-strip-divider{width:1px;background:var(--border2);flex-shrink:0;margin:0 5px}
+
+.fb-strip-label{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text2);text-align:center;letter-spacing:.3px;line-height:1.2;min-height:32px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;width:100%;word-break:break-word}
+.fb-strip.master .fb-strip-label,.fb-strip.cat .fb-strip-label{font-family:var(--display);font-size:18px;letter-spacing:1.5px}
+.fb-strip.master .fb-strip-label{color:var(--green)}
+.fb-strip.cat-BGM .fb-strip-label{color:var(--cat-bgm)}
+.fb-strip.cat-SFX .fb-strip-label{color:var(--cat-sfx)}
+.fb-strip.cat-AMB .fb-strip-label{color:var(--cat-amb)}
+.fb-strip.is-group .fb-strip-label{color:#c89bff;font-family:var(--display);font-size:15px;letter-spacing:.5px}
+.fb-strip.is-playing .fb-strip-label{color:var(--green)}
+.fb-cat-tag{font-family:var(--mono);font-size:7px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.fb-staged-tag{font-family:var(--mono);font-size:7px;letter-spacing:1.5px;color:var(--amber);text-transform:uppercase;font-weight:700}
+.fb-strip.is-staged{border-style:dashed;border-color:var(--amber)}
+.fb-strip.is-staged .fb-strip-label{color:var(--amber)}
+
+.fb-pct{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.fb-strip.is-muted .fb-pct{color:var(--muted)}
+
+/* Play/stop button */
+.fb-playstop{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--green);font-size:15px;padding:9px 0;border-radius:8px;cursor:pointer;transition:all .12s;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.fb-playstop:active{transform:scale(.94)}
+.fb-playstop.playing{background:var(--green);color:#000;border-color:var(--green)}
+
+/* ── Custom touch fader: track + fill + draggable cap ── */
+.fb-fader-zone{flex:1 1 auto;min-height:90px;display:flex;gap:10px;align-items:stretch;justify-content:center;width:100%;padding:4px 0}
+.fb-fader{position:relative;width:46px;flex-shrink:0;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;display:flex;justify-content:center}
+.fb-fader:active{cursor:grabbing}
+.fb-fader-track{position:relative;width:14px;height:100%;background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.2));border:1px solid var(--border);border-radius:8px;overflow:visible}
+.fb-fader-fill{position:absolute;left:0;right:0;bottom:0;border-radius:0 0 7px 7px;background:linear-gradient(0deg,rgba(120,120,130,.5),rgba(160,160,170,.3));transition:height .05s linear;pointer-events:none}
+.fb-strip.master .fb-fader-fill{background:linear-gradient(0deg,rgba(0,230,118,.5),rgba(0,230,118,.25))}
+.fb-strip.cat-BGM .fb-fader-fill{background:linear-gradient(0deg,rgba(64,196,255,.5),rgba(64,196,255,.25))}
+.fb-strip.cat-SFX .fb-fader-fill{background:linear-gradient(0deg,rgba(255,193,7,.5),rgba(255,193,7,.25))}
+.fb-strip.cat-AMB .fb-fader-fill{background:linear-gradient(0deg,rgba(0,230,118,.5),rgba(0,230,118,.25))}
+.fb-strip.is-group .fb-fader-fill{background:linear-gradient(0deg,rgba(200,155,255,.5),rgba(200,155,255,.25))}
+/* The cap (handle) */
+.fb-fader-cap{position:absolute;left:50%;width:42px;height:26px;transform:translate(-50%,50%);background:linear-gradient(180deg,#f0f0f4,#b4b4be);border:1px solid #46464e;border-radius:6px;box-shadow:0 3px 7px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 3px rgba(0,0,0,.2);pointer-events:none;transition:bottom .05s linear}
+.fb-fader-cap::after{content:'';position:absolute;left:8px;right:8px;top:50%;height:1px;background:rgba(0,0,0,.35);box-shadow:0 -3px 0 rgba(0,0,0,.2),0 3px 0 rgba(0,0,0,.2)}
+.fb-strip.master .fb-fader-cap{background:linear-gradient(180deg,#9affca,#00e676);border-color:#00a050}
+.fb-strip.cat-BGM .fb-fader-cap{background:linear-gradient(180deg,#bfe9ff,#40c4ff);border-color:#1f8fcf}
+.fb-strip.cat-SFX .fb-fader-cap{background:linear-gradient(180deg,#ffeaa0,#ffc107);border-color:#cf9a00}
+.fb-strip.cat-AMB .fb-fader-cap{background:linear-gradient(180deg,#9affca,#00e676);border-color:#00a050}
+.fb-strip.is-group .fb-fader-cap{background:linear-gradient(180deg,#e4ccff,#c89bff);border-color:#9d6fd6}
+
+/* Meter */
+.fb-meter{width:12px;background:rgba(0,0,0,.35);border-radius:6px;border:1px solid var(--border);overflow:hidden;position:relative;flex-shrink:0}
+.fb-meter-fill{position:absolute;left:0;right:0;bottom:0;height:0%;background:linear-gradient(0deg,var(--green) 0%,var(--green) 60%,var(--amber) 82%,var(--red) 100%);transition:height .08s linear}
+.fb-strip.is-muted .fb-meter-fill{background:var(--muted)!important}
+
+/* Mute button */
+.fb-mute{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted2);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:9px 0;border-radius:8px;cursor:pointer;transition:all .12s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.fb-mute:active{transform:scale(.94)}
+.fb-strip.is-muted .fb-mute{background:var(--red);border-color:var(--red);color:#fff}
+.fb-spacer{height:38px;flex-shrink:0}
+.fb-empty{margin:auto;color:var(--muted);font-family:var(--mono);font-size:13px;text-align:center;line-height:1.7;padding:0 30px}
+
+/* Pager */
+.fb-pager{display:none;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(20,26,33,.9);border-top:1px solid var(--border);flex-shrink:0}
+.fb-pager.multi{display:flex}
+.fb-pager-dot{width:36px;height:9px;border-radius:5px;background:var(--s3);border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.fb-pager-dot.active{background:#c89bff;border-color:#c89bff;width:52px}
+.fb-pager-label{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:1px;margin:0 10px}
+
+/* Phone landscape: tighter */
+@media (max-width: 950px){
+  .fb-brand{font-size:17px;letter-spacing:1.5px}
+  .fb-byline{font-size:8px}
+  .fb-topbar{gap:9px;padding:8px 12px}
+  .fb-scene-trigger{padding:6px 11px;gap:7px}
+  .fb-scene-trigger-name{font-size:14px;max-width:120px}
+  .fb-viewmode{font-size:10px;padding:8px 10px;min-width:54px}
+  .fb-stopall{font-size:10px;padding:8px 12px}
+  .fb-conn span:not(.fb-conn-dot){display:none}
+  .fb-faders{gap:7px;padding:12px}
+  .fb-strip{min-width:60px;padding:11px 5px;gap:8px}
+  .fb-strip-label{font-size:9px;min-height:26px}
+  .fb-strip.master .fb-strip-label,.fb-strip.cat .fb-strip-label{font-size:14px}
+  .fb-pct{font-size:12px}
+  .fb-mute,.fb-playstop{font-size:10px;padding:8px 0}
+  .fb-fader{width:40px}
+  .fb-fader-cap{width:36px;height:22px}
+  .fb-mod-name{font-size:19px}
+  .fb-mod-col{padding:0 12px}
+}
+@media (max-width: 700px){
+  .fb-strip{min-width:52px;padding:9px 4px;gap:6px}
+  .fb-fader{width:34px}
+  .fb-fader-cap{width:30px;height:20px}
+  .fb-meter{width:9px}
+}
+/* Short viewport (phone in landscape): compact chrome, let faders shrink so
+   nothing overflows the screen and the drag geometry stays correct. */
+@media (max-height: 460px){
+  .fb-topbar{padding:7px 14px;gap:9px}
+  .fb-brand{font-size:16px}
+  .fb-byline{display:none}
+  .fb-faders{padding:8px 12px;gap:7px}
+  .fb-strip{padding:8px 5px;gap:5px}
+  .fb-strip-label{min-height:22px;font-size:9px;-webkit-line-clamp:1}
+  .fb-pct{font-size:11px}
+  .fb-playstop{padding:6px 0;font-size:13px}
+  .fb-mute{padding:6px 0;font-size:9px}
+  .fb-spacer{height:30px}
+  .fb-fader-zone{min-height:60px}
+  .fb-fader-cap{height:20px}
+}
+@media (max-height: 380px){
+  .fb-strip-label{min-height:18px}
+  .fb-playstop{padding:5px 0}
+  .fb-mute{padding:5px 0}
+  .fb-fader-zone{min-height:48px}
+}
+
 /* add-track button in pool header */
 .pool-add-btn{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--muted2);font-size:10px;font-weight:600;letter-spacing:1px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:var(--mono);transition:all .12s}
 .pool-add-btn:hover{border-color:var(--green);color:var(--green)}
@@ -758,7 +1025,9 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
     <button class="btn btn-purple" onclick="openMixer()" title="Global mixer — all tracks at once">▤ MIXER</button>
     <button class="btn btn-blue" onclick="toggleFloatingWindow()" title="Show / hide control panel">⚙ CONTROLS</button>
     <button class="btn btn-ghost btn-help" onclick="openReadme()" title="How to use Offside Sound">?</button>
+    <button class="btn btn-ghost btn-help" onclick="openSupport()" title="Support this app">♥</button>
     <button class="btn btn-ghost btn-help" onclick="openDiag()" title="Diagnostics — capture errors for debugging">🔧</button>
+    <button class="btn btn-purple" onclick="openFaderLink()" title="Link a fader board device">📱 LINK FADER</button>
     <button class="btn-stopall" id="stopall-btn" onclick="stopAllFade()">
       <span id="stopall-lbl">↓ FADE ALL</span>
       <div class="stopall-progress" id="stopall-progress"></div>
@@ -767,7 +1036,7 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 </div>
 
 <!-- ══ FLOATING CONTROL WINDOW ══ -->
-<div class="float-window" id="float-window">
+<div class="float-window hidden" id="float-window">
   <div class="float-handle" id="float-handle">
     <span class="float-title">⚙ CONTROLS</span>
     <button class="float-close" onclick="toggleFloatingWindow()" title="Hide">✕</button>
@@ -877,6 +1146,72 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
   </div>
 </div>
 
+<!-- ══ SUPPORT MODAL ══ -->
+<div class="modal-overlay" id="support-modal">
+  <div class="modal-card" style="max-width:440px">
+    <div class="modal-head">
+      <div class="modal-title"><span class="modal-icon">♥</span><span>Support Offside Sound</span></div>
+      <button class="modal-close" onclick="closeSupport()" title="Close">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <p style="font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:20px">
+        I hope you had a good show. Offside Sound is free to use — built by one person, for theatre folk like you. If it helped your production, a small contribution keeps it alive and growing. No pressure, only thanks. ♥
+      </p>
+
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--muted2);margin-bottom:8px">UPI — TAP TO COPY</div>
+      <button id="support-upi" onclick="copyUPI()" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px;font-family:var(--mono);font-size:18px;font-weight:700;color:var(--green);cursor:pointer;transition:all .12s">arvin.vaz@federal</button>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px" id="support-copy-hint">Tap the ID above to copy it, then paste into any UPI app.</div>
+
+      <!-- Static QR slot: replace support-qr.png with your own QR image in the same folder -->
+      <div style="margin-top:22px">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px">— OR SCAN —</div>
+        <img src="support-qr.png" alt="UPI QR code" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div style="display:none;font-size:11px;color:var(--muted);line-height:1.5">(Add your QR image as <b>support-qr.png</b> in the app folder to show it here.)</div>
+      </div>
+
+      <div style="font-size:12px;color:var(--text2);margin-top:22px">Thank you — truly. <span style="color:var(--muted)">— Arvin Vaz</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DEDUPE CONFIRM MODAL ══ -->
+<div class="modal-overlay" id="dedupe-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title"><span class="modal-icon">⧉</span><span>Remove duplicate tracks</span></div>
+      <button class="modal-close" onclick="closeDedupe()" title="Cancel">✕</button>
+    </div>
+    <div class="modal-body" id="dedupe-body"></div>
+    <div class="modal-foot" id="dedupe-foot" style="display:flex;justify-content:flex-end;gap:10px;align-items:center"></div>
+  </div>
+</div>
+
+<!-- ══ CATEGORY ASSIGN MODAL (after upload) ══ -->
+<div class="modal-overlay" id="cat-assign-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title"><span class="modal-icon">🏷</span><span>Set categories</span><span class="modal-sub" id="cat-assign-count"></span></div>
+      <button class="modal-close" onclick="closeCategoryAssign()" title="Done">✕</button>
+    </div>
+    <div class="modal-body" id="cat-assign-body"></div>
+    <div class="modal-foot" style="display:flex;justify-content:flex-end;gap:10px;align-items:center">
+      <span style="font-size:11px;color:var(--muted);margin-right:auto">BGM = music · SFX = effects · AMB = ambience</span>
+      <button class="ca-done-btn" onclick="closeCategoryAssign()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FADER LINK (QR) MODAL ══ -->
+<div class="modal-overlay" id="fader-link-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title"><span class="modal-icon">📱</span><span>Link a Fader Board</span></div>
+      <button class="modal-close" onclick="closeFaderLink()" title="Close">✕</button>
+    </div>
+    <div class="modal-body" id="fader-link-body" style="text-align:center"></div>
+  </div>
+</div>
+
 <!-- ══ DIAGNOSTICS MODAL ══ -->
 <div class="modal-overlay" id="diag-modal">
   <div class="modal-card modal-card-wide">
@@ -945,6 +1280,10 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
       <h3>▤ Global Mixer</h3>
       <p>The mixer shows every track and group in your production on one screen, with live volume sliders and play/stop on each row. Useful to see "what's actually happening" or to ride a gain in a hurry. Search box at the top filters by name.</p>
 
+      <h3>🎚 Fader Board (second device)</h3>
+      <p>You can use a second device — a phone, tablet, or another laptop — as a physical-style fader board for the show. It needs the local sync server running (see the FADER-BOARD-SETUP guide that came with the app). Once running, open the fader board URL on the second device.</p>
+      <p>The fader board gives you Master + BGM/SFX/AMB + a vertical fader for every track, each with a level meter and mute. It also has <strong>FIRE</strong> and <strong>XFADE</strong> buttons that advance through your scenes in order — so you can run the whole show from the second device while the console drives the audio. On a phone in landscape, faders spread across swipeable pages. If the network drops, the faders grey out and a warning shows — the console keeps working on its own regardless.</p>
+
       <h3>⌨ Keyboard shortcuts</h3>
       <ul>
         <li><strong>1-9</strong> — trigger play/pause on tracks 1-9</li>
@@ -1012,6 +1351,85 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
   </div>
 </div>
 
+<!-- ══ ROLE CHOOSER (shown on bare local-server URL) ══ -->
+<div id="role-chooser">
+  <div class="rc-inner">
+    <div class="rc-brand">OFFSIDE SOUND</div>
+    <div class="rc-byline">by Arvin Vaz</div>
+    <div class="rc-prompt">What is this device?</div>
+    <div class="rc-cards">
+      <button class="rc-card" onclick="chooseRole('console')">
+        <div class="rc-card-icon">🎚</div>
+        <div class="rc-card-title">CONSOLE</div>
+        <div class="rc-card-desc">The main playback machine that holds the show and plays the audio.</div>
+      </button>
+      <button class="rc-card" onclick="chooseRole('faderboard')">
+        <div class="rc-card-icon">📱</div>
+        <div class="rc-card-title">FADER BOARD</div>
+        <div class="rc-card-desc">A second device used as a remote mixing surface for the console.</div>
+      </button>
+    </div>
+    <div class="rc-hint">Usually: the laptop is the Console, the iPad or phone is the Fader Board.</div>
+  </div>
+</div>
+
+<!-- ══ FADER BOARD (second-device mixing surface) ══ -->
+<div id="faderboard-root">
+  <div class="fb-topbar">
+    <div class="fb-brand-wrap">
+      <div class="fb-brand">OFFSIDE SOUND</div>
+      <div class="fb-byline">by Arvin Vaz</div>
+    </div>
+    <button class="fb-scene-trigger" id="fb-scene-trigger" onclick="toggleSceneModule()">
+      <span class="fb-scene-trigger-label">SCENE</span>
+      <span class="fb-scene-trigger-name" id="fb-scene-active">No scene</span>
+      <span class="fb-scene-trigger-caret">▾</span>
+    </button>
+    <div class="fb-conn" id="fb-conn">
+      <span class="fb-conn-dot" id="fb-conn-dot"></span>
+      <span id="fb-conn-text">Connecting…</span>
+    </div>
+    <button class="fb-viewmode scene" id="fb-viewmode" onclick="fbToggleViewMode()" title="Show all tracks or only the active scene's tracks">SCENE</button>
+    <button class="fb-diag-btn" onclick="openDiag()" title="Diagnostics — capture this device's log">🔧</button>
+    <button class="fb-stopall" onclick="fbStopAll()">FADE ALL</button>
+  </div>
+
+  <!-- Scene management module (pops down from the SCENE trigger) -->
+  <div class="fb-scene-module" id="fb-scene-module">
+    <div class="fb-scene-module-inner">
+      <div class="fb-mod-col">
+        <div class="fb-mod-dir">‹ PREVIOUS</div>
+        <div class="fb-mod-name" id="fb-mod-prev-name">— none —</div>
+        <div class="fb-mod-btns">
+          <button class="fb-mod-btn fire" id="fb-mod-prev-fire" onclick="fbSceneAction('prev','fire')">▶ FIRE</button>
+          <button class="fb-mod-btn xfade" id="fb-mod-prev-xfade" onclick="fbSceneAction('prev','xfade')">⇄ XFADE</button>
+        </div>
+      </div>
+      <div class="fb-mod-divider"></div>
+      <div class="fb-mod-col">
+        <div class="fb-mod-dir">NEXT ›</div>
+        <div class="fb-mod-name" id="fb-mod-next-name">— end —</div>
+        <div class="fb-mod-btns">
+          <button class="fb-mod-btn fire" id="fb-mod-next-fire" onclick="fbSceneAction('next','fire')">▶ FIRE</button>
+          <button class="fb-mod-btn xfade" id="fb-mod-next-xfade" onclick="fbSceneAction('next','xfade')">⇄ XFADE</button>
+        </div>
+      </div>
+      <button class="fb-mod-close" onclick="closeSceneModule()">✕</button>
+    </div>
+  </div>
+
+  <div class="fb-disconnect-banner" id="fb-disconnect-banner">
+    ⚠ SYNC LOST — moving faders won't change anything. Check the network connection to the console.
+  </div>
+  <div class="fb-notes-banner" id="fb-notes-banner">
+    <div class="fb-notes-lbl">Scene Notes</div>
+    <div class="fb-notes-text" id="fb-notes-text"></div>
+  </div>
+  <div class="fb-faders" id="fb-faders"></div>
+  <div class="fb-pager" id="fb-pager"></div>
+  <div class="fb-favs-tab" id="fb-favs"></div>
+</div>
+
 <!-- ══ BODY ══ -->
 <div class="app-body">
 
@@ -1031,6 +1449,7 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
           <input type="file" accept=".json" onchange="importProjectFile(event)">
         </label>
       </div>
+      <button class="btn-dedupe" onclick="findDuplicates()">⧉ Remove duplicate tracks</button>
     </div>
   </aside>
 
@@ -1048,6 +1467,9 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
         <button class="mfb-close" onclick="hideMissingFilesBanner()" title="Dismiss">✕</button>
       </div>
       <div class="mfb-list" id="mfb-list"></div>
+    </div>
+    <div class="dup-console-banner" id="dup-console-banner" style="display:none">
+      ⚠ ANOTHER CONSOLE IS OPEN — Two consoles cause ghost audio (sounds that won't stop). Close the other console tab/window so only ONE is running. <button onclick="document.getElementById('dup-console-banner').style.display='none'" style="margin-left:10px;background:transparent;border:1px solid currentColor;color:inherit;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:var(--mono)">Dismiss</button>
     </div>
     <div class="notes-banner" id="notes-banner">
       <div class="notes-banner-lbl">Scene Notes</div>
@@ -1150,6 +1572,26 @@ function getAudioCtx(){
   return sharedAudioCtx;
 }
 
+// When a play command arrives from the fader board (a different device), the
+// browser on THIS machine hasn't received a user gesture, so audio contexts may
+// be suspended. Resume them so remote-triggered playback is actually audible.
+let _audioUnlockedOnce = false;
+function unlockAudioForRemote(){
+  try{
+    const ctx = getAudioCtx();
+    if(ctx && ctx.state === 'suspended') ctx.resume().catch(()=>{});
+  }catch(_){}
+  // Resume WaveSurfer's own audio context(s) too — each track's WaveSurfer holds
+  // a backend AudioContext for playback of non-grouped tracks.
+  try{
+    tracks.forEach(t=>{
+      const ac = t.ws && (t.ws.getAudioContext ? t.ws.getAudioContext() : (t.ws.backend && t.ws.backend.ac));
+      if(ac && ac.state === 'suspended') ac.resume().catch(()=>{});
+    });
+  }catch(_){}
+  _audioUnlockedOnce = true;
+}
+
 // Wake the AudioContext on first user tap (browser autoplay-blocking rule)
 document.addEventListener('pointerdown',()=>{
   if(sharedAudioCtx && sharedAudioCtx.state==='suspended'){
@@ -1215,11 +1657,21 @@ async function ensureGroupBuffers(g){
 function startGroupAt(g, offset){
   const ctx = g.audioCtx;
   if(!ctx) return;
-  // Tear down any existing sources
+  diagInfo(`startGroupAt: ${g.name} @${(offset||0).toFixed(1)}s`);
+  // Tear down any existing sources (also clears any orphaned ones we know about)
   stopGroupSources(g);
   const members = g.trackIds.map(tById).filter(t=>t && g.buffers[t.id]);
   if(!members.length) return;
+  // Reset the group master gain to its real volume, cancelling any stale
+  // scheduled ramps left over from a previous scene fade-out (which could
+  // otherwise leave the group playing silently at gain 0).
+  if(g.masterGain){
+    const now0 = ctx.currentTime;
+    g.masterGain.gain.cancelScheduledValues(now0);
+    g.masterGain.gain.setValueAtTime(g.volume, now0);
+  }
   const startTime = ctx.currentTime + 0.08; // small cushion so all scheduling completes
+  if(!g._allSources) g._allSources = [];
   members.forEach(t=>{
     const src = ctx.createBufferSource();
     src.buffer = g.buffers[t.id];
@@ -1229,9 +1681,11 @@ function startGroupAt(g, offset){
     // First source's 'ended' event drives our internal isPlaying flag
     src.start(startTime, Math.max(0, offset));
     g.sources[t.id] = {source:src, gain, started:startTime};
+    g._allSources.push(src); // track for guaranteed stop even if orphaned
   });
   g.startedAt = startTime - offset; // virtual t=0 reference
   g.isPlaying = true;
+  g._playGen = (g._playGen||0); // ensure field exists; play is now "live"
   // Watch for natural end via the longest stem
   const longest = members.reduce((a,b)=> g.buffers[a.id].duration >= g.buffers[b.id].duration ? a : b);
   if(g.sources[longest.id]){
@@ -1259,11 +1713,34 @@ function startGroupAt(g, offset){
 }
 
 function stopGroupSources(g){
+  // Stop the current source map…
   Object.values(g.sources).forEach(({source})=>{
     try{ source.onended=null; source.stop(); }catch(_){}
     try{ source.disconnect(); }catch(_){}
   });
+  // …AND any sources ever created for this group that might have been orphaned
+  // by a concurrent/overlapping start (e.g. a scene crossfade racing a board tap).
+  if(g._allSources){
+    g._allSources.forEach(source=>{
+      try{ source.onended=null; source.stop(); }catch(_){}
+      try{ source.disconnect(); }catch(_){}
+    });
+  }
+  g._allSources = [];
   g.sources = {};
+  // BULLETPROOF: every source for this group routes through g.masterGain →
+  // destination. Disconnect and rebuild that node, which guarantees silence
+  // even if some source escaped our bookkeeping. This is the hard guarantee
+  // that "stop" always stops the sound.
+  if(g.masterGain && g.audioCtx){
+    try{ g.masterGain.disconnect(); }catch(_){}
+    try{
+      const ng = g.audioCtx.createGain();
+      ng.gain.value = g.volume;
+      ng.connect(g.audioCtx.destination);
+      g.masterGain = ng;
+    }catch(_){}
+  }
 }
 
 // Smoothly update a stem's volume on the audio graph (no clicks on slider drag)
@@ -1481,11 +1958,16 @@ async function groupTogglePlay(id){
   const g=gById(id); if(!g) return;
   const members=g.trackIds.map(tById).filter(t=>t && t.src);
   if(!members.length){ showToast('Group is empty or stems lack audio'); diagWarn(`Group play attempted but empty: ${g.name}`); return; }
-  diagInfo(`Group ${g.isPlaying?'pause':'play'}: ${g.name} (${members.length} stems)`);
+  // Authoritative "is it actually playing?" — true if the flag is set OR there
+  // are live sources running. This prevents a desync (e.g. a scene started the
+  // group) from making a pause-tap start a second stacked copy.
+  const actuallyPlaying = g.isPlaying || (g.sources && Object.keys(g.sources).length>0);
+  diagInfo(`Group ${actuallyPlaying?'pause':'play'}: ${g.name} (${members.length} stems)`);
   // Wake AudioContext
   const ctx = getAudioCtx();
   if(ctx.state==='suspended'){ try{ await ctx.resume(); }catch(_){} }
-  if(g.isPlaying){
+  if(actuallyPlaying){
+    g._playGen = (g._playGen||0) + 1; // cancel any in-flight start
     g.pausedAt = groupPlayhead(g);
     stopGroupSources(g);
     g.isPlaying = false;
@@ -1495,14 +1977,31 @@ async function groupTogglePlay(id){
     updateStatus();
     return;
   }
+  // Starting: a re-entrancy lock prevents rapid repeat taps (esp. from the
+  // fader board) from stacking multiple overlapping starts while we await decode.
+  if(g._starting){ diagWarn(`Group start ignored (already starting): ${g.name}`); return; }
+  g._starting = true;
+  const myGen = (g._playGen||0) + 1;
+  g._playGen = myGen;
   refreshGroupDisplay(g);
-  await ensureGroupBuffers(g);
-  startGroupAt(g, g.pausedAt || 0);
-  layoutTracks(); // show the Now Playing mirror
+  try{
+    await ensureGroupBuffers(g);
+    if(g._playGen !== myGen){
+      // A stop (or another toggle) happened while we were decoding — abort this start.
+      return;
+    }
+    startGroupAt(g, g.pausedAt || 0);
+    layoutTracks(); // show the Now Playing mirror
+  } finally {
+    g._starting = false;
+  }
 }
 
 function groupStop(id){
   const g=gById(id); if(!g) return;
+  diagInfo(`groupStop: ${g.name} (sources=${Object.keys(g.sources||{}).length}, allSrc=${(g._allSources||[]).length})`);
+  g._playGen = (g._playGen||0) + 1; // cancel any in-flight start
+  g._starting = false; // release any start lock
   clearInterval(g.fadeTimer);
   stopGroupSources(g);
   g.isPlaying = false;
@@ -1533,6 +2032,8 @@ function setGroupVolume(id,v){
   setGroupAudioVolume(g, g.volume);
   const vp = g.el?.querySelector('[data-grole="vol-pct"]');
   if(vp) vp.textContent = Math.round(g.volume*100)+'%';
+  const vs = g.el?.querySelector('[data-grole="vol-slider"]');
+  if(vs && parseFloat(vs.value)!==g.volume) vs.value = g.volume;
   autoSave();
 }
 
@@ -1760,6 +2261,7 @@ function setMaster(v){
   const pct=Math.round(masterVol*100)+'%';
   const mv=document.getElementById('master-val'); if(mv) mv.textContent=pct;
   const sm=document.getElementById('st-master'); if(sm) sm.textContent=pct;
+  const sl=document.getElementById('master-slider'); if(sl && parseFloat(sl.value)!==masterVol) sl.value=masterVol;
   tracks.forEach(t=>{if(t.ws)t.ws.setVolume(effectiveVol(t));});
   autoSave();
 }
@@ -1999,11 +2501,14 @@ function uploadMulti(event){
   const basename = path => (path||'').split(/[\\/]/).pop();
   const norm = s => (s||'').toLowerCase().trim();
 
-  let matched=0, added=0, favRestored=0;
+  let matched=0, added=0, favRestored=0, skipped=0;
   const affectedGroups=new Set();
   const unmatched=[];
+  const newTrackIds=[]; // newly created tracks → category popup
+  const skippedNames=[];
 
   files.forEach(f=>{
+   try{
     // Candidate names for matching: try the raw .name, the basename of webkitRelativePath, etc.
     const candidates = new Set();
     candidates.add(f.name);
@@ -2033,6 +2538,8 @@ function uploadMulti(event){
       if(!orphan.el) buildTrackElement(orphan);
       const og = groupOfTrack(orphan);
       if(og){
+        if(!og.decodeStatus) og.decodeStatus = {};
+        if(!og.buffers) og.buffers = {};
         affectedGroups.add(og.id);
         og.decodeStatus[orphan.id]='decoding';
       } else if(isTrackExpanded(orphan)){
@@ -2040,18 +2547,35 @@ function uploadMulti(event){
       }
       refreshTrackDisplay(orphan);
       matched++;
-    } else {
-      // No match — add as new track (only if not a folder leftover we want to ignore).
-      // Track that we couldn't match this file by name (helps debugging).
+      return;
+    }
+    // Duplicate? An existing track ALREADY has this audio (same filename or same
+    // track name). Skip it rather than create a duplicate.
+    const fileBase = basename(f.name);
+    const nameFromFile = norm(fileBase.replace(/\.[^/.]+$/,''));
+    const dup = tracks.find(t=> t.src && (
+      matches(t.filename) || norm(t.name)===nameFromFile
+    ));
+    if(dup){
+      skipped++;
+      skippedNames.push(fileBase);
+      return;
+    }
+    {
+      // New track
       const cat=guessCat(f.name);
-      const t=mkTrack(basename(f.name).replace(/\.[^/.]+$/,''),cat);
+      const t=mkTrack(fileBase.replace(/\.[^/.]+$/,''),cat);
       t.src=URL.createObjectURL(f);
-      t.filename=basename(f.name);
+      t.filename=fileBase;
       tracks.push(t);
       buildTrackElement(t);
       added++;
-      unmatched.push(basename(f.name));
+      newTrackIds.push(t.id);
+      unmatched.push(fileBase);
     }
+   }catch(err){
+     diagErr('Upload failed for file: '+(f&&f.name?f.name:'(unknown)'), err&&err.message?err.message:String(err));
+   }
   });
   if(favRestored) renderFavourites();
   layoutTracks();
@@ -2068,8 +2592,10 @@ function uploadMulti(event){
   if(matched) bits.push(`${matched} matched`);
   if(added) bits.push(`${added} new`);
   if(favRestored) bits.push(`${favRestored} fav`);
+  if(skipped) bits.push(`${skipped} duplicate${skipped>1?'s':''} skipped`);
   showToast('↑ '+(bits.length?bits.join(', '):'no audio matched'));
-  diagInfo(`Upload done: ${matched} matched, ${added} new, ${favRestored} fav restored`);
+  diagInfo(`Upload done: ${matched} matched, ${added} new, ${favRestored} fav restored, ${skipped} skipped`);
+  if(skipped) diagInfo('Skipped duplicates', skippedNames.join(', '));
   // If there were unmatched files AND there are still missing tracks, give the user a hint
   const stillMissing = tracks.filter(t=>t.filename && !t.src).length;
   if(stillMissing>0 && unmatched.length>0){
@@ -2079,6 +2605,10 @@ function uploadMulti(event){
   event.target.value='';
   refreshMissingFilesBanner();
   autoSave();
+  // If new tracks were added, let the user set their categories in one pass
+  if(newTrackIds.length){
+    openCategoryAssign(newTrackIds);
+  }
 }
 
 function uploadSingle(event,id){
@@ -2513,6 +3043,7 @@ function layoutTracks(){
   CAT_ORDER.forEach(cat=>{
     const items=activeByCat[cat];
     if(!items.length) return;
+    items.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
     const div=document.createElement('div');
     div.className=`active-cat-divider ${cat}`;
     div.innerHTML=`<span>${cat}</span>`;
@@ -2543,6 +3074,7 @@ function layoutTracks(){
   CAT_ORDER.forEach(cat=>{
     const items=inactiveByCat[cat];
     if(!items.length) return;
+    items.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
     const div=document.createElement('div');
     div.className=`cat-divider ${cat}`;
     div.innerHTML=`<span>${cat}</span> <span style="color:var(--muted);font-size:9px;letter-spacing:1px;font-weight:400">${CAT_DESC[cat]}</span>`;
@@ -2804,6 +3336,33 @@ function resetStopBtn(){
   if(lbl) lbl.textContent='↓ FADE ALL';
   if(prog){ prog.style.transition='none'; prog.style.width='0'; }
 }
+// NUCLEAR silence: suspending the shared AudioContext instantly halts EVERY
+// Web Audio group source — including orphaned/duplicate ones. We ALSO force-stop
+// every WaveSurfer track (separate audio context), because a grouped stem can in
+// rare cases end up playing through BOTH engines; this catches that too.
+function killAllGroupAudio(){
+  // 1. Stop every WaveSurfer track outright (their own audio contexts).
+  tracks.forEach(t=>{
+    try{ clearAutoStop(t); clearInterval(t.fadeTimer); }catch(_){}
+    try{ if(t.ws){ t.ws.stop(); t.ws.setVolume(effectiveVol(t)); } }catch(_){}
+    t.playing=false; try{ refreshPlayUI(t); }catch(_){}
+  });
+  // 2. Nuke all group audio by suspending the shared context (instant, catches
+  //    any orphan), then tear down group state and resume for the next cue.
+  const ctx = sharedAudioCtx;
+  const finish = ()=>{
+    groups.forEach(g=>{ try{ groupStop(g.id); }catch(_){} });
+    if(sharedAudioCtx && sharedAudioCtx.state==='suspended'){
+      sharedAudioCtx.resume().catch(()=>{});
+    }
+  };
+  if(ctx && ctx.state==='running'){
+    ctx.suspend().then(finish).catch(finish);
+  } else {
+    finish();
+  }
+}
+
 function hardStopAll(){
   if(stopAllTimer!==null){ clearInterval(stopAllTimer); stopAllTimer=null; }
   tracks.forEach(t=>{
@@ -2811,6 +3370,8 @@ function hardStopAll(){
     if(t.ws){ t.ws.stop(); t.ws.setVolume(effectiveVol(t)); }
     t.playing=false; refreshPlayUI(t);
   });
+  // Guaranteed group silence (suspends the audio context to catch any orphans).
+  killAllGroupAudio();
   updateStatus(); resetStopBtn();
 }
 
@@ -2819,10 +3380,24 @@ function stopAllFade(){
   if(stopAllTimer!==null){ hardStopAll(); return; }
   const FADE=2000;
   const playing=tracks.filter(t=>t.playing&&t.ws);
-  if(!playing.length) return;
+  // Groups play through the Web Audio engine (not t.ws). Include any group that
+  // could be making sound — flag, live sources, OR a masterGain that exists
+  // (covers orphaned audio whose bookkeeping was lost).
+  const playingGroups=groups.filter(g=> g.isPlaying || (g.sources && Object.keys(g.sources).length>0) || g.masterGain);
+  if(!playing.length && !playingGroups.length) return;
   const startLevels={};
   playing.forEach(t=>{ startLevels[t.id] = masterVol>0 ? t.ws.getVolume()/masterVol : 0; });
   playing.forEach(t=>clearInterval(t.fadeTimer));
+  // Ramp each group's master gain to 0 over the fade.
+  playingGroups.forEach(g=>{
+    if(g.masterGain && g.audioCtx){
+      const now=g.audioCtx.currentTime;
+      const cur=g.masterGain.gain.value;
+      g.masterGain.gain.cancelScheduledValues(now);
+      g.masterGain.gain.setValueAtTime(cur, now);
+      g.masterGain.gain.linearRampToValueAtTime(0, now + FADE/1000);
+    }
+  });
   const btn=document.getElementById('stopall-btn');
   const lbl=document.getElementById('stopall-lbl');
   const prog=document.getElementById('stopall-progress');
@@ -2846,6 +3421,9 @@ function stopAllFade(){
         if(t.ws){ t.ws.pause(); t.ws.setVolume(effectiveVol(t)); }
         t.playing=false; refreshPlayUI(t);
       });
+      // Guaranteed group silence — suspends the audio context to catch any
+      // orphaned/duplicate sources that escaped per-group bookkeeping.
+      killAllGroupAudio();
       updateStatus(); resetStopBtn();
     }
   },30);
@@ -2859,13 +3437,14 @@ function stopAllFade(){
 function onVol(id,v){
   const t=tById(id); if(!t) return;
   t.volume=parseFloat(v);
-  // Update displays immediately
-  const vc=role(t,'vol-c'); if(vc && vc.value!=v) vc.value=v;
-  const ve=role(t,'vol-e'); if(ve && ve.value!=v) ve.value=v;
-  const vs=role(t,'vol-s'); if(vs && vs.value!=v) vs.value=v;
-  const vpc=role(t,'volpct-c'); if(vpc) vpc.textContent=Math.round(t.volume*100)+'%';
-  const vpe=role(t,'volpct-e'); if(vpe) vpe.textContent=Math.round(t.volume*100)+'%';
-  const vps=role(t,'volpct-s'); if(vps) vps.textContent=Math.round(t.volume*100)+'%';
+  const nv=t.volume;
+  // Update displays immediately (compare numerically so remote string values still apply)
+  const vc=role(t,'vol-c'); if(vc && parseFloat(vc.value)!==nv) vc.value=nv;
+  const ve=role(t,'vol-e'); if(ve && parseFloat(ve.value)!==nv) ve.value=nv;
+  const vs=role(t,'vol-s'); if(vs && parseFloat(vs.value)!==nv) vs.value=nv;
+  const vpc=role(t,'volpct-c'); if(vpc) vpc.textContent=Math.round(nv*100)+'%';
+  const vpe=role(t,'volpct-e'); if(vpe) vpe.textContent=Math.round(nv*100)+'%';
+  const vps=role(t,'volpct-s'); if(vps) vps.textContent=Math.round(nv*100)+'%';
   // Visual muted state
   if(t.el) t.el.classList.toggle('is-muted', t.volume<=0.02);
   // If the track is a stem in a group, route to Web Audio gain
@@ -2873,7 +3452,6 @@ function onVol(id,v){
   if(g && g.sources[t.id]){
     setStemAudioVolume(g, t.id, t.volume);
   } else if(t.ws){
-    // Non-grouped: use the existing ease into WaveSurfer volume
     startVolEase(t);
   }
   autoSave();
@@ -3049,7 +3627,11 @@ function updateStatus(){
 function mkSnapshot(){
   // included = track is part of this scene (will show in Now Playing when scene is fired)
   // playing  = track auto-fires when scene fires (vs just being staged silently)
-  return tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,playing:t.playing,included:t.playing,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,cues:JSON.parse(JSON.stringify(t.cues))}));
+  // IMPORTANT: exclude tracks that belong to a group — those are represented by
+  // the group's own snapshot and play through the group engine. Including them
+  // here too would fire the same audio twice (WaveSurfer + group), creating an
+  // orphaned copy that the group's stop can't reach.
+  return tracks.filter(t=>!groupOfTrack(t)).map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,playing:t.playing,included:t.playing,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,cues:JSON.parse(JSON.stringify(t.cues))}));
 }
 
 // Group snapshot for scenes: captures group's full play state + stem volumes
@@ -3239,6 +3821,11 @@ function fireScene(sid,xfade=false){
   updateNotesBanner();
 
   tracks.forEach(t=>{
+    // Grouped tracks are driven by the group engine (handled in the groups loop
+    // below). Skip them here so we never fire the same stem through WaveSurfer
+    // too — that double-play was the cause of "fires twice / won't stop" audio.
+    // This also defends old scenes saved before grouped stems were excluded.
+    if(groupOfTrack(t)) return;
     clearInterval(t.fadeTimer);
     const snap=snapMap[t.id];
     if(!snap){
@@ -3326,10 +3913,13 @@ function fireScene(sid,xfade=false){
           g.masterGain.gain.cancelScheduledValues(now);
           g.masterGain.gain.setValueAtTime(sv, now);
           g.masterGain.gain.linearRampToValueAtTime(0, now + fadeDur/1000);
-          // After fade: actually stop sources and restore gain to slider value
+          // After fade: actually stop sources and restore gain to slider value.
+          // Guard with the play generation so a manual restart during the fade
+          // isn't killed by this stale timeout.
+          const gen = (g._playGen||0);
           setTimeout(()=>{
+            if((g._playGen||0) !== gen) return; // superseded by a newer action
             groupStop(g.id);
-            if(g.masterGain) g.masterGain.gain.value = g.volume;
           }, fadeDur + 50);
         } else {
           groupStop(g.id);
@@ -3387,9 +3977,10 @@ function fireScene(sid,xfade=false){
         g.masterGain.gain.cancelScheduledValues(now);
         g.masterGain.gain.setValueAtTime(sv, now);
         g.masterGain.gain.linearRampToValueAtTime(0, now + fadeDur/1000);
+        const gen = (g._playGen||0);
         setTimeout(()=>{
+          if((g._playGen||0) !== gen) return; // superseded by a newer action
           groupStop(g.id);
-          if(g.masterGain) g.masterGain.gain.value = g.volume;
         }, fadeDur + 50);
       } else {
         groupStop(g.id);
@@ -3397,20 +3988,28 @@ function fireScene(sid,xfade=false){
     } else if(!wasPlaying && willPlay){
       // Start silent, ramp up
       g.pausedAt = snap.pausedAt || 0;
+      if(g._starting) return; // a start is already in flight — don't stack
+      g._starting = true;
+      const myGen = (g._playGen||0) + 1; g._playGen = myGen;
       (async ()=>{
-        const ctx = getAudioCtx();
-        if(ctx.state==='suspended'){ try{ await ctx.resume(); }catch(_){} }
-        await ensureGroupBuffers(g);
-        if(g.masterGain) g.masterGain.gain.value = 0;
-        startGroupAt(g, g.pausedAt || 0);
-        if(g.masterGain){
-          const c = g.audioCtx;
-          const now = c.currentTime;
-          g.masterGain.gain.cancelScheduledValues(now);
-          g.masterGain.gain.setValueAtTime(0, now);
-          g.masterGain.gain.linearRampToValueAtTime(snap.volume, now + fadeDur/1000);
-        }
-        layoutTracks();
+        try{
+          const ctx = getAudioCtx();
+          if(ctx.state==='suspended'){ try{ await ctx.resume(); }catch(_){} }
+          await ensureGroupBuffers(g);
+          // If a stop/other action happened while decoding, abort this start so
+          // we don't resurrect a group the user just stopped (or orphan sources).
+          if(g._playGen !== myGen) return;
+          if(g.masterGain) g.masterGain.gain.value = 0;
+          startGroupAt(g, g.pausedAt || 0);
+          if(g.masterGain){
+            const c = g.audioCtx;
+            const now = c.currentTime;
+            g.masterGain.gain.cancelScheduledValues(now);
+            g.masterGain.gain.setValueAtTime(0, now);
+            g.masterGain.gain.linearRampToValueAtTime(snap.volume, now + fadeDur/1000);
+          }
+          layoutTracks();
+        } finally { g._starting = false; }
       })();
     }
   });
@@ -3592,6 +4191,252 @@ function openReadme(){
 }
 function closeReadme(){
   document.getElementById('readme-modal').classList.remove('open');
+}
+
+// ════════════════════════════════════════════════
+// FADER LINK — QR code to the fader board URL
+// ════════════════════════════════════════════════
+function faderBoardURL(){
+  // Same host that served this page, with faderboard mode
+  return `${location.protocol}//${location.host}/?mode=faderboard`;
+}
+
+function openFaderLink(){
+  const fbURL = faderBoardURL();                       // …/?mode=faderboard
+  const baseURL = `${location.protocol}//${location.host}/`; // bare IP → chooser
+  const body = document.getElementById('fader-link-body');
+  const isLocalhost = /localhost|127\.0\.0\.1/.test(location.host);
+
+  let warn = '';
+  if(isLocalhost){
+    warn = `<div style="background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.35);border-radius:8px;padding:11px 13px;margin-bottom:16px;font-size:12px;color:var(--amber);line-height:1.5;text-align:left">
+      ⚠ You opened the console at <b>localhost</b>, which other devices can't reach. To link a fader board, open the console using your computer's network address instead — the green <b>http://192.168.x.x:${location.port||3000}</b> URL the server printed in its window. Then reopen this.</div>`;
+  }
+
+  // The simple, reliable way: type the bare address; tap "Fader Board".
+  body.innerHTML = `
+    ${warn}
+    <div style="text-align:left">
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--muted2);margin-bottom:7px">ON THE IPAD / PHONE — TYPE THIS IN THE BROWSER (SAFARI / CHROME):</div>
+      <div style="display:flex;gap:8px;align-items:stretch">
+        <div id="fl-url" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:16px 18px;font-family:var(--mono);font-size:22px;font-weight:700;color:var(--green);word-break:break-all;user-select:all">${esc(location.host)}</div>
+        <button onclick="flCopy('${esc(baseURL)}')" style="flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:9px;padding:0 18px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer" id="fl-copy">COPY</button>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-top:14px">Then tap <b style="color:#c89bff">FADER BOARD</b> on the screen that appears.</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px">Both devices must be on the same Wi-Fi / router.</div>
+    </div>`;
+  document.getElementById('fader-link-modal').classList.add('open');
+}
+function flCopy(url){
+  const btn = document.getElementById('fl-copy');
+  const done = ()=>{ if(btn){ btn.textContent='COPIED'; setTimeout(()=>{ if(btn) btn.textContent='COPY'; }, 1500); } };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=>{ flCopyFallback(url); done(); });
+  } else { flCopyFallback(url); done(); }
+}
+function flCopyFallback(text){
+  try{
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }catch(_){}
+}
+function closeFaderLink(){ document.getElementById('fader-link-modal').classList.remove('open'); }
+
+// ════════════════════════════════════════════════
+// SUPPORT — gentle contribution prompt
+// ════════════════════════════════════════════════
+const SUPPORT_UPI = 'arvin.vaz@federal';
+function openSupport(){ document.getElementById('support-modal').classList.add('open'); }
+function closeSupport(){ document.getElementById('support-modal').classList.remove('open'); }
+function copyUPI(){
+  const btn = document.getElementById('support-upi');
+  const hint = document.getElementById('support-copy-hint');
+  const done = ()=>{
+    if(btn){ const orig=btn.textContent; btn.textContent='✓ Copied!'; setTimeout(()=>{ if(btn) btn.textContent=orig; }, 1600); }
+    if(hint) hint.textContent='Copied — paste into your UPI app to contribute. Thank you!';
+  };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(SUPPORT_UPI).then(done).catch(()=>{ _copyFallback(SUPPORT_UPI); done(); });
+  } else { _copyFallback(SUPPORT_UPI); done(); }
+}
+function _copyFallback(text){
+  try{
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }catch(_){}
+}
+
+// ════════════════════════════════════════════════
+// CATEGORY ASSIGN — after uploading new files
+// ════════════════════════════════════════════════
+let _caTrackIds = [];
+function openCategoryAssign(trackIds){
+  _caTrackIds = trackIds.slice();
+  const body = document.getElementById('cat-assign-body');
+  const countEl = document.getElementById('cat-assign-count');
+  if(countEl) countEl.textContent = `${trackIds.length} new`;
+  let html = `<div class="ca-bulk">
+    <span class="ca-bulk-label">Set all to:</span>
+    <button class="ca-bulk-btn" onclick="caSetAll('BGM')">BGM</button>
+    <button class="ca-bulk-btn" onclick="caSetAll('SFX')">SFX</button>
+    <button class="ca-bulk-btn" onclick="caSetAll('AMB')">AMB</button>
+  </div>`;
+  trackIds.forEach(id=>{
+    const t = tById(id); if(!t) return;
+    html += `<div class="ca-row" data-ca-id="${id}">
+      <span class="ca-name">${esc(t.name)}</span>
+      <div class="ca-segs">
+        ${['BGM','SFX','AMB'].map(c=>`<button class="ca-seg ${c} ${t.cat===c?'active':''}" onclick="caSetCat(${id},'${c}')">${c}</button>`).join('')}
+      </div>
+    </div>`;
+  });
+  body.innerHTML = html;
+  document.getElementById('cat-assign-modal').classList.add('open');
+}
+function caSetCat(id, cat){
+  const t = tById(id); if(!t) return;
+  t.cat = cat;
+  // update the row's active states
+  const row = document.querySelector(`.ca-row[data-ca-id="${id}"]`);
+  if(row) row.querySelectorAll('.ca-seg').forEach(s=>s.classList.toggle('active', s.textContent.trim()===cat));
+  autoSave();
+}
+function caSetAll(cat){
+  _caTrackIds.forEach(id=>{ const t=tById(id); if(t) t.cat=cat; });
+  // refresh all rows
+  document.querySelectorAll('#cat-assign-body .ca-row').forEach(row=>{
+    row.querySelectorAll('.ca-seg').forEach(s=>s.classList.toggle('active', s.textContent.trim()===cat));
+  });
+  autoSave();
+}
+function closeCategoryAssign(){
+  document.getElementById('cat-assign-modal').classList.remove('open');
+  _caTrackIds = [];
+  layoutTracks(); // re-sort into the right category sections
+}
+
+// ════════════════════════════════════════════════
+// REMOVE DUPLICATE TRACKS (manual cleanup, with confirmation)
+// ════════════════════════════════════════════════
+function _trackInScene(id){
+  return scenes.some(s => (s.snapshot||[]).some(sn=>sn.id===id));
+}
+function _trackInGroup(id){
+  return groups.some(g => g.trackIds.includes(id));
+}
+// Score for "which copy to keep" — higher is kept. Wired-in copies win.
+function _keepScore(t){
+  let s = 0;
+  if(_trackInGroup(t.id)) s += 4;
+  if(_trackInScene(t.id)) s += 2;
+  if(t.src) s += 1; // has audio loaded
+  return s;
+}
+
+// Returns groups of duplicates: [{key, keep, remove:[...]}]
+function _computeDuplicates(){
+  const norm = s => (s||'').toLowerCase().trim();
+  const base = fn => (fn||'').split(/[\\/]/).pop();
+  // Bucket tracks by a signature: prefer filename; also bucket by name.
+  // Two tracks are dup if they share filename OR share name.
+  const buckets = new Map(); // sig -> [tracks]
+  // Use union-find-ish: build by filename first, then merge by name.
+  // Simpler: for each track, signature = filename if present else name.
+  // Then a second pass merges name-equal tracks across filename buckets.
+  const byKey = new Map();
+  tracks.forEach(t=>{
+    const fnKey = t.filename ? 'f:'+norm(base(t.filename)) : null;
+    const nmKey = 'n:'+norm(t.name);
+    // group under filename key if available, else name key
+    const key = fnKey || nmKey;
+    if(!byKey.has(key)) byKey.set(key, []);
+    byKey.get(key).push(t);
+  });
+  // Merge buckets that share a track name (so same-name diff-filename also dup)
+  // Build name → keys map
+  const nameToKeys = new Map();
+  byKey.forEach((arr,key)=>{
+    arr.forEach(t=>{
+      const nk = norm(t.name);
+      if(!nameToKeys.has(nk)) nameToKeys.set(nk, new Set());
+      nameToKeys.get(nk).add(key);
+    });
+  });
+  // Union keys that share a name
+  const parent = new Map(); [...byKey.keys()].forEach(k=>parent.set(k,k));
+  const find = k => { while(parent.get(k)!==k){ parent.set(k,parent.get(parent.get(k))); k=parent.get(k);} return k; };
+  const union = (a,b)=>{ parent.set(find(a),find(b)); };
+  nameToKeys.forEach(keys=>{ const ks=[...keys]; for(let i=1;i<ks.length;i++) union(ks[0],ks[i]); });
+  // Regroup tracks by their root key
+  const rootGroups = new Map();
+  byKey.forEach((arr,key)=>{
+    const r = find(key);
+    if(!rootGroups.has(r)) rootGroups.set(r, []);
+    rootGroups.get(r).push(...arr);
+  });
+  // Build duplicate result: only groups with >1 track
+  const result = [];
+  rootGroups.forEach(arr=>{
+    if(arr.length < 2) return;
+    // pick keeper: highest score; tie → earliest in tracks[]
+    let keep = arr[0], keepScore = _keepScore(arr[0]);
+    arr.forEach(t=>{ const sc=_keepScore(t); if(sc>keepScore){ keep=t; keepScore=sc; } });
+    const remove = arr.filter(t=>t.id!==keep.id);
+    result.push({ keep, remove });
+  });
+  return result;
+}
+
+function findDuplicates(){
+  const dups = _computeDuplicates();
+  const body = document.getElementById('dedupe-body');
+  const foot = document.getElementById('dedupe-foot');
+  if(!dups.length){
+    body.innerHTML = `<div class="dd-none">No duplicate tracks found.<br>Every track is unique by filename and name.</div>`;
+    foot.innerHTML = `<button class="dd-cancel-btn" onclick="closeDedupe()">Close</button>`;
+    document.getElementById('dedupe-modal').classList.add('open');
+    return;
+  }
+  const totalRemove = dups.reduce((n,d)=>n+d.remove.length,0);
+  let html = `<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">Found ${dups.length} set${dups.length>1?'s':''} of duplicates. ${totalRemove} track${totalRemove>1?'s':''} will be removed. The copy wired into a group or scene is kept; loose copies are removed.</div>`;
+  dups.forEach(d=>{
+    const why = (_trackInGroup(d.keep.id)?'in group':_trackInScene(d.keep.id)?'in scene':(d.keep.src?'has audio':'first copy'));
+    html += `<div class="dd-group">
+      <div class="dd-keep"><span class="dd-tag">keep</span><span class="dd-trk">${esc(d.keep.name)}</span><span class="dd-why">${why}</span></div>`;
+    d.remove.forEach(r=>{
+      html += `<div class="dd-remove"><span class="dd-tag">remove</span><span class="dd-trk">${esc(r.name)}</span></div>`;
+    });
+    html += `</div>`;
+  });
+  body.innerHTML = html;
+  foot.innerHTML = `<button class="dd-cancel-btn" onclick="closeDedupe()">Cancel</button>
+    <button class="dd-confirm-btn" onclick="confirmDedupe()">Remove ${totalRemove} track${totalRemove>1?'s':''}</button>`;
+  // stash for the confirm step
+  _pendingDedupe = dups;
+  document.getElementById('dedupe-modal').classList.add('open');
+}
+
+let _pendingDedupe = null;
+function confirmDedupe(){
+  if(!_pendingDedupe){ closeDedupe(); return; }
+  const idsToRemove = [];
+  _pendingDedupe.forEach(d=>d.remove.forEach(r=>idsToRemove.push(r.id)));
+  // Remove from scene snapshots first, then delete the tracks
+  idsToRemove.forEach(id=>{
+    scenes.forEach(s=>{ if(s.snapshot) s.snapshot = s.snapshot.filter(sn=>sn.id!==id); });
+  });
+  idsToRemove.forEach(id=>deleteTrack(id));
+  const n = idsToRemove.length;
+  diagInfo(`Removed ${n} duplicate track(s)`);
+  _pendingDedupe = null;
+  closeDedupe();
+  showToast(`⧉ Removed ${n} duplicate${n>1?'s':''}`);
+  layoutTracks();
+  autoSave();
+}
+function closeDedupe(){
+  document.getElementById('dedupe-modal').classList.remove('open');
+  _pendingDedupe = null;
 }
 
 // ════════════════════════════════════════════════
@@ -3779,14 +4624,75 @@ function exportDiagnostics(){
   });
   lines.push('');
   lines.push('═══ END ═══');
-  const blob = new Blob([lines.join('\n')], {type:'text/plain'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const text = lines.join('\n');
   const projName = (currentProjectName()||'session').replace(/[^a-z0-9_-]/gi,'_');
   const stamp = new Date().toISOString().replace(/[:.]/g,'-').substring(0,19);
-  a.download = `offside-diag-${projName}-${stamp}.txt`;
-  a.click();
-  diagInfo('Diagnostics exported');
+  const fname = `offside-diag-${projName}-${stamp}.txt`;
+
+  // iPad / iOS Safari ignores the <a download> trick, so detect iOS and use
+  // the share sheet or an on-screen copyable panel instead.
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  if(isIOS){
+    showDiagText(text, fname);
+    diagInfo('Diagnostics shown for copy (iOS)');
+    return;
+  }
+  // Desktop: normal file download
+  try{
+    const blob = new Blob([text], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
+    diagInfo('Diagnostics exported');
+  }catch(e){
+    // Fallback for any browser where download fails
+    showDiagText(text, fname);
+  }
+}
+
+// Show diagnostic text on-screen with Copy + Share (works on iPad)
+function showDiagText(text, fname){
+  let panel = document.getElementById('diag-text-panel');
+  if(!panel){
+    panel = document.createElement('div');
+    panel.id = 'diag-text-panel';
+    panel.className = 'modal-overlay';
+    document.body.appendChild(panel);
+  }
+  panel.innerHTML = `
+    <div class="modal-card" style="max-width:640px">
+      <div class="modal-head">
+        <div class="modal-title"><span class="modal-icon">🔧</span><span>Diagnostics</span></div>
+        <button class="modal-close" onclick="document.getElementById('diag-text-panel').classList.remove('open')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button class="diag-action" onclick="copyDiagText()">⧉ Copy all</button>
+          ${navigator.share?`<button class="diag-action" onclick="shareDiagText()">↗ Share</button>`:''}
+        </div>
+        <textarea id="diag-text-area" readonly style="width:100%;height:46vh;background:var(--s2);border:1px solid var(--border);border-radius:9px;color:var(--text2);font-family:var(--mono);font-size:11px;line-height:1.5;padding:12px;resize:none;-webkit-user-select:all;user-select:all">${esc(text)}</textarea>
+        <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5">Tap “Copy all”, then paste into Notes, Mail, or a message. (On iPad, downloads aren’t supported, so copy/share is the way to get this out.)</div>
+      </div>
+    </div>`;
+  panel.classList.add('open');
+  window._diagText = text; window._diagFname = fname;
+}
+function copyDiagText(){
+  const ta = document.getElementById('diag-text-area');
+  if(ta){ ta.focus(); ta.select(); }
+  const text = window._diagText || (ta?ta.value:'');
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(text).then(()=>showToast('⧉ Copied')).catch(()=>{ try{document.execCommand('copy');showToast('⧉ Copied');}catch(_){} });
+  } else { try{document.execCommand('copy');showToast('⧉ Copied');}catch(_){} }
+}
+function shareDiagText(){
+  const text = window._diagText || '';
+  if(navigator.share){ navigator.share({title:'Offside Sound diagnostics', text}).catch(()=>{}); }
 }
 
 // Log key app events
@@ -3862,7 +4768,7 @@ function renderMixer(){
     if(!items.length) return;
     items.sort((a,b)=>{
       if(a.playing !== b.playing) return a.playing ? -1 : 1;
-      return a.order - b.order;
+      return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'});
     });
     const playing = items.filter(t=>t.playing).length;
     html += `<div class="mxr-section">
@@ -4047,7 +4953,12 @@ function exportState(){
   const blob=new Blob([stateToJSON()],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=(currentProjectName()||'offside-session')+'.json';
+  const name=(currentProjectName()||'offside-session').replace(/[^a-z0-9_-]/gi,'_');
+  // YYYY-MM-DD_HH-MM local time so the newest export sorts last / reads clearly
+  const d=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  const stamp=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}-${p(d.getMinutes())}`;
+  a.download=`${name}_${stamp}.json`;
   a.click();
   showToast('Session exported');
 }
@@ -4111,7 +5022,7 @@ function loadProject(id){
       masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
       tracks=deserializeTracks(data.tracks||[]);
       scenes=migrateScenes(data.scenes||[]);
-      groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null}));
+      groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null,buffers:{},sources:{},decodeStatus:{},isPlaying:false,duration:gd.duration||0,startedAt:0,pausedAt:0}));
       favourites=(data.favourites||[]).map(fd=>({id:fd.id,name:fd.name,filename:fd.filename||null,src:null}));
       if(data.catVol){ catVol.BGM=data.catVol.BGM??1; catVol.SFX=data.catVol.SFX??1; catVol.AMB=data.catVol.AMB??1; }
       (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
@@ -4176,8 +5087,8 @@ function createNewProject(){
   const p = {id, name:name.trim(), created:Date.now(), lastOpened:Date.now()};
   projectsIndex.push(p);
   saveProjectsIndex();
-  closeProjectPicker();
   loadProject(id); // resets workspace to empty + sets currentProjectId
+  document.getElementById('project-picker').classList.remove('open');
   // Persist the empty state so reloading sees the project
   autoSave();
 }
@@ -4243,8 +5154,10 @@ function importProjectFile(event){
       projectsIndex.push(p);
       try{ localStorage.setItem('offside_project_'+id, JSON.stringify(data)); }catch(_){}
       saveProjectsIndex();
-      closeProjectPicker();
+      // Load first — this sets currentProjectId — THEN close the picker.
+      // (closeProjectPicker bails if no current project, so order matters.)
       loadProject(id);
+      document.getElementById('project-picker').classList.remove('open');
       showToast(`Imported "${p.name}"`);
     } catch(err){ alert('Could not import: '+err.message); }
   };
@@ -4291,9 +5204,9 @@ function renderProjectList(){
 }
 
 function pickProject(id){
-  if(id===currentProjectId){ closeProjectPicker(); return; }
-  closeProjectPicker();
+  if(id===currentProjectId){ document.getElementById('project-picker').classList.remove('open'); return; }
   loadProject(id);
+  document.getElementById('project-picker').classList.remove('open');
 }
 
 // One-time migration: if there's old offside_v7 data and no projects index,
@@ -4357,7 +5270,7 @@ function importState(event){
       uid=data.uid||0; gid=data.gid||0; fid=data.fid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
       tracks=deserializeTracks(data.tracks);
       scenes=migrateScenes(data.scenes);
-      groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null}));
+      groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null,buffers:{},sources:{},decodeStatus:{},isPlaying:false,duration:gd.duration||0,startedAt:0,pausedAt:0}));
       favourites=(data.favourites||[]).map(fd=>({id:fd.id,name:fd.name,filename:fd.filename||null,src:null}));
       if(data.catVol){ catVol.BGM=data.catVol.BGM??1; catVol.SFX=data.catVol.SFX??1; catVol.AMB=data.catVol.AMB??1; }
       (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
@@ -4383,7 +5296,7 @@ function loadAutoSave(){
     uid=data.uid||0; gid=data.gid||0; fid=data.fid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
     tracks=deserializeTracks(data.tracks);
     scenes=migrateScenes(data.scenes);
-    groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null}));
+    groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null,buffers:{},sources:{},decodeStatus:{},isPlaying:false,duration:gd.duration||0,startedAt:0,pausedAt:0}));
     favourites=(data.favourites||[]).map(fd=>({id:fd.id,name:fd.name,filename:fd.filename||null,src:null}));
     if(data.catVol){ catVol.BGM=data.catVol.BGM??1; catVol.SFX=data.catVol.SFX??1; catVol.AMB=data.catVol.AMB??1; }
     (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
@@ -4429,12 +5342,22 @@ document.addEventListener('click',e=>{
     closeGroupPops();
   if(!e.target.closest('.upload-wrap-v2'))
     closeUploadMenu();
+  // Close the fader-board scene module when tapping outside it
+  if(!e.target.closest('.fb-scene-module') && !e.target.closest('.fb-scene-trigger')){
+    const sm=document.getElementById('fb-scene-module');
+    if(sm && sm.classList.contains('open')) sm.classList.remove('open');
+  }
   // Tap on modal overlay (outside the card) closes the modal
   if(e.target.classList.contains('modal-overlay')){
     if(e.target.id==='scene-preview-modal') closeScenePreview();
     if(e.target.id==='mixer-modal') closeMixer();
     if(e.target.id==='readme-modal') closeReadme();
     if(e.target.id==='diag-modal') closeDiag();
+    if(e.target.id==='fader-link-modal') closeFaderLink();
+    if(e.target.id==='support-modal') closeSupport();
+    if(e.target.id==='cat-assign-modal') closeCategoryAssign();
+    if(e.target.id==='dedupe-modal') closeDedupe();
+    if(e.target.id==='diag-text-panel') e.target.classList.remove('open');
   }
 });
 
@@ -4450,21 +5373,947 @@ function fmtT(s){
   const m=Math.floor(s/60),sec=Math.floor(s%60).toString().padStart(2,'0'),ds=Math.floor((s%1)*10);
   return `${m}:${sec}.${ds}`;
 }
+function warnDuplicateConsole(count){
+  diagWarn(`Duplicate console detected — ${count} consoles connected`);
+  const b = document.getElementById('dup-console-banner');
+  if(b) b.style.display = 'block';
+  showToast('⚠ Another console is open — close it to avoid ghost audio');
+}
+
 function esc(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ════════════════════════════════════════════════
+// FADER BOARD + SYNC
+// Two roles, selected by URL ?mode=faderboard|console.
+//   console    — the full app, also pushes state to the relay server
+//   faderboard — a stripped mixing surface that reads state + sends moves
+// The relay server (offside-sound-server.js) just passes JSON between them.
+// ════════════════════════════════════════════════
+const _url = new URL(window.location.href);
+let APP_MODE = _url.searchParams.get('mode') || 'console';
+const SYNC_BASE = ''; // same origin as the server that served this file
+// If the page was opened from the LOCAL SERVER with no mode specified
+// (i.e. someone typed the bare http://192.168.x.x:PORT address), show a
+// chooser instead of assuming console. GitHub/https single-device use is
+// unaffected — it goes straight to the console as always.
+const _servedLocally = location.protocol === 'http:' &&
+  !/github\.io$/i.test(location.hostname) &&
+  location.hostname !== '';
+const _noModeGiven = !_url.searchParams.get('mode');
+if(_servedLocally && _noModeGiven) APP_MODE = 'choose';
+
+let _syncTimer = null;
+let _syncFailCount = 0;
+
+// ───────── MASTER (console) SIDE ─────────
+function buildFaderSnapshot(){
+  // Determine the "next" scene: the one after the active scene in list order.
+  // If no active scene, next is the first scene.
+  let nextScene = null, activeName = null, nextIndex = -1;
+  if(scenes.length){
+    if(activeSceneId){
+      const idx = scenes.findIndex(s=>s.id===activeSceneId);
+      activeName = idx>=0 ? scenes[idx].name : null;
+      if(idx>=0 && idx < scenes.length-1){ nextScene = scenes[idx+1]; nextIndex = idx+1; }
+      // if idx is last, nextScene stays null (stop at end)
+    } else {
+      nextScene = scenes[0]; nextIndex = 0;
+    }
+  }
+  let prevScene = null, prevIndex = -1;
+  if(scenes.length && activeSceneId){
+    const idx = scenes.findIndex(s=>s.id===activeSceneId);
+    if(idx>0){ prevScene = scenes[idx-1]; prevIndex = idx-1; }
+  }
+  // Work out scene membership for SCENE-mode filtering on the fader board.
+  const activeScene = activeSceneId ? scenes.find(s=>s.id===activeSceneId) : null;
+  const sceneTrackIds = new Set();
+  const sceneGroupIds = new Set();
+  if(activeScene){
+    (activeScene.snapshot||[]).forEach(sn=>{ if(sn.included) sceneTrackIds.add(sn.id); });
+    (activeScene.groupSnapshot||[]).forEach(gs=>{ if(gs.included) sceneGroupIds.add(gs.id); });
+  }
+  // A track that lives inside a group is represented by the group on the fader board,
+  // so exclude grouped tracks from the standalone track list.
+  const groupedTrackIds = new Set();
+  groups.forEach(g=>g.trackIds.forEach(id=>groupedTrackIds.add(id)));
+
+  return {
+    master: masterVol,
+    catVol: { BGM: catVol.BGM ?? 1, SFX: catVol.SFX ?? 1, AMB: catVol.AMB ?? 1 },
+    tracks: tracks.filter(t=>!groupedTrackIds.has(t.id)).map(t=>({
+      id: t.id, name: t.name, cat: t.cat,
+      volume: t.volume,
+      muted: t.volume <= 0.001,
+      playing: !!t.playing,
+      level: t._audioVol ?? (t.playing ? effectiveVol(t) : 0),
+      inScene: sceneTrackIds.has(t.id)
+    })),
+    groups: groups.map(g=>({
+      id: g.id, name: g.name, volume: g.volume, playing: !!g.isPlaying,
+      cat: (tById(g.trackIds[0])||{}).cat || 'BGM',
+      level: g.isPlaying ? (g.volume * (catVol[ (tById(g.trackIds[0])||{}).cat ] ?? 1) * masterVol) : 0,
+      inScene: sceneGroupIds.has(g.id)
+    })),
+    scene: {
+      activeName,
+      activeId: activeSceneId || null,
+      next: nextScene ? {id:nextScene.id, name:nextScene.name, index:nextIndex} : null,
+      prev: prevScene ? {id:prevScene.id, name:prevScene.name, index:prevIndex} : null,
+      total: scenes.length,
+      hasActive: !!activeScene,
+      notes: (activeScene && activeScene.notes) ? activeScene.notes : ''
+    },
+    favourites: favourites.map(f=>({ id:f.id, name:f.name, hasAudio: !!f.src }))
+  };
+}
+
+function applyFaderChange(ch){
+  if(!ch || !ch.type) return;
+  diagInfo(`Change in: ${ch.type}/${ch.id ?? ''}/${ch.field} = ${ch.value}`);
+  if(ch.type === 'scene'){
+    // Scene navigation from the fader board
+    if(ch.field === 'fireId' && ch.value) fireScene(ch.value, false);
+    else if(ch.field === 'xfadeId' && ch.value) fireScene(ch.value, true);
+    return;
+  }
+  if(ch.type === 'fav'){
+    // Favourite one-shot fired from the board → play it here on the console.
+    if(ch.field === 'fire' && ch.id){ unlockAudioForRemote(); fireFavourite(ch.id); }
+    return;
+  }
+  if(ch.type === 'master'){
+    if(ch.field === 'fadeAll'){ stopAllFade(); return; }
+    setMaster(ch.value);
+  } else if(ch.type === 'cat'){
+    if(ch.field === 'muted'){ fadeCatMute(ch.id, ch.value); }
+    else setCatVol(ch.id, ch.value);
+  } else if(ch.type === 'track'){
+    const t = tById(ch.id); if(!t) return;
+    if(ch.field === 'volume') onVol(ch.id, ch.value);
+    else if(ch.field === 'muted'){
+      fadeTrackMute(ch.id, ch.value);
+    }
+    else if(ch.field === 'playStop'){
+      // A play command from the fader board is not a user gesture on THIS device,
+      // so the browser may have the audio context suspended. Wake it first.
+      unlockAudioForRemote();
+      if(t.playing) stopTrack(ch.id);
+      else togglePlay(ch.id);
+    }
+  } else if(ch.type === 'group'){
+    const g = gById(ch.id); if(!g) return;
+    if(ch.field === 'volume') setGroupVolume(ch.id, ch.value);
+    else if(ch.field === 'playStop'){
+      unlockAudioForRemote();
+      // Authoritative check (flag OR live sources) so a board tap reliably
+      // stops a group that a scene started, instead of stacking a 2nd copy.
+      const actuallyPlaying = g.isPlaying || (g.sources && Object.keys(g.sources).length>0);
+      if(actuallyPlaying) groupStop(ch.id);
+      else groupTogglePlay(ch.id);
+    }
+  }
+}
+
+// Smooth mute / unmute for a track (used by the fader board's mute button).
+const MUTE_FADE_MS = 600;
+function fadeTrackMute(id, mute){
+  const t = tById(id); if(!t) return;
+  if(mute){
+    // remember the level to come back to
+    t._preMuteVol = (t.volume > 0.001 ? t.volume : (t._preMuteVol ?? 1));
+    _fadeTrackVolTo(t, 0);
+  } else {
+    _fadeTrackVolTo(t, t._preMuteVol ?? 1);
+  }
+  syncVolUI(t);
+  autoSave();
+}
+// Ramp a track's actual volume value to a target over MUTE_FADE_MS, updating
+// both the audio and the stored volume so the rest of the app stays in sync.
+function _fadeTrackVolTo(t, target){
+  clearInterval(t.fadeTimer);
+  const start = t.volume;
+  if(Math.abs(start-target) < 0.005){ t.volume = target; onVol(t.id, target); return; }
+  const t0 = Date.now();
+  t.fadeTimer = setInterval(()=>{
+    const r = Math.min((Date.now()-t0)/MUTE_FADE_MS, 1);
+    const v = start + (target-start)*r;
+    t.volume = v;
+    // push to audio without re-easing (we are the ease)
+    const g = groupOfTrack(t);
+    if(g && g.sources[t.id]) setStemAudioVolume(g, t.id, v);
+    else if(t.ws){ t._audioVol = v; t.ws.setVolume(effectiveVol(t)); }
+    // update the strip's % live
+    const vpc=role(t,'volpct-c'); if(vpc) vpc.textContent=Math.round(v*100)+'%';
+    if(r>=1){ clearInterval(t.fadeTimer); t.volume=target; syncVolUI(t); }
+  }, 20);
+}
+// Smooth mute / unmute for a whole category.
+function fadeCatMute(cat, mute){
+  if(mute){
+    _catPreMute = _catPreMute || {};
+    _catPreMute[cat] = (catVol[cat] > 0.001 ? catVol[cat] : (_catPreMute[cat] ?? 1));
+    _fadeCatVolTo(cat, 0);
+  } else {
+    _fadeCatVolTo(cat, (_catPreMute && _catPreMute[cat] != null) ? _catPreMute[cat] : 1);
+  }
+}
+let _catPreMute = {};
+let _catFadeTimers = {};
+function _fadeCatVolTo(cat, target){
+  clearInterval(_catFadeTimers[cat]);
+  const start = catVol[cat] ?? 1;
+  if(Math.abs(start-target) < 0.005){ setCatVol(cat, target); return; }
+  const t0 = Date.now();
+  _catFadeTimers[cat] = setInterval(()=>{
+    const r = Math.min((Date.now()-t0)/MUTE_FADE_MS, 1);
+    setCatVol(cat, start + (target-start)*r);
+    if(r>=1){ clearInterval(_catFadeTimers[cat]); setCatVol(cat, target); }
+  }, 20);
+}
+
+// ─────────────────────────────────────────────────────────────
+// WEBSOCKET TRANSPORT (with automatic HTTP-polling fallback)
+// ─────────────────────────────────────────────────────────────
+let _ws = null;
+let _wsConnected = false;
+let _wsReconnectTimer = null;
+let _usePolling = false; // becomes true if WS can't connect
+
+function wsURL(){
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${proto}//${location.host}/`;
+}
+
+function connectWS(role, onState, onChange){
+  let opened = false;
+  try{
+    _ws = new WebSocket(wsURL());
+  }catch(e){
+    startPollingFallback(role, onState, onChange);
+    return;
+  }
+  // If the socket doesn't open in time, retry WS once, THEN fall back to polling.
+  // (A working LAN WebSocket opens in well under a second; the extra grace +
+  // single retry helps flaky iOS-Chrome upgrades connect on the fast path.)
+  const failTimer = setTimeout(()=>{
+    if(!opened){
+      try{ _ws.close(); }catch(_){}
+      if(!connectWS._retried){
+        connectWS._retried = true;
+        diagWarn('WebSocket slow — retrying once before HTTP fallback');
+        connectWS(role, onState, onChange);
+      } else {
+        startPollingFallback(role, onState, onChange);
+      }
+    }
+  }, 3500);
+
+  _ws.onopen = ()=>{
+    opened = true; _wsConnected = true; _usePolling = false;
+    connectWS._retried = false;
+    clearTimeout(failTimer);
+    _ws.send(JSON.stringify({kind:'hello', role}));
+    if(role==='faderboard') fbConn(true);
+    diagInfo('WebSocket connected ('+role+')');
+  };
+  _ws.onmessage = (ev)=>{
+    let msg; try{ msg = JSON.parse(ev.data); }catch(_){ return; }
+    if(msg.kind==='state' && onState) onState(msg.state);
+    else if(msg.kind==='change' && onChange) onChange(msg.change);
+    else if(msg.kind==='dupConsole') warnDuplicateConsole(msg.count);
+  };
+  _ws.onclose = ()=>{
+    _wsConnected = false;
+    if(role==='faderboard') fbConn(false);
+    // Try to reconnect after a short delay (unless we've gone to polling)
+    if(!_usePolling){
+      clearTimeout(_wsReconnectTimer);
+      _wsReconnectTimer = setTimeout(()=>connectWS(role, onState, onChange), 1500);
+    }
+  };
+  _ws.onerror = ()=>{ try{ _ws.close(); }catch(_){} };
+}
+
+function wsSendMsg(obj){
+  if(_ws && _wsConnected){
+    try{ _ws.send(JSON.stringify(obj)); return true; }catch(_){}
+  }
+  return false;
+}
+
+// ───────── MASTER (console) SIDE ─────────
+function startMasterSync(){
+  // Push snapshot over WS whenever state changes; also on a slow heartbeat.
+  connectWS('console',
+    null, // console doesn't receive state
+    (change)=>applyFaderChange(change) // console receives changes from boards
+  );
+  // Push state on a heartbeat (covers WS + fallback). 200ms is plenty over WS.
+  _syncTimer = setInterval(()=>{
+    const snap = buildFaderSnapshot();
+    if(!wsSendMsg({kind:'state', state:snap})){
+      // WS not available — use HTTP fallback
+      pushStateHTTP(snap);
+    }
+  }, 200);
+  diagInfo('Master sync started');
+}
+
+// Push state immediately (called right after any local change for snappy sync)
+function pushStateNow(){
+  const snap = buildFaderSnapshot();
+  if(!wsSendMsg({kind:'state', state:snap})) pushStateHTTP(snap);
+}
+
+async function pushStateHTTP(snap){
+  try{
+    const res = await fetch(SYNC_BASE + '/api/state', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(snap)
+    });
+    const data = await res.json();
+    if(data.changes && data.changes.length) data.changes.forEach(applyFaderChange);
+  }catch(e){ /* relay not reachable; console keeps working */ }
+}
+
+function startPollingFallback(role, onState, onChange){
+  _usePolling = true;
+  diagWarn('WebSocket unavailable — using HTTP polling fallback');
+  if(role==='faderboard'){
+    const poll = async ()=>{
+      try{
+        const res = await fetch(SYNC_BASE + '/api/state', {cache:'no-store'});
+        const data = await res.json();
+        fbConn(true);
+        if(onState) onState(data);
+      }catch(e){ fbConn(false); }
+    };
+    poll();
+    _syncTimer = setInterval(poll, 150);
+  }
+  // (master polling fallback is handled inside startMasterSync's heartbeat)
+}
+
+// ───────── FADER BOARD SIDE ─────────
+let _fbState = null;
+let _fbDragging = {};
+let _fbLocalOverride = {};
+let _fbPlayOverride = {};
+let _fbMuteOverride = {};
+let _fbMeterTimer = null;
+let _fbPage = 0;            // current page index (for phone pagination)
+let _fbPerPage = 999;       // track faders per page (recomputed on resize)
+let _fbSceneCooldown = 0;   // debounce scene fire taps
+let _fbViewMode = 'scene';  // 'all' | 'scene' — default to scene-following
+
+function fbToggleViewMode(){
+  _fbViewMode = _fbViewMode === 'all' ? 'scene' : 'all';
+  const btn = document.getElementById('fb-viewmode');
+  if(btn){
+    btn.textContent = _fbViewMode === 'all' ? 'ALL' : 'SCENE';
+    btn.classList.toggle('scene', _fbViewMode === 'scene');
+  }
+  _fbPage = 0;
+  rebuildFaderBoard();
+}
+
+function fbConn(ok){
+  const dot = document.getElementById('fb-conn-dot');
+  const txt = document.getElementById('fb-conn-text');
+  if(dot) dot.className = 'fb-conn-dot ' + (ok ? 'ok' : 'bad');
+  if(txt) txt.textContent = ok ? 'Connected' : 'Disconnected';
+  document.body.classList.toggle('fb-disconnected', !ok);
+}
+
+// How many track strips fit on one page, given current viewport width.
+// Master + 3 categories are always on page 1's left; tracks paginate.
+function computePerPage(){
+  const w = window.innerWidth;
+  // strip min-width incl gap: ~62px phone, ~84px tablet
+  const stripW = w <= 950 ? 62 : 84;
+  const fixed = 4; // master + 3 cats
+  const dividers = 30;
+  const usable = w - 36 - dividers;
+  const totalFit = Math.floor(usable / stripW);
+  // On a wide iPad, everything usually fits — no pagination.
+  // On a phone, reserve room for the 4 fixed strips on page 1.
+  const trackFit = Math.max(3, totalFit - (w <= 950 ? fixed : 0));
+  return trackFit;
+}
+
+function startFaderBoard(){
+  document.body.classList.add('faderboard-mode');
+  document.title = 'Offside Sound — Faders';
+  _fbPerPage = computePerPage();
+  let _fbResizeTimer = null;
+  window.addEventListener('resize', ()=>{
+    // Mobile browsers fire resize constantly (address bar show/hide). Debounce,
+    // and never rebuild mid-drag (that would detach the fader under the finger).
+    clearTimeout(_fbResizeTimer);
+    _fbResizeTimer = setTimeout(()=>{
+      if(_fbActiveFader) return; // don't disrupt an active drag
+      const np = computePerPage();
+      if(np !== _fbPerPage){ _fbPerPage = np; _fbPage = 0; rebuildFaderBoard(); }
+    }, 250);
+  });
+  // Connect via WebSocket; falls back to polling automatically.
+  connectWS('faderboard',
+    (state)=>{ _fbState = state; fbConn(true); renderFaderBoard(); updateSceneControls(); renderFavourites_fb(); },
+    null
+  );
+  _fbMeterTimer = setInterval(updateFaderMeters, 80);
+}
+
+// ── Scene controls ──
+function updateSceneControls(){
+  if(!_fbState || !_fbState.scene) return;
+  const sc = _fbState.scene;
+  // Topbar button shows the ACTIVE scene name
+  const activeEl = document.getElementById('fb-scene-active');
+  if(activeEl) activeEl.textContent = sc.activeName || (sc.hasActive ? '—' : 'No scene');
+  // Module contents (prev / next)
+  const prevName = document.getElementById('fb-mod-prev-name');
+  const nextName = document.getElementById('fb-mod-next-name');
+  if(prevName) prevName.textContent = sc.prev ? sc.prev.name : '— none —';
+  if(nextName) nextName.textContent = sc.next ? sc.next.name : '— end —';
+  // Dim (don't disable) when there's no target — disabling can swallow a tap if
+  // state momentarily flips during a transition. fbSceneAction guards anyway.
+  ['fb-mod-prev-fire','fb-mod-prev-xfade'].forEach(id=>{ const b=document.getElementById(id); if(b){ b.disabled=false; b.style.opacity = sc.prev ? '' : '0.4'; } });
+  ['fb-mod-next-fire','fb-mod-next-xfade'].forEach(id=>{ const b=document.getElementById(id); if(b){ b.disabled=false; b.style.opacity = sc.next ? '' : '0.4'; } });
+  // Notes banner — show only when a scene is active and it has notes.
+  const banner = document.getElementById('fb-notes-banner');
+  const noteText = document.getElementById('fb-notes-text');
+  const notes = (sc.hasActive && sc.notes && sc.notes.trim()) ? sc.notes.trim() : '';
+  if(banner && noteText){
+    if(notes){ noteText.textContent = notes; banner.classList.add('visible'); }
+    else { banner.classList.remove('visible'); }
+  }
+}
+
+function renderFavourites_fb(){
+  const wrap = document.getElementById('fb-favs');
+  if(!wrap || !_fbState) return;
+  const favs = _fbState.favourites || [];
+  // Only rebuild when the set actually changes (rebuilding every heartbeat could
+  // swallow a tap mid-press).
+  const sig = favs.map(f=>`${f.id}:${f.name}:${f.hasAudio?1:0}`).join('|');
+  if(sig === _fbFavSig) return;
+  _fbFavSig = sig;
+  if(!favs.length){ wrap.innerHTML=''; document.body.classList.remove('fb-has-favs'); return; }
+  document.body.classList.add('fb-has-favs');
+  let html = `<span class="fb-favs-tab-lbl">★ FAV</span>`;
+  favs.forEach(f=>{
+    html += `<button class="fb-fav-btn ${f.hasAudio?'':'no-audio'}" data-fbfav="${esc(f.id)}" onclick="fbFireFav('${esc(f.id)}')">${esc(f.name)}</button>`;
+  });
+  wrap.innerHTML = html;
+}
+let _fbFavSig = null;
+let _fbFavCooldown = {}; // per-favourite debounce timestamps
+function fbFireFav(id){
+  // Touchscreens can emit duplicate tap events (and an accidental double-tap is
+  // easy on a small button). Debounce per-favourite so one tap = one fire.
+  if(Date.now() < (_fbFavCooldown[id]||0)){ diagInfo(`Fav tap within debounce — ignored: ${id}`); return; }
+  _fbFavCooldown[id] = Date.now() + 500;
+  const btn = document.querySelector(`[data-fbfav="${id}"]`);
+  if(btn){ btn.classList.add('fav-fired'); setTimeout(()=>btn.classList.remove('fav-fired'),300); }
+  fbSendChange('fav', id, 'fire', true);
+  diagInfo(`Board send: fav/${id}/fire`);
+}
+
+function fbSceneAction(which, mode){
+  // which: 'prev'|'next'   mode: 'fire'|'xfade'
+  const sc = _fbState?.scene;
+  if(!sc){ diagWarn('Scene tap ignored: no scene state yet'); return; }
+  const target = which==='prev' ? sc.prev : sc.next;
+  if(!target){ diagWarn(`Scene tap ignored: no ${which} scene`); return; }
+  // Short debounce so an accidental double-tap doesn't double-fire, but not so
+  // long that real taps feel swallowed.
+  if(Date.now() < _fbSceneCooldown){ diagInfo('Scene tap within debounce — ignored'); return; }
+  _fbSceneCooldown = Date.now() + 150;
+  diagInfo(`Scene action: ${mode} → ${target.name}`);
+  fbSendChange('scene', null, mode==='xfade'?'xfadeId':'fireId', target.id);
+  // Optimistically reflect the new active scene name so the UI feels instant
+  // and you're not tempted to tap again while the round-trip completes.
+  const nameEl = document.getElementById('fb-scene-active');
+  if(nameEl) nameEl.textContent = target.name;
+  closeSceneModule();
+}
+
+function openSceneModule(){ document.getElementById('fb-scene-module').classList.add('open'); }
+function closeSceneModule(){ document.getElementById('fb-scene-module').classList.remove('open'); }
+function toggleSceneModule(){ document.getElementById('fb-scene-module').classList.toggle('open'); }
+
+function fbSendChange(type, id, field, value){
+  // Hold the local value long enough to cover the round-trip (board → server →
+  // console applies → console heartbeat → back to board), so it doesn't snap back.
+  _fbLocalOverride[`${type}:${id ?? ''}`] = { value, until: Date.now() + 1200 };
+  const msg = {type, id, field, value};
+  const sent = wsSendMsg({kind:'change', change:msg});
+  diagInfo(`Board send ${sent?'(ws)':'(http)'}: ${type}/${id ?? ''}/${field} = ${value}`);
+  if(!sent){
+    // Fallback to HTTP
+    fetch(SYNC_BASE + '/api/change', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(msg)
+    }).catch(()=>fbConn(false));
+  }
+}
+
+function _fbVal(key, fallback){
+  const o = _fbLocalOverride[key];
+  if(o && Date.now() < o.until) return o.value;
+  return fallback;
+}
+
+function _fbSortedTracks(){
+  const CO = ['BGM','SFX','AMB'];
+  let list = [..._fbState.tracks];
+  // SCENE mode: only tracks in the active scene
+  if(_fbViewMode === 'scene' && _fbState.scene && _fbState.scene.hasActive){
+    list = list.filter(t=>t.inScene);
+  }
+  return list.sort((a,b)=>{
+    if(a.cat!==b.cat) return CO.indexOf(a.cat)-CO.indexOf(b.cat);
+    return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'});
+  });
+}
+
+function _fbVisibleGroups(){
+  let list = [...(_fbState.groups||[])];
+  if(_fbViewMode === 'scene' && _fbState.scene && _fbState.scene.hasActive){
+    list = list.filter(g=>g.inScene);
+  }
+  return list.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
+}
+
+// The full ordered list of channel strips (groups first after categories, then tracks).
+// Each entry: {kind:'group'|'track', data}
+function _fbStripList(){
+  const groups = _fbVisibleGroups().map(g=>({kind:'group', data:g}));
+  const tracks = _fbSortedTracks().map(t=>({kind:'track', data:t}));
+  return [...groups, ...tracks];
+}
+
+// Which strip keys belong on the current page (groups + tracks paginated together)
+function _fbPageStripKeys(){
+  const strips = _fbStripList();
+  const pages = Math.max(1, Math.ceil(strips.length / _fbPerPage));
+  if(_fbPage >= pages) _fbPage = pages-1;
+  const start = _fbPage * _fbPerPage;
+  return strips.slice(start, start + _fbPerPage).map(s=> s.kind+':'+s.data.id);
+}
+
+function renderFaderBoard(){
+  const root = document.getElementById('fb-faders');
+  if(!root || !_fbState) return;
+  // Never rebuild the DOM while a fader is being dragged — it would detach the
+  // element under the user's finger. Defer the structural refresh until release.
+  if(_fbActiveFader){ _fbPendingRender = true; return; }
+  const pageKeys = _fbPageStripKeys();
+  const showFixed = (_fbPage === 0);
+  const wantKeys = [
+    ...(showFixed ? ['master','cat:BGM','cat:SFX','cat:AMB'] : []),
+    ...pageKeys
+  ];
+  const haveKeys = [...root.querySelectorAll('.fb-strip')].map(s=>s.dataset.key);
+  const sameStructure = wantKeys.length===haveKeys.length && wantKeys.every((k,i)=>k===haveKeys[i]);
+  if(!sameStructure){ rebuildFaderBoard(); return; }
+  if(showFixed){
+    updateFaderStrip('master', null, _fbState.master, false, false);
+    ['BGM','SFX','AMB'].forEach(cat=> updateFaderStrip('cat', cat, _fbState.catVol[cat] ?? 1, false, false));
+  }
+  const tById_ = {}; _fbState.tracks.forEach(t=>tById_[t.id]=t);
+  const gById_ = {}; (_fbState.groups||[]).forEach(g=>gById_[g.id]=g);
+  pageKeys.forEach(k=>{
+    const [kind, idStr] = k.split(':');
+    if(kind==='track'){
+      const t = tById_[parseInt(idStr)];
+      if(t) updateFaderStrip('track', t.id, t.volume, t.muted, t.playing);
+    } else {
+      const g = gById_[parseInt(idStr)];
+      if(g) updateGroupStrip(g);
+    }
+  });
+}
+
+function rebuildFaderBoard(){
+  const root = document.getElementById('fb-faders');
+  if(!root || !_fbState) return;
+  const strips = _fbStripList();
+  if(!strips.length && (!_fbState.tracks.length && !(_fbState.groups||[]).length)){
+    root.innerHTML = `<div class="fb-empty">No tracks in the current production.<br>Add tracks on the console to see faders here.</div>`;
+    renderPager();
+    return;
+  }
+  if(!strips.length && _fbViewMode==='scene'){
+    root.innerHTML = `<div class="fb-empty">No tracks in the active scene.<br>Switch to ALL to see every track, or fire a scene with tracks in it.</div>`;
+    renderPager();
+    return;
+  }
+  const pages = Math.max(1, Math.ceil(strips.length / _fbPerPage));
+  if(_fbPage >= pages) _fbPage = pages-1;
+  const showFixed = (_fbPage === 0);
+  let html = '';
+  if(showFixed){
+    html += faderStripHTML('master', null, 'MASTER', _fbState.master, false, false, 'master');
+    html += `<div class="fb-strip-divider"></div>`;
+    html += faderStripHTML('cat', 'BGM', 'BGM', _fbState.catVol.BGM ?? 1, false, false, 'cat cat-BGM');
+    html += faderStripHTML('cat', 'SFX', 'SFX', _fbState.catVol.SFX ?? 1, false, false, 'cat cat-SFX');
+    html += faderStripHTML('cat', 'AMB', 'AMB', _fbState.catVol.AMB ?? 1, false, false, 'cat cat-AMB');
+    html += `<div class="fb-strip-divider"></div>`;
+  }
+  const start = _fbPage * _fbPerPage;
+  const pageStrips = strips.slice(start, start + _fbPerPage);
+  pageStrips.forEach(s=>{
+    if(s.kind==='group') html += groupStripHTML(s.data);
+    else { const t=s.data; html += faderStripHTML('track', t.id, t.name, t.volume, t.muted, t.playing, 'track-strip cat-'+t.cat, t.cat, t.inScene); }
+  });
+  root.innerHTML = html;
+  renderPager();
+  sizeFaders();
+}
+
+// The faders are horizontal range inputs rotated -90°. For the rotation to fill
+// the vertical space, each slider's width must equal its column's measured height.
+function sizeFaders(){ /* custom faders are pure CSS — no sizing needed */ }
+
+// ── Custom touch fader drag ──
+let _fbActiveFader = null; // {key,type,id,...}
+let _fbPendingRender = false; // set if a state update arrived mid-drag
+function fbFaderDown(ev, type, idStr){
+  ev.preventDefault();
+  const faderEl = ev.currentTarget;
+  const trackEl = faderEl.querySelector('.fb-fader-track');
+  const key = `${type}:${idStr}`;
+  // Track ids are numeric; group and category ids are strings. Only parseInt tracks.
+  const id = idStr==='' ? null : (type==='track' ? parseInt(idStr) : idStr);
+  // Measure the track's geometry ONCE, now, while the element is definitely live.
+  const rect = trackEl.getBoundingClientRect();
+  const fill = faderEl.querySelector('[data-fb="fill"]');
+  const cap = faderEl.querySelector('[data-fb="cap"]');
+  const strip = faderEl.closest('.fb-strip');
+  const pctEl = strip ? strip.querySelector('[data-fb="pct"]') : null;
+  // Current value (from the cap's position) — drag is RELATIVE to this, so the
+  // fader doesn't jump to wherever you touch. You grab the level and slide it.
+  const startVal = cap ? (parseFloat(cap.style.bottom) || 0) / 100 : 0;
+  _fbActiveFader = {
+    key, type, id, height: rect.height, fill, cap, pctEl,
+    startY: ev.clientY, startVal
+  };
+  _fbDragging[key] = true;
+  faderEl.setPointerCapture?.(ev.pointerId);
+  // NOTE: do NOT move on the initial touch — only on drag.
+  faderEl.onpointermove = (e)=>{ if(_fbActiveFader) fbFaderMoveTo(e.clientY); };
+  const end = (e)=>{
+    // Make sure the final resting value is sent (the last move may have been
+    // throttled out), so the console lands exactly where the fader stopped.
+    if(_fbActiveFader && _fbActiveFader.lastVal !== undefined &&
+       _fbActiveFader.lastVal !== _fbActiveFader.sentVal){
+      fbSendChange(_fbActiveFader.type, _fbActiveFader.id, 'volume', _fbActiveFader.lastVal);
+    }
+    _fbDragging[key] = false;
+    _fbActiveFader = null;
+    faderEl.onpointermove = null;
+    faderEl.onpointerup = null;
+    faderEl.onpointercancel = null;
+    try{ faderEl.releasePointerCapture?.(e.pointerId); }catch(_){}
+    if(_fbPendingRender){ _fbPendingRender = false; renderFaderBoard(); }
+  };
+  faderEl.onpointerup = end;
+  faderEl.onpointercancel = end;
+}
+function fbFaderMoveTo(clientY){
+  if(!_fbActiveFader) return;
+  const { type, id, height, fill, cap, pctEl, startY, startVal } = _fbActiveFader;
+  if(!height || height <= 0) return; // guard: never divide by zero
+  // Relative drag: how far (as a fraction of track height) have we moved from
+  // the touch-down point? Up = louder.
+  const deltaFrac = (startY - clientY) / height;
+  let v = startVal + deltaFrac;
+  v = Math.max(0, Math.min(1, v));
+  v = Math.round(v*100)/100;
+  // Visual update is instant (every move) so the fader feels smooth…
+  if(fill) fill.style.height = (v*100)+'%';
+  if(cap) cap.style.bottom = (v*100)+'%';
+  if(pctEl) pctEl.textContent = Math.round(v*100)+'%';
+  // …but the network send is throttled to ~60/sec to avoid flooding the link.
+  _fbActiveFader.lastVal = v;
+  const now = performance.now();
+  if(now - (_fbActiveFader.lastSent || 0) >= 16){
+    _fbActiveFader.lastSent = now;
+    _fbActiveFader.sentVal = v;
+    fbSendChange(type, id, 'volume', v);
+  }
+}
+
+function renderPager(){
+  const pager = document.getElementById('fb-pager');
+  if(!pager || !_fbState){ return; }
+  const strips = _fbStripList();
+  const pages = Math.max(1, Math.ceil(strips.length / _fbPerPage));
+  if(pages <= 1){
+    pager.className = 'fb-pager';
+    pager.innerHTML = '';
+    return;
+  }
+  pager.className = 'fb-pager multi';
+  let html = `<span class="fb-pager-label">PAGE ${_fbPage+1} / ${pages}</span>`;
+  for(let i=0;i<pages;i++){
+    html += `<div class="fb-pager-dot ${i===_fbPage?'active':''}" onclick="fbGoPage(${i})"></div>`;
+  }
+  pager.innerHTML = html;
+}
+
+function fbGoPage(i){
+  _fbPage = i;
+  rebuildFaderBoard();
+}
+
+// A custom touch fader: a track with a fill (from the bottom) and a draggable cap.
+// pointer events on .fb-fader handle drag. No <input type=range>.
+function customFaderHTML(type, id, value, playing){
+  const key = `${type}:${id ?? ''}`;
+  const pctH = Math.round(value*100);
+  // cap sits at value height; fill rises to value
+  return `<div class="fb-fader" data-fb="fader" data-key="${key}" data-type="${type}" data-id="${id ?? ''}"
+      onpointerdown="fbFaderDown(event,'${type}','${id ?? ''}')">
+      <div class="fb-fader-track">
+        <div class="fb-fader-fill" data-fb="fill" style="height:${pctH}%"></div>
+        <div class="fb-fader-cap" data-fb="cap" style="bottom:${pctH}%"></div>
+      </div>
+    </div>`;
+}
+
+function faderStripHTML(type, id, label, value, muted, playing, extraCls='', catTag='', inScene=false){
+  const key = `${type}:${id ?? ''}`;
+  const pct = Math.round(value*100);
+  const fillH = Math.round(value*100);
+  const isTrack = type==='track';
+  const staged = isTrack && inScene && !playing;
+  // Meters only exist for individual tracks (and groups). Master/category faders
+  // have no live meter, so we render the fader full-width with no meter column.
+  const hasMeter = isTrack;
+  return `<div class="fb-strip ${extraCls} ${muted?'is-muted':''} ${playing?'is-playing':''} ${staged?'is-staged':''} ${hasMeter?'':'no-meter'}" data-key="${key}" data-type="${type}" data-id="${id ?? ''}">
+    <div class="fb-strip-label">${esc(label)}</div>
+    ${staged?`<div class="fb-staged-tag">staged</div>`:(catTag?`<div class="fb-cat-tag">${catTag}</div>`:'')}
+    ${isTrack ? `<button class="fb-playstop ${playing?'playing':''}" data-fb="playstop" onclick="fbPlayStop('track',${id})">${playing?'■':'▶'}</button>` : ''}
+    <div class="fb-pct" data-fb="pct">${pct}%</div>
+    <div class="fb-fader-zone">
+      ${customFaderHTML(type, id, value, playing)}
+      ${hasMeter ? `<div class="fb-meter"><div class="fb-meter-fill" data-fb="meter" style="height:${playing?fillH:0}%"></div></div>` : ''}
+    </div>
+    ${isTrack ? `<button class="fb-mute" data-fb="mute" onclick="fbToggleMute(${id})">${muted?'UNMUTE':'MUTE'}</button>` : `<div class="fb-spacer"></div>`}
+  </div>`;
+}
+
+function groupStripHTML(g){
+  const key = `group:${g.id}`;
+  const pct = Math.round(g.volume*100);
+  const fillH = Math.round(g.volume*100);
+  return `<div class="fb-strip is-group ${g.playing?'is-playing':''}" data-key="${key}" data-type="group" data-id="${g.id}">
+    <div class="fb-strip-label">⛬ ${esc(g.name)}</div>
+    <div class="fb-cat-tag">group</div>
+    <button class="fb-playstop ${g.playing?'playing':''}" data-fb="playstop" onclick="fbPlayStop('group','${g.id}')">${g.playing?'■':'▶'}</button>
+    <div class="fb-pct" data-fb="pct">${pct}%</div>
+    <div class="fb-fader-zone">
+      ${customFaderHTML('group', g.id, g.volume, g.playing)}
+      <div class="fb-meter"><div class="fb-meter-fill" data-fb="meter" style="height:${g.playing?fillH:0}%"></div></div>
+    </div>
+    <div class="fb-spacer"></div>
+  </div>`;
+}
+
+function updateGroupStrip(g){
+  const key = `group:${g.id}`;
+  const strip = document.querySelector(`.fb-strip[data-key="${key}"]`);
+  if(!strip) return;
+  const displayVal = _fbVal(key, g.volume);
+  if(!_fbDragging[key]) setFaderVisual(strip, displayVal);
+  const pct = strip.querySelector('[data-fb="pct"]');
+  if(pct) pct.textContent = Math.round(displayVal*100)+'%';
+  const po = _fbPlayState(key);
+  const effPlaying = po !== null ? po : !!g.playing;
+  strip.classList.toggle('is-playing', effPlaying);
+  const ps = strip.querySelector('[data-fb="playstop"]');
+  if(ps){ ps.textContent = effPlaying ? '■' : '▶'; ps.classList.toggle('playing', effPlaying); }
+}
+
+// Move a strip's custom fader cap + fill to a value (0..1)
+function setFaderVisual(strip, v){
+  const fill = strip.querySelector('[data-fb="fill"]');
+  const cap = strip.querySelector('[data-fb="cap"]');
+  const h = Math.round(v*100);
+  if(fill) fill.style.height = h+'%';
+  if(cap) cap.style.bottom = h+'%';
+}
+
+function updateFaderStrip(type, id, value, muted, playing){
+  const key = `${type}:${id ?? ''}`;
+  const strip = document.querySelector(`.fb-strip[data-key="${key}"]`);
+  if(!strip) return;
+  const displayVal = _fbVal(key, value);
+  if(!_fbDragging[key]) setFaderVisual(strip, displayVal);
+  const pct = strip.querySelector('[data-fb="pct"]');
+  if(pct) pct.textContent = Math.round(displayVal*100)+'%';
+  const mo = _fbMuteState(key);
+  const effMuted = mo !== null ? mo : !!muted;
+  strip.classList.toggle('is-muted', effMuted);
+  // Respect optimistic play state if within hold window
+  const po = _fbPlayState(key);
+  const effPlaying = po !== null ? po : !!playing;
+  strip.classList.toggle('is-playing', effPlaying);
+  const mute = strip.querySelector('[data-fb="mute"]');
+  if(mute) mute.textContent = effMuted ? 'UNMUTE' : 'MUTE';
+  // Play/stop button (tracks)
+  const ps = strip.querySelector('[data-fb="playstop"]');
+  if(ps){ ps.textContent = effPlaying ? '■' : '▶'; ps.classList.toggle('playing', effPlaying); }
+  // Staged styling: in a scene but not playing.
+  if(type==='track'){
+    const t = (_fbState?.tracks||[]).find(x=>x.id===id);
+    const staged = t && t.inScene && !effPlaying;
+    strip.classList.toggle('is-staged', !!staged);
+  }
+}
+
+function updateFaderMeters(){
+  if(!_fbState) return;
+  const byId = {};
+  _fbState.tracks.forEach(t=>byId[t.id]=t);
+  const gById_ = {}; (_fbState.groups||[]).forEach(g=>gById_[g.id]=g);
+  // Track strips
+  document.querySelectorAll('.fb-strip[data-type="track"]').forEach(strip=>{
+    const id = parseInt(strip.dataset.id);
+    const t = byId[id];
+    const meter = strip.querySelector('[data-fb="meter"]');
+    if(!meter) return;
+    if(t && t.playing && !t.muted){
+      const h = Math.min(100, Math.round((t.level ?? t.volume)*100));
+      meter.style.height = h + '%';
+    } else {
+      meter.style.height = '0%';
+    }
+  });
+  // Group strips (group ids are strings like "g8", so don't parseInt them)
+  document.querySelectorAll('.fb-strip[data-type="group"]').forEach(strip=>{
+    const id = strip.dataset.id;
+    const g = gById_[id];
+    const meter = strip.querySelector('[data-fb="meter"]');
+    if(!meter) return;
+    if(g && g.playing){
+      const h = Math.min(100, Math.round((g.level ?? g.volume)*100));
+      meter.style.height = h + '%';
+    } else {
+      meter.style.height = '0%';
+    }
+  });
+}
+
+function fbToggleMute(id){
+  const key = `track:${id}`;
+  const strip = document.querySelector(`.fb-strip[data-key="${key}"]`);
+  // Determine current muted state from the DOM (what the user sees), not stale state
+  let nowMuted = strip ? strip.classList.contains('is-muted') : false;
+  const willMute = !nowMuted;
+  if(strip){
+    strip.classList.toggle('is-muted', willMute);
+    const mute = strip.querySelector('[data-fb="mute"]');
+    if(mute) mute.textContent = willMute ? 'UNMUTE' : 'MUTE';
+  }
+  _fbMuteOverride[key] = { muted: willMute, until: Date.now() + 900 };
+  fbSendChange('track', id, 'muted', willMute);
+}
+function _fbMuteState(key){
+  const o = _fbMuteOverride[key];
+  if(o && Date.now() < o.until) return o.muted;
+  return null;
+}
+
+function fbPlayStop(type, id){
+  const key = `${type}:${id}`;
+  const strip = document.querySelector(`.fb-strip[data-key="${key}"]`);
+  let willPlay = true;
+  if(strip){
+    const ps = strip.querySelector('[data-fb="playstop"]');
+    const wasPlaying = ps && ps.classList.contains('playing');
+    willPlay = !wasPlaying;
+    if(ps){ ps.textContent = willPlay ? '■' : '▶'; ps.classList.toggle('playing', willPlay); }
+    strip.classList.toggle('is-playing', willPlay);
+  }
+  // Hold this play state for ~900ms so the next few polls don't flip it back
+  // while the change makes its round-trip to the master and back.
+  _fbPlayOverride[key] = { playing: willPlay, until: Date.now() + 900 };
+  fbSendChange(type, id, 'playStop', true);
+}
+
+// Returns the optimistic play state if still within the hold window, else null
+function _fbPlayState(key){
+  const o = _fbPlayOverride[key];
+  if(o && Date.now() < o.until) return o.playing;
+  return null;
+}
+
+function fbStopAll(){
+  fbSendChange('master', null, 'fadeAll', true);
+}
+
+
+// ════════════════════════════════════════════════
+// ROLE CHOOSER (bare local-server URL → pick console or fader board)
+// ════════════════════════════════════════════════
+function showRoleChooser(){
+  document.body.classList.add('choose-mode');
+}
+function chooseRole(role){
+  // Navigate to the proper mode URL so a refresh remembers the choice and
+  // the normal init path runs cleanly.
+  const u = new URL(window.location.href);
+  u.searchParams.set('mode', role);
+  window.location.href = u.toString();
 }
 
 // ════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════
 makeFloatingDraggable();
-loadProjectsIndex();
-migrateLegacyData();
 
-// Always open the picker on launch. User must explicitly choose a production.
-openProjectPicker(true);
-// If there's only one project, auto-load it but stay in the picker so the user can confirm.
-// Actually: just show the picker — user picks. Cleaner UX.
+// Remind to export before closing the console (only when a production with
+// tracks is loaded). Browsers show their own generic "Leave site?" dialog.
+window.addEventListener('beforeunload', (e)=>{
+  if(APP_MODE === 'console' && tracks && tracks.length){
+    e.preventDefault();
+    e.returnValue = ''; // triggers the native confirm dialog
+    return '';
+  }
+});
+
+if(APP_MODE === 'choose'){
+  showRoleChooser();
+} else if(APP_MODE === 'faderboard'){
+  // Second-device mixing surface — no project picker, no audio engine.
+  startFaderBoard();
+} else {
+  // Full console.
+  loadProjectsIndex();
+  migrateLegacyData();
+  // Always open the picker on launch. User must explicitly choose a production.
+  openProjectPicker(true);
+  // Start pushing fader state to the relay (harmless if no server / no fader board).
+  startMasterSync();
+  // Unlock audio on the first interaction with the console, so that playback
+  // triggered remotely from the fader board is actually audible afterwards.
+  const _unlock = ()=>{
+    try{ const ctx=getAudioCtx(); if(ctx.state==='suspended') ctx.resume().catch(()=>{}); }catch(_){}
+    unlockAudioForRemote();
+    window.removeEventListener('pointerdown', _unlock);
+    window.removeEventListener('keydown', _unlock);
+  };
+  window.addEventListener('pointerdown', _unlock);
+  window.addEventListener('keydown', _unlock);
+}
 </script>
 </body>
 </html>
