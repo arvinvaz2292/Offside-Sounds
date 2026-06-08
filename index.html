@@ -24,7 +24,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:1
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9000}
 
 /* ── TOPBAR ── */
-.topbar{position:sticky;top:0;z-index:500;height:62px;background:rgba(7,10,13,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:14px}
+.topbar{position:sticky;top:0;z-index:500;height:62px;background:rgba(7,10,13,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:12px}
 .brand-name{font-family:var(--display);font-size:24px;letter-spacing:2.5px;line-height:1;flex-shrink:0;white-space:nowrap}
 
 /* Project pill in topbar */
@@ -81,7 +81,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .pp-tool-btn:disabled:hover{border-color:var(--border);color:var(--muted2)}
 .brand-sub{font-size:9px;color:var(--muted2);letter-spacing:2.5px;text-transform:uppercase;flex-shrink:0}
 
-.active-scene-badge{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.4);border-radius:18px;flex-shrink:0;min-width:0;max-width:240px}
+.active-scene-badge{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.4);border-radius:18px;flex-shrink:1;min-width:0;max-width:240px;overflow:hidden}
+.active-scene-badge .asb-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .asb-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.6s infinite;flex-shrink:0}
 .asb-label{font-size:8px;letter-spacing:2px;color:var(--green2);font-weight:600;flex-shrink:0}
 .asb-name{font-size:12px;font-weight:600;color:var(--green);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px}
@@ -89,7 +90,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .master-row{display:flex;align-items:center;gap:10px;font-size:10px;color:var(--muted2);letter-spacing:1.5px;flex-shrink:0}
 .master-row input[type=range]{width:100px}
 .master-val{color:var(--green);min-width:36px;font-weight:600;font-size:11px}
-.topbar-right{display:flex;gap:8px;margin-left:auto;align-items:center}
+.topbar-right{display:flex;gap:8px;margin-left:auto;align-items:center;flex-shrink:0}
 button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .btn{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:9px 15px;border-radius:8px;white-space:nowrap}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted2)}.btn-ghost:hover{border-color:var(--muted2);color:var(--text)}
@@ -1026,7 +1027,6 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
       <input type="file" id="upload-input-files" accept=".mp3,.wav,.m4a,.aac,.ogg,.flac,.aiff,.opus,.webm,audio/*" multiple style="display:none" onchange="uploadMulti(event);closeUploadMenu()">
       <input type="file" id="upload-input-folder" webkitdirectory directory multiple style="display:none" onchange="uploadMulti(event);closeUploadMenu()">
     </div>
-    <button class="btn btn-ghost" onclick="createGroup()">+ GROUP</button>
     <button class="btn btn-purple" onclick="openMixer()" title="Global mixer — all tracks at once">▤ MIXER</button>
     <button class="btn btn-blue" onclick="toggleFloatingWindow()" title="Show / hide control panel">⚙ CONTROLS</button>
     <button class="btn btn-ghost btn-help" onclick="openReadme()" title="How to use Offside Sound">?</button>
@@ -1279,7 +1279,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
       <p>Add the active scene's notes in the textarea below the scene. They show up in a banner above the track area when fired — useful for cue numbers, timings, or reminders.</p>
 
       <h3>⛬ Groups (stems)</h3>
-      <p>A <strong>Group</strong> plays several stems in sample-accurate sync — drum kit, multitrack song, ambient layers. Tap <strong>+ GROUP</strong> in the topbar, then on each track tap the dashed <strong>G+</strong> button to add it to the group.</p>
+      <p>A <strong>Group</strong> plays several stems in sample-accurate sync — drum kit, multitrack song, ambient layers. On any track, tap the dashed <strong>G+</strong> button and choose <strong>+ New group…</strong> to start a group, then tap <strong>G+</strong> on other tracks to add them to it.</p>
       <p>Inside the group container: one shared seek bar for all stems, individual volume sliders per stem (with mini-waveforms), group volume, fade in/out, and rewind. Hit play on the group and every stem fires at the same instant — no drift. Add a group to a scene just like a track, using the <strong>+ SCENE</strong> button on the group's header.</p>
 
       <h3>⚙ Controls window</h3>
