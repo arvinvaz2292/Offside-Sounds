@@ -1627,7 +1627,7 @@ async function ensureGroupBuffers(g){
   if(!g.masterGain){
     g.audioCtx = ctx;
     g.masterGain = ctx.createGain();
-    g.masterGain.gain.value = g.volume;
+    g.masterGain.gain.value = groupEffectiveVol(g);
     g.masterGain.connect(ctx.destination);
   }
   const members = g.trackIds.map(tById).filter(t=>t && t.src);
@@ -1737,7 +1737,7 @@ function stopGroupSources(g){
     try{ g.masterGain.disconnect(); }catch(_){}
     try{
       const ng = g.audioCtx.createGain();
-      ng.gain.value = g.volume;
+      ng.gain.value = groupEffectiveVol(g);
       ng.connect(g.audioCtx.destination);
       g.masterGain = ng;
     }catch(_){}
@@ -1756,13 +1756,24 @@ function setStemAudioVolume(g, trackId, v){
 }
 
 // Update group master gain smoothly
+// Groups are always music, so they're treated as BGM: their output is scaled by
+// the BGM category fader and the master fader, exactly like BGM tracks. The
+// group's own volume (g.volume) is the per-group trim on top of that.
+//   group output = g.volume × BGM × master
+function groupEffectiveVol(g){
+  return (g.volume ?? 1) * (catVol.BGM ?? 1) * masterVol;
+}
+
 function setGroupAudioVolume(g, v){
   if(!g.masterGain) return;
   const ctx = g.audioCtx;
   const now = ctx.currentTime;
+  // v is the group's own volume; fold in BGM + master so the BGM and master
+  // faders duck the music groups too.
+  const eff = (v ?? g.volume ?? 1) * (catVol.BGM ?? 1) * masterVol;
   g.masterGain.gain.cancelScheduledValues(now);
   g.masterGain.gain.setValueAtTime(g.masterGain.gain.value, now);
-  g.masterGain.gain.linearRampToValueAtTime(v, now + 0.05);
+  g.masterGain.gain.linearRampToValueAtTime(eff, now + 0.05);
 }
 
 // Current playhead position (in seconds) for a group
@@ -2264,6 +2275,8 @@ function setMaster(v){
   const sm=document.getElementById('st-master'); if(sm) sm.textContent=pct;
   const sl=document.getElementById('master-slider'); if(sl && parseFloat(sl.value)!==masterVol) sl.value=masterVol;
   tracks.forEach(t=>{if(t.ws)t.ws.setVolume(effectiveVol(t));});
+  // Groups (music) follow master too.
+  groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); });
   autoSave();
 }
 
@@ -2279,6 +2292,8 @@ function setCatVol(cat,v){
   catVol[cat]=parseFloat(v);
   catLiveVol[cat]=catVol[cat]; // manual move sets the live level directly
   tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
+  // Groups are treated as BGM, so the BGM fader scales playing groups too.
+  if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
   const lbl=document.getElementById(`catvol-val-${cat}`);
   if(lbl) lbl.textContent=Math.round(catVol[cat]*100)+'%';
   const sl=document.getElementById(`catvol-slider-${cat}`);
@@ -2338,6 +2353,9 @@ function applyCatLive(cat){
   const prev=catVol[cat];
   catVol[cat]=catLiveVol[cat];
   tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
+  // Groups are BGM — fade them along with the BGM category. setGroupAudioVolume
+  // reads catVol.BGM, which is the live value inside this window.
+  if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
   catVol[cat]=prev;
 }
 
@@ -3941,7 +3959,7 @@ function fireScene(sid,xfade=false){
     const vp = g.el?.querySelector('[data-grole="vol-pct"]'); if(vp) vp.textContent=Math.round(g.volume*100)+'%';
     const vs = g.el?.querySelector('[data-grole="vol-slider"]'); if(vs) vs.value=g.volume;
     if(g.masterGain && !(xfade && wasPlaying && willPlay)){
-      g.masterGain.gain.value = g.volume;
+      g.masterGain.gain.value = groupEffectiveVol(g);
     }
 
     if(!xfade || fadeDur<=0){
@@ -3967,7 +3985,7 @@ function fireScene(sid,xfade=false){
         const sv = g.masterGain.gain.value;
         g.masterGain.gain.cancelScheduledValues(now);
         g.masterGain.gain.setValueAtTime(sv, now);
-        g.masterGain.gain.linearRampToValueAtTime(snap.volume, now + fadeDur/1000);
+        g.masterGain.gain.linearRampToValueAtTime(snap.volume * (catVol.BGM ?? 1) * masterVol, now + fadeDur/1000);
       }
     } else if(wasPlaying && !willPlay){
       if(snap.included) return; // staged, leave it
@@ -4007,7 +4025,7 @@ function fireScene(sid,xfade=false){
             const now = c.currentTime;
             g.masterGain.gain.cancelScheduledValues(now);
             g.masterGain.gain.setValueAtTime(0, now);
-            g.masterGain.gain.linearRampToValueAtTime(snap.volume, now + fadeDur/1000);
+            g.masterGain.gain.linearRampToValueAtTime(snap.volume * (catVol.BGM ?? 1) * masterVol, now + fadeDur/1000);
           }
           layoutTracks();
         } finally { g._starting = false; }
@@ -5471,8 +5489,8 @@ function buildFaderSnapshot(){
     })),
     groups: groups.map(g=>({
       id: g.id, name: g.name, volume: g.volume, playing: !!g.isPlaying,
-      cat: (tById(g.trackIds[0])||{}).cat || 'BGM',
-      level: g.isPlaying ? (g.volume * (catVol[ (tById(g.trackIds[0])||{}).cat ] ?? 1) * masterVol) : 0,
+      cat: 'BGM',
+      level: g.isPlaying ? (g.volume * (catVol.BGM ?? 1) * masterVol) : 0,
       inScene: sceneGroupIds.has(g.id)
     })),
     scene: {
