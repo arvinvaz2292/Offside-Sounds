@@ -620,6 +620,8 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 
 /* Mixer search box */
 .mxr-search{background:var(--s3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:11px;padding:6px 10px;border-radius:6px;width:180px;outline:none;transition:all .12s}
+.mxr-viewmode{background:transparent;border:1px solid #c89bff;color:#c89bff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .12s;white-space:nowrap;min-width:60px}
+.mxr-viewmode.scene{background:#c89bff;color:#000}
 .mxr-search:focus{border-color:#c89bff;background:var(--s2)}
 
 /* Mixer rows */
@@ -1417,6 +1419,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
         <span class="modal-sub" id="mxr-count"></span>
       </div>
       <div class="modal-head-actions">
+        <button class="mxr-viewmode" id="mxr-viewmode" onclick="mxrToggleViewMode()" title="Show all tracks or only the active scene's tracks">ALL</button>
         <input type="search" class="mxr-search" id="mxr-search" placeholder="Filter…" oninput="renderMixer()">
         <button class="modal-close" onclick="closeMixer()" title="Close">✕</button>
       </div>
@@ -4413,6 +4416,12 @@ function closeScenePreview(){
 let _mixerRefreshTimer = null;
 function openMixer(){
   document.getElementById('mixer-modal').classList.add('open');
+  // Reflect the current view mode on the toggle button.
+  const vmBtn = document.getElementById('mxr-viewmode');
+  if(vmBtn){
+    vmBtn.textContent = _mxrViewMode === 'scene' ? 'SCENE' : 'ALL';
+    vmBtn.classList.toggle('scene', _mxrViewMode === 'scene');
+  }
   renderMixer();
   // While open, refresh the mixer every 250ms so playing state stays live
   if(!_mixerRefreshTimer){
@@ -5185,6 +5194,18 @@ function _sceneTagsFor(itemId, kind){
   }).map(s=>s.name);
 }
 
+let _mxrViewMode = 'all';  // 'all' | 'scene' — global mixer filter
+
+function mxrToggleViewMode(){
+  _mxrViewMode = _mxrViewMode === 'all' ? 'scene' : 'all';
+  const btn = document.getElementById('mxr-viewmode');
+  if(btn){
+    btn.textContent = _mxrViewMode === 'scene' ? 'SCENE' : 'ALL';
+    btn.classList.toggle('scene', _mxrViewMode === 'scene');
+  }
+  renderMixer();
+}
+
 function renderMixer(){
   const body = document.getElementById('mxr-body');
   const search = (document.getElementById('mxr-search')?.value || '').trim().toLowerCase();
@@ -5213,11 +5234,12 @@ function renderMixer(){
       </div>`).join('')}
   </div>`;
 
-  // Filter helper
+  // Filter helper — by search text, and (in SCENE mode) by active-scene membership.
+  const sceneMode = _mxrViewMode === 'scene' && !!activeSceneId;
   const matches = (name) => !search || name.toLowerCase().includes(search);
 
   // Groups section
-  const filteredGroups = groups.filter(g=>matches(g.name));
+  const filteredGroups = groups.filter(g=>matches(g.name) && (!sceneMode || isGroupInActiveScene(g) || g.isPlaying));
   if(filteredGroups.length){
     html += `<div class="mxr-section">
       <div class="mxr-section-title">Groups <span class="count" style="color:var(--muted);font-family:var(--mono);font-size:10px">${filteredGroups.length}</span></div>`;
@@ -5243,7 +5265,7 @@ function renderMixer(){
 
   // Tracks section, grouped by category
   CAT_ORDER.forEach(cat=>{
-    const items = tracks.filter(t=>t.cat===cat && matches(t.name));
+    const items = tracks.filter(t=>t.cat===cat && matches(t.name) && (!sceneMode || isInActiveScene(t) || t.playing));
     if(!items.length) return;
     items.sort((a,b)=>{
       if(a.playing !== b.playing) return a.playing ? -1 : 1;
