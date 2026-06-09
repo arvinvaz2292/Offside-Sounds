@@ -508,6 +508,9 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 
 /* status */
 .status{position:fixed;bottom:0;left:0;right:0;height:36px;background:rgba(7,10,13,.97);border-top:1px solid var(--border);display:flex;align-items:center;gap:22px;padding:0 22px;font-size:10px;color:var(--muted);letter-spacing:1.5px;z-index:600}
+/* The status bar is keyboard-hint chrome for the console only — hide it on the
+   touch fader board and the cue-light display to reclaim that bottom space. */
+body.faderboard-mode .status,body.cuelight-mode .status{display:none!important}
 .status-item{display:flex;align-items:center;gap:6px}
 .status-val{color:var(--text2);font-weight:600}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0}
@@ -916,6 +919,13 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 .fb-mute{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted2);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:9px 0;border-radius:8px;cursor:pointer;transition:all .12s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
 .fb-mute:active{transform:scale(.94)}
 .fb-strip.is-muted .fb-mute{background:var(--red);border-color:var(--red);color:#fff}
+/* Category FADE OUT / FADE IN toggle */
+.fb-catfade{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--amber);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;padding:9px 0;border-radius:8px;cursor:pointer;transition:all .12s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.fb-catfade:active{transform:scale(.94)}
+.fb-catfade.faded{background:var(--amber);border-color:var(--amber);color:#000;animation:cuePulse 1s ease-in-out infinite}
+/* A faded-out category strip dims its fader so it's clear it's silenced */
+.fb-strip.is-cat-faded .fb-fader-fill,.fb-strip.is-cat-faded .fb-fader-cap{opacity:.4}
+.fb-strip.is-cat-faded .fb-pct{color:var(--muted)}
 .fb-spacer{height:38px;flex-shrink:0}
 .fb-empty{margin:auto;color:var(--muted);font-family:var(--mono);font-size:13px;text-align:center;line-height:1.7;padding:0 30px}
 
@@ -974,6 +984,38 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
   .fb-playstop{padding:5px 0}
   .fb-mute{padding:5px 0}
   .fb-fader-zone{min-height:48px}
+}
+
+/* ── Portrait orientation (phone/iPad held upright) ──
+   The fader area now has the full height (status bar removed), so make the
+   faders tall and let the topbar wrap instead of overflowing. Strips stay in a
+   horizontal scroll row but are narrower so several show at once. */
+@media (orientation: portrait){
+  body.faderboard-mode #faderboard-root{padding-bottom:env(safe-area-inset-bottom,0)}
+  .fb-topbar{flex-wrap:wrap;row-gap:8px;padding:10px 14px}
+  /* Let the scene trigger and action buttons share rows neatly */
+  .fb-scene-trigger{margin-left:0}
+  .fb-topbar .fb-conn{order:-1}
+  .fb-faders{padding:14px 12px;gap:9px;align-items:stretch}
+  /* Narrower strips → more visible per screen; the tall height is the point */
+  .fb-strip{min-width:84px;max-width:140px}
+  .fb-fader-zone{min-height:160px}     /* tall throw for finer control */
+  .fb-strip-label{font-size:12px;min-height:34px;-webkit-line-clamp:2}
+  .fb-pct{font-size:16px}
+  .fb-playstop{padding:11px 0;font-size:17px}
+  .fb-mute{padding:11px 0;font-size:12px}
+  .fb-fader{width:52px}
+  .fb-fader-cap{width:46px;height:28px}
+  .fb-meter{width:14px}
+  /* Scene-notes banner: cap height so it never crowds the faders */
+  .fb-notes-text{max-height:14vh}
+}
+/* Narrow portrait (phones): tighten a touch more so 3–4 strips fit */
+@media (orientation: portrait) and (max-width: 600px){
+  .fb-strip{min-width:74px}
+  .fb-fader{width:46px}
+  .fb-fader-cap{width:40px;height:24px}
+  .fb-fader-zone{min-height:130px}
 }
 
 /* add-track button in pool header */
@@ -1633,6 +1675,9 @@ let lcid=0;        // counter for light cue ids
 let cueState={ phase:'idle', cueId:null, label:'', color:'', ts:0 };
 const catVol={BGM:1,SFX:1,AMB:1}; // per-category volume multipliers (fader target)
 const catLiveVol={BGM:1,SFX:1,AMB:1}; // actual live category level (for fades)
+const catFaded={BGM:false,SFX:false,AMB:false}; // latched "faded out" state — when true, the category is silent regardless of fader position, until fade-in releases it
+const catFadeRamp={BGM:undefined,SFX:undefined,AMB:undefined}; // transient 0..1 ramp factor during a fade toggle (undefined = settled)
+const catFadeToggleTimer={BGM:null,SFX:null,AMB:null};
 const catFadeTimer={BGM:null,SFX:null,AMB:null};
 const seekDragging={};
 const expandedIds=new Set();
@@ -1645,9 +1690,19 @@ const CAT_ACCENTS={
 };
 let catC={BGM:0,SFX:0,AMB:0};
 
+// The actual output multiplier for a category, honouring the fade-out latch.
+// When a category is latched "faded", it outputs silence regardless of where its
+// fader sits — moving the fader changes the stored level but stays silent until
+// fade-in releases the latch. catFadeRamp animates the transition (0..1).
+function catOut(cat){
+  const base = catVol[cat] ?? 1;
+  const ramp = (catFadeRamp[cat] === undefined) ? (catFaded[cat] ? 0 : 1) : catFadeRamp[cat];
+  return base * ramp;
+}
+
 function effectiveVol(t){
   const g=groupOfTrack(t);
-  return t.volume * (g?g.volume:1) * (catVol[t.cat]??1) * masterVol;
+  return t.volume * (g?g.volume:1) * catOut(t.cat) * masterVol;
 }
 
 // Group lookup helpers
@@ -1873,7 +1928,7 @@ function setStemAudioVolume(g, trackId, v){
 // group's own volume (g.volume) is the per-group trim on top of that.
 //   group output = g.volume × BGM × master
 function groupEffectiveVol(g){
-  return (g.volume ?? 1) * (catVol.BGM ?? 1) * masterVol;
+  return (g.volume ?? 1) * catOut('BGM') * masterVol;
 }
 
 function setGroupAudioVolume(g, v){
@@ -1881,8 +1936,8 @@ function setGroupAudioVolume(g, v){
   const ctx = g.audioCtx;
   const now = ctx.currentTime;
   // v is the group's own volume; fold in BGM + master so the BGM and master
-  // faders duck the music groups too.
-  const eff = (v ?? g.volume ?? 1) * (catVol.BGM ?? 1) * masterVol;
+  // faders duck the music groups too. catOut() honours the BGM fade-out latch.
+  const eff = (v ?? g.volume ?? 1) * catOut('BGM') * masterVol;
   g.masterGain.gain.cancelScheduledValues(now);
   g.masterGain.gain.setValueAtTime(g.masterGain.gain.value, now);
   g.masterGain.gain.linearRampToValueAtTime(eff, now + 0.05);
@@ -2472,6 +2527,46 @@ function applyCatLive(cat){
   // reads catVol.BGM, which is the live value inside this window.
   if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
   catVol[cat]=prev;
+}
+
+// Push the current category output to all tracks/groups in it (reads catOut, so
+// it honours both the fader value and the fade ramp/latch).
+function applyCatOut(cat){
+  tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
+  if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
+}
+
+// Toggle a category between playing and a latched "faded out" state.
+//  • Fade OUT: ramp the category's audible output to silence over FADE_MS, then
+//    latch it. While latched, moving the fader changes the stored level but makes
+//    NO sound (catOut returns 0).
+//  • Fade IN: release the latch and ramp back up to wherever the fader now sits.
+// The fader cap never moves on its own — only the audible level fades.
+function catFadeToggle(cat, fadeMs){
+  if(!(cat in catFaded)) return;
+  clearInterval(catFadeToggleTimer[cat]);
+  clearInterval(catFadeTimer[cat]); // cancel any old-style cat fade
+  const FADE_MS = (typeof fadeMs === 'number' && fadeMs > 0) ? fadeMs : 2000;
+  const goingOut = !catFaded[cat];        // currently audible → fade out
+  const from = (catFadeRamp[cat] === undefined) ? (catFaded[cat] ? 0 : 1) : catFadeRamp[cat];
+  const to = goingOut ? 0 : 1;
+  // Releasing the latch immediately so the ramp-up is audible; setting it at the
+  // end for fade-out so it stays silent afterwards.
+  if(!goingOut) catFaded[cat] = false;
+  const t0 = Date.now();
+  catFadeToggleTimer[cat] = setInterval(()=>{
+    const r = Math.min((Date.now()-t0)/FADE_MS, 1);
+    catFadeRamp[cat] = from + (to-from)*r;
+    applyCatOut(cat);
+    if(r>=1){
+      clearInterval(catFadeToggleTimer[cat]);
+      catFaded[cat] = goingOut;       // latch (out) or leave released (in)
+      catFadeRamp[cat] = undefined;   // settle — catOut now uses the latch
+      applyCatOut(cat);
+      pushStateNow();                 // tell the board the latch state changed
+    }
+  }, 30);
+  pushStateNow(); // immediate state push so the board's button flips right away
 }
 
 // ════════════════════════════════════════════════
@@ -6016,6 +6111,7 @@ function buildFaderSnapshot(){
   return {
     master: masterVol,
     catVol: { BGM: catVol.BGM ?? 1, SFX: catVol.SFX ?? 1, AMB: catVol.AMB ?? 1 },
+    catFaded: { BGM: !!catFaded.BGM, SFX: !!catFaded.SFX, AMB: !!catFaded.AMB },
     tracks: tracks.filter(t=>!groupedTrackIds.has(t.id)).map(t=>({
       id: t.id, name: t.name, cat: t.cat,
       volume: t.volume,
@@ -6072,6 +6168,7 @@ function applyFaderChange(ch){
     setMaster(ch.value);
   } else if(ch.type === 'cat'){
     if(ch.field === 'muted'){ fadeCatMute(ch.id, ch.value); }
+    else if(ch.field === 'fade'){ catFadeToggle(ch.id); }
     else setCatVol(ch.id, ch.value);
   } else if(ch.type === 'track'){
     const t = tById(ch.id); if(!t) return;
@@ -6317,17 +6414,10 @@ function fbConn(ok){
 // How many track strips fit on one page, given current viewport width.
 // Master + 3 categories are always on page 1's left; tracks paginate.
 function computePerPage(){
-  const w = window.innerWidth;
-  // strip min-width incl gap: ~62px phone, ~84px tablet
-  const stripW = w <= 950 ? 62 : 84;
-  const fixed = 4; // master + 3 cats
-  const dividers = 30;
-  const usable = w - 36 - dividers;
-  const totalFit = Math.floor(usable / stripW);
-  // On a wide iPad, everything usually fits — no pagination.
-  // On a phone, reserve room for the 4 fixed strips on page 1.
-  const trackFit = Math.max(3, totalFit - (w <= 950 ? fixed : 0));
-  return trackFit;
+  // No pagination any more — all strips live on one page and the fader area
+  // scrolls (horizontally in landscape, wraps/scrolls in portrait). This frees
+  // the bottom pager bar for more usable fader height.
+  return 9999;
 }
 
 function startFaderBoard(){
@@ -6806,11 +6896,17 @@ function faderStripHTML(type, id, label, value, muted, playing, extraCls='', cat
   const pct = Math.round(value*100);
   const fillH = Math.round(value*100);
   const isTrack = type==='track';
+  const isCat = type==='cat';
   const staged = isTrack && inScene && !playing;
-  // Meters only exist for individual tracks (and groups). Master/category faders
-  // have no live meter, so we render the fader full-width with no meter column.
   const hasMeter = isTrack;
-  return `<div class="fb-strip ${extraCls} ${muted?'is-muted':''} ${playing?'is-playing':''} ${staged?'is-staged':''} ${hasMeter?'':'no-meter'}" data-key="${key}" data-type="${type}" data-id="${id ?? ''}">
+  // Category fade-out latch state (from the synced snapshot)
+  const faded = isCat && _fbState && _fbState.catFaded && _fbState.catFaded[id];
+  // Bottom-slot control: tracks get MUTE, categories get a FADE toggle, others a spacer.
+  let bottom;
+  if(isTrack) bottom = `<button class="fb-mute" data-fb="mute" onclick="fbToggleMute(${id})">${muted?'UNMUTE':'MUTE'}</button>`;
+  else if(isCat) bottom = `<button class="fb-catfade ${faded?'faded':''}" data-fb="catfade" onclick="fbCatFade('${id}')">${faded?'FADE IN':'FADE OUT'}</button>`;
+  else bottom = `<div class="fb-spacer"></div>`;
+  return `<div class="fb-strip ${extraCls} ${muted?'is-muted':''} ${playing?'is-playing':''} ${staged?'is-staged':''} ${faded?'is-cat-faded':''} ${hasMeter?'':'no-meter'}" data-key="${key}" data-type="${type}" data-id="${id ?? ''}">
     <div class="fb-strip-label">${esc(label)}</div>
     ${staged?`<div class="fb-staged-tag">staged</div>`:(catTag?`<div class="fb-cat-tag">${catTag}</div>`:'')}
     ${isTrack ? `<button class="fb-playstop ${playing?'playing':''}" data-fb="playstop" onclick="fbPlayStop('track',${id})">${playing?'■':'▶'}</button>` : ''}
@@ -6819,7 +6915,7 @@ function faderStripHTML(type, id, label, value, muted, playing, extraCls='', cat
       ${customFaderHTML(type, id, value, playing)}
       ${hasMeter ? `<div class="fb-meter"><div class="fb-meter-fill" data-fb="meter" style="height:${playing?fillH:0}%"></div></div>` : ''}
     </div>
-    ${isTrack ? `<button class="fb-mute" data-fb="mute" onclick="fbToggleMute(${id})">${muted?'UNMUTE':'MUTE'}</button>` : `<div class="fb-spacer"></div>`}
+    ${bottom}
   </div>`;
 }
 
@@ -6890,6 +6986,13 @@ function updateFaderStrip(type, id, value, muted, playing){
     const staged = t && t.inScene && !effPlaying;
     strip.classList.toggle('is-staged', !!staged);
   }
+  // Category fade-out latch → update the FADE button + dimmed styling.
+  if(type==='cat'){
+    const faded = !!(_fbState && _fbState.catFaded && _fbState.catFaded[id]);
+    strip.classList.toggle('is-cat-faded', faded);
+    const cf = strip.querySelector('[data-fb="catfade"]');
+    if(cf){ cf.textContent = faded ? 'FADE IN' : 'FADE OUT'; cf.classList.toggle('faded', faded); }
+  }
 }
 
 function updateFaderMeters(){
@@ -6943,6 +7046,26 @@ function _fbMuteState(key){
   const o = _fbMuteOverride[key];
   if(o && Date.now() < o.until) return o.muted;
   return null;
+}
+
+// Toggle a category's fade-out latch from the board. Optimistically flip the
+// button so it feels instant, then send the command (the console runs the ramp
+// and the real latch state comes back in the next snapshot).
+let _fbCatFadeCooldown = {};
+function fbCatFade(cat){
+  if(Date.now() < (_fbCatFadeCooldown[cat]||0)) return;
+  _fbCatFadeCooldown[cat] = Date.now() + 400;
+  const key = `cat:${cat}`;
+  const strip = document.querySelector(`.fb-strip[data-key="${key}"]`);
+  if(strip){
+    const nowFaded = strip.classList.contains('is-cat-faded');
+    const willFade = !nowFaded;
+    strip.classList.toggle('is-cat-faded', willFade);
+    const cf = strip.querySelector('[data-fb="catfade"]');
+    if(cf){ cf.textContent = willFade ? 'FADE IN' : 'FADE OUT'; cf.classList.toggle('faded', willFade); }
+  }
+  fbSendChange('cat', cat, 'fade', true);
+  diagInfo(`Board send: cat/${cat}/fade`);
 }
 
 function fbPlayStop(type, id){
