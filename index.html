@@ -1056,6 +1056,9 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 .fw-fade-btns{display:flex;gap:5px;margin-top:2px}
 .fw-fade-btns button{flex:1;background:var(--s3);border:1px solid var(--border);color:var(--muted2);font-size:9px;letter-spacing:.5px;padding:5px;border-radius:5px;cursor:pointer;font-family:var(--mono);transition:all .12s}
 .fw-fade-btns button:hover{border-color:var(--text2);color:var(--text)}
+.fw-fade-btns button.active{border-color:var(--amber);color:var(--amber);background:rgba(255,193,7,.12)}
+.fw-fader.is-cat-faded .fw-fader-row input[type="range"]{opacity:.45}
+.fw-fader.is-cat-faded .fw-fader-val{color:var(--muted)}
 .fw-divider{height:1px;background:var(--border2)}
 .fw-fadeall{background:transparent;border:1px solid var(--red);color:var(--red);font-size:11px;font-weight:600;letter-spacing:1.5px;padding:9px;border-radius:8px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-transform:uppercase}
 .fw-fadeall:hover{background:var(--red);color:#fff}
@@ -1200,8 +1203,8 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
         </div>
       </div>
       <div class="fw-fade-btns">
-        <button onclick="catFade('BGM','in')">↑ Fade In</button>
-        <button onclick="catFade('BGM','out')">↓ Fade Out</button>
+        <button data-catfadebtn="in" onclick="catFadeToggle('BGM',undefined,'in')">↑ Fade In</button>
+        <button data-catfadebtn="out" onclick="catFadeToggle('BGM',undefined,'out')">↓ Fade Out</button>
       </div>
     </div>
     <div class="fw-fader" data-cat="SFX">
@@ -1217,8 +1220,8 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
         </div>
       </div>
       <div class="fw-fade-btns">
-        <button onclick="catFade('SFX','in')">↑ Fade In</button>
-        <button onclick="catFade('SFX','out')">↓ Fade Out</button>
+        <button data-catfadebtn="in" onclick="catFadeToggle('SFX',undefined,'in')">↑ Fade In</button>
+        <button data-catfadebtn="out" onclick="catFadeToggle('SFX',undefined,'out')">↓ Fade Out</button>
       </div>
     </div>
     <div class="fw-fader" data-cat="AMB">
@@ -1234,8 +1237,8 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
         </div>
       </div>
       <div class="fw-fade-btns">
-        <button onclick="catFade('AMB','in')">↑ Fade In</button>
-        <button onclick="catFade('AMB','out')">↓ Fade Out</button>
+        <button data-catfadebtn="in" onclick="catFadeToggle('AMB',undefined,'in')">↑ Fade In</button>
+        <button data-catfadebtn="out" onclick="catFadeToggle('AMB',undefined,'out')">↓ Fade Out</button>
       </div>
     </div>
     <div class="fw-divider"></div>
@@ -2536,18 +2539,24 @@ function applyCatOut(cat){
   if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
 }
 
-// Toggle a category between playing and a latched "faded out" state.
+// Toggle (or force) a category between playing and a latched "faded out" state.
 //  • Fade OUT: ramp the category's audible output to silence over FADE_MS, then
 //    latch it. While latched, moving the fader changes the stored level but makes
 //    NO sound (catOut returns 0).
 //  • Fade IN: release the latch and ramp back up to wherever the fader now sits.
 // The fader cap never moves on its own — only the audible level fades.
-function catFadeToggle(cat, fadeMs){
+// `dir` may be 'in' or 'out' to force a direction (console's two buttons); omit
+// it to simply toggle (fader board's single button).
+function catFadeToggle(cat, fadeMs, dir){
   if(!(cat in catFaded)) return;
+  const goingOut = dir ? (dir==='out') : !catFaded[cat]; // forced, or toggle
+  // No-op if already in the requested state (e.g. Fade In when already audible).
+  if(dir && goingOut === catFaded[cat]) {
+    // already in target latch state; still ensure ramp settled
+  }
   clearInterval(catFadeToggleTimer[cat]);
   clearInterval(catFadeTimer[cat]); // cancel any old-style cat fade
   const FADE_MS = (typeof fadeMs === 'number' && fadeMs > 0) ? fadeMs : 2000;
-  const goingOut = !catFaded[cat];        // currently audible → fade out
   const from = (catFadeRamp[cat] === undefined) ? (catFaded[cat] ? 0 : 1) : catFadeRamp[cat];
   const to = goingOut ? 0 : 1;
   // Releasing the latch immediately so the ramp-up is audible; setting it at the
@@ -2563,10 +2572,24 @@ function catFadeToggle(cat, fadeMs){
       catFaded[cat] = goingOut;       // latch (out) or leave released (in)
       catFadeRamp[cat] = undefined;   // settle — catOut now uses the latch
       applyCatOut(cat);
+      syncCatFadeUI(cat);
       pushStateNow();                 // tell the board the latch state changed
     }
   }, 30);
+  syncCatFadeUI(cat);
   pushStateNow(); // immediate state push so the board's button flips right away
+}
+
+// Reflect a category's fade-latch state on the console's floating-window buttons.
+function syncCatFadeUI(cat){
+  const wrap = document.querySelector(`.fw-fader[data-cat="${cat}"]`);
+  if(!wrap) return;
+  const faded = !!catFaded[cat];
+  wrap.classList.toggle('is-cat-faded', faded);
+  const inBtn = wrap.querySelector('[data-catfadebtn="in"]');
+  const outBtn = wrap.querySelector('[data-catfadebtn="out"]');
+  if(inBtn) inBtn.classList.toggle('active', faded);   // "Fade In" is the live action when faded
+  if(outBtn) outBtn.classList.toggle('active', !faded);
 }
 
 // ════════════════════════════════════════════════
@@ -5661,6 +5684,8 @@ function resetWorkspace(){
   masterVol=1;
   catVol.BGM=1; catVol.SFX=1; catVol.AMB=1;
   catLiveVol.BGM=1; catLiveVol.SFX=1; catLiveVol.AMB=1;
+  catFaded.BGM=false; catFaded.SFX=false; catFaded.AMB=false;
+  catFadeRamp.BGM=undefined; catFadeRamp.SFX=undefined; catFadeRamp.AMB=undefined;
   lastTriggeredId=null;
 }
 
@@ -5984,6 +6009,7 @@ function syncCatVolUI(){
     catLiveVol[cat]=catVol[cat];
     const sl=document.getElementById(`catvol-slider-${cat}`); if(sl) sl.value=catVol[cat];
     const lbl=document.getElementById(`catvol-val-${cat}`); if(lbl) lbl.textContent=Math.round(catVol[cat]*100)+'%';
+    syncCatFadeUI(cat);
   });
 }
 
