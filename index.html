@@ -2158,6 +2158,9 @@ function setGroupVolume(id,v){
   if(vp) vp.textContent = Math.round(g.volume*100)+'%';
   const vs = g.el?.querySelector('[data-grole="vol-slider"]');
   if(vs && parseFloat(vs.value)!==g.volume) vs.value = g.volume;
+  // Keep the global-mixer group row's % label in sync (if the mixer is open)
+  const mxrRow=document.querySelector(`[data-mxr-id="g-${g.id}"]`);
+  if(mxrRow){ const mp=mxrRow.querySelector('.mxr-vol-pct'); if(mp) mp.textContent=Math.round(g.volume*100)+'%'; }
   autoSave();
 }
 
@@ -3696,6 +3699,9 @@ function onVol(id,v){
   const vpc=role(t,'volpct-c'); if(vpc) vpc.textContent=Math.round(nv*100)+'%';
   const vpe=role(t,'volpct-e'); if(vpe) vpe.textContent=Math.round(nv*100)+'%';
   const vps=role(t,'volpct-s'); if(vps) vps.textContent=Math.round(nv*100)+'%';
+  // Keep the global-mixer row's % label in sync too (if the mixer is open)
+  const mxrRow=document.querySelector(`[data-mxr-id="t-${t.id}"]`);
+  if(mxrRow){ const mp=mxrRow.querySelector('.mxr-vol-pct'); if(mp) mp.textContent=Math.round(nv*100)+'%'; }
   // Visual muted state
   if(t.el) t.el.classList.toggle('is-muted', t.volume<=0.02);
   // If the track is a stem in a group, route to Web Audio gain
@@ -3713,7 +3719,12 @@ function startVolEase(t){
   if(!t.ws) return;
   clearInterval(t.fadeTimer);
   const GLIDE_MS=400; // quick glide so slider feels like a smooth fade, not a jump
-  if(t._audioVol===undefined) t._audioVol = masterVol>0 ? t.ws.getVolume()/(masterVol*(catVol[t.cat]??1)*((groupOfTrack(t)?.volume)??1)) : t.volume;
+  // Starting point for the glide = the track's last known BASE level. We must NOT
+  // back-calculate it from ws.getVolume() — that returns the already-multiplied
+  // player volume (and can be a stale 1.0), which made the audio spike up and then
+  // ramp back down on the first touch. If we have no reliable remembered level,
+  // start from the target itself (i.e. no audible glide) rather than a guess.
+  if(typeof t._audioVol !== 'number' || !isFinite(t._audioVol)) t._audioVol = t.volume;
   const startLevel=t._audioVol;
   const target=t.volume;
   if(Math.abs(startLevel-target)<0.005){
@@ -4070,6 +4081,9 @@ function fireScene(sid,xfade=false){
   layoutTracks();
   renderScenes();
   updateNotesBanner();
+  // If the global mixer is open, rebuild its rows so SCENE-mode filtering and
+  // staged/playing state reflect the newly-fired scene.
+  if(document.getElementById('mixer-modal')?.classList.contains('open')) renderMixer();
 
   tracks.forEach(t=>{
     // Grouped tracks are driven by the group engine (handled in the groups loop
@@ -4423,7 +4437,8 @@ function openMixer(){
     vmBtn.classList.toggle('scene', _mxrViewMode === 'scene');
   }
   renderMixer();
-  // While open, refresh the mixer every 250ms so playing state stays live
+  // While open, refresh the mixer ~10x/sec so playing state AND fading volumes
+  // track live (scene crossfades, manual fades, remote changes).
   if(!_mixerRefreshTimer){
     _mixerRefreshTimer = setInterval(()=>{
       if(document.getElementById('mixer-modal').classList.contains('open')){
@@ -4431,7 +4446,7 @@ function openMixer(){
       } else {
         clearInterval(_mixerRefreshTimer); _mixerRefreshTimer=null;
       }
-    }, 250);
+    }, 100);
   }
 }
 
@@ -5304,14 +5319,19 @@ function renderMixer(){
   body.innerHTML = html;
 }
 
-// Tick: cheap update of playing state + volumes without full re-render.
-// Only updates the dots, the play buttons, and the live count.
+// Tick: cheap update of playing state + live volumes without a full re-render.
+// Updates dots, play buttons, the count, AND each fader's position + % so the
+// mixer tracks scene fades and any other volume change in real time.
 function updateMixerLiveState(){
   const count = document.getElementById('mxr-count');
   const playingCount = tracks.filter(t=>t.playing).length + groups.filter(g=>g.isPlaying).length;
   if(count) count.textContent = `${tracks.length} tracks · ${groups.length} groups · ${playingCount} playing`;
 
-  // Update each row's playing class + play button without rebuilding the row
+  // The slider the user is currently dragging — don't yank it out from under them.
+  const active = document.activeElement;
+  const isActiveRange = active && active.tagName === 'INPUT' && active.type === 'range';
+
+  // Update each track row: playing state, play button, and live fader + %.
   tracks.forEach(t=>{
     const row = document.querySelector(`[data-mxr-id="t-${t.id}"]`);
     if(!row) return;
@@ -5321,6 +5341,12 @@ function updateMixerLiveState(){
       pb.textContent = t.playing ? '⏸' : '▶';
       pb.classList.toggle('on', t.playing);
     }
+    const sl = row.querySelector('input[type="range"]');
+    if(sl && !(isActiveRange && active===sl) && parseFloat(sl.value)!==t.volume){
+      sl.value = t.volume;
+    }
+    const pc = row.querySelector('.mxr-vol-pct');
+    if(pc){ const txt = Math.round(t.volume*100)+'%'; if(pc.textContent!==txt) pc.textContent=txt; }
   });
   groups.forEach(g=>{
     const row = document.querySelector(`[data-mxr-id="g-${g.id}"]`);
@@ -5331,7 +5357,29 @@ function updateMixerLiveState(){
       pb.textContent = g.isPlaying ? '⏸' : '▶';
       pb.classList.toggle('on', g.isPlaying);
     }
+    const sl = row.querySelector('input[type="range"]');
+    if(sl && !(isActiveRange && active===sl) && parseFloat(sl.value)!==g.volume){
+      sl.value = g.volume;
+    }
+    const pc = row.querySelector('.mxr-vol-pct');
+    if(pc){ const txt = Math.round(g.volume*100)+'%'; if(pc.textContent!==txt) pc.textContent=txt; }
   });
+
+  // Master + category faders (a scene can change these too).
+  const fsec = document.querySelector('.mxr-fader-section');
+  if(fsec){
+    const fades = fsec.querySelectorAll('.mxr-fader');
+    // fades[0] = master, then CAT_ORDER
+    const syncFader = (el, val) => {
+      if(!el) return;
+      const sl = el.querySelector('input[type="range"]');
+      if(sl && !(isActiveRange && active===sl) && parseFloat(sl.value)!==val) sl.value = val;
+      const vv = el.querySelector('.mxr-fader-val');
+      if(vv){ const txt = Math.round(val*100)+'%'; if(vv.textContent!==txt) vv.textContent=txt; }
+    };
+    syncFader(fades[0], masterVol);
+    CAT_ORDER.forEach((cat,i)=> syncFader(fades[i+1], catVol[cat]??1));
+  }
 }
 
 // Just refresh fader percentages (called when master/cat sliders are dragged inside the mixer)
