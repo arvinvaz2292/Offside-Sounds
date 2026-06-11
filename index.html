@@ -443,6 +443,12 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .exp-sliders{flex:1;display:flex;flex-direction:column;gap:9px}
 .exp-sl-row{display:flex;align-items:center;gap:9px}
 .exp-sl-tag{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;width:18px;text-align:right;flex-shrink:0;font-weight:600}
+/* Pan row (SFX tracks): slider with centre detent feel + travel sweep controls */
+.exp-pan-slider{accent-color:var(--amber)}
+.exp-pan-lbl{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--amber);width:30px;text-align:center;flex-shrink:0;letter-spacing:.5px}
+.exp-pan-travel{background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:12px;line-height:1;padding:4px 8px;border-radius:6px;cursor:pointer;flex-shrink:0;transition:all .12s}
+.exp-pan-travel:hover{border-color:var(--amber);color:var(--amber)}
+.exp-pan-secs{width:44px;background:var(--s2);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:10px;padding:4px 5px;border-radius:6px;flex-shrink:0;text-align:center}
 input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--border);outline:none;cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;transition:transform .1s,box-shadow .1s}
 input[type=range]:active::-webkit-slider-thumb{transform:scale(1.3);box-shadow:0 0 0 5px rgba(0,230,118,.2)}
@@ -811,6 +817,12 @@ body.faderboard-mode > .project-picker{display:none!important}
 
 /* Notes banner — shows the active scene's notes (display only) */
 .fb-notes-banner{display:none;margin:8px 14px 0;background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.32);border-radius:10px;padding:9px 14px;flex-shrink:0}
+/* Show Caller lane on the board — bigger touch targets than the console lane */
+.fb-scl-lane{display:none;margin:8px 14px 0;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.3);border-radius:10px;padding:8px 12px;flex-shrink:0;align-items:center;gap:8px;overflow-x:auto}
+.fb-scl-lane.visible{display:flex}
+.fb-scl-lane .scl-chip{font-size:13px;padding:10px 14px}
+.fb-scl-lane .scl-nudge{font-size:12px;padding:9px 11px}
+.fb-scl-lane .scl-clock{font-size:15px}
 .fb-notes-banner.visible{display:block}
 .fb-notes-lbl{font-family:var(--mono);font-size:8px;letter-spacing:2.5px;color:var(--amber);text-transform:uppercase;font-weight:700;margin-bottom:4px}
 .fb-notes-text{font-family:var(--mono);font-size:13px;color:#f3e3c4;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:22vh;overflow-y:auto}
@@ -935,6 +947,19 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 .fb-mute{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted2);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:9px 0;border-radius:8px;cursor:pointer;transition:all .12s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
 .fb-mute:active{transform:scale(.94)}
 .fb-strip.is-muted .fb-mute{background:var(--red);border-color:var(--red);color:#fff}
+/* SFX pan button + modal */
+.fb-panbtn{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;padding:8px 0;border-radius:8px;cursor:pointer;transition:all .12s;flex-shrink:0;margin-top:5px;-webkit-tap-highlight-color:transparent}
+.fb-panbtn:active{transform:scale(.94)}
+.fb-pan-modal{max-width:420px}
+.fb-pan-body{padding:20px 22px 24px;display:flex;flex-direction:column;gap:10px}
+.fb-pan-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted2);padding:0 2px}
+#fb-pan-slider{width:100%;height:34px;accent-color:var(--amber)}
+.fb-pan-val{text-align:center;font-family:var(--mono);font-size:22px;font-weight:700;color:var(--amber);letter-spacing:1px}
+.fb-pan-travel-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+.fb-pan-tbtn{flex:1;background:var(--s3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;padding:12px 0;border-radius:8px;cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.fb-pan-tbtn:active{transform:scale(.96);border-color:var(--amber);color:var(--amber)}
+.fb-pan-secs-wrap{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;color:var(--muted2);flex-shrink:0}
+.fb-pan-secs-wrap input{width:52px;background:var(--s2);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:13px;padding:9px 6px;border-radius:7px;text-align:center}
 /* Category FADE OUT / FADE IN toggle */
 .fb-catfade{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--amber);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;padding:9px 0;border-radius:8px;cursor:pointer;transition:all .12s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
 .fb-catfade:active{transform:scale(.94)}
@@ -1079,6 +1104,39 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 .fw-fadeall{background:transparent;border:1px solid var(--red);color:var(--red);font-size:11px;font-weight:600;letter-spacing:1.5px;padding:9px;border-radius:8px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-transform:uppercase}
 .fw-fadeall:hover{background:var(--red);color:#fff}
 .fw-section-title{font-size:11px;letter-spacing:2px;color:var(--amber);font-weight:600}
+/* ── Show Caller ── */
+.scl-status{font-size:9px;letter-spacing:.5px;color:var(--muted);font-style:italic;margin:2px 0}
+.scl-btnrow{display:flex;gap:6px}
+.scl-filter-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.scl-chiptoggle{background:var(--s3);border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.5px;padding:4px 7px;border-radius:10px;cursor:pointer;transition:all .12s;opacity:.55}
+.scl-chiptoggle.on{color:var(--amber);border-color:var(--amber);opacity:1;background:rgba(255,193,7,.08)}
+.scl-chiptoggle:hover{opacity:1}
+.scl-btn{flex:1;background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:10px;font-weight:700;letter-spacing:1px;padding:8px 4px;border-radius:7px;cursor:pointer;font-family:var(--mono);transition:all .12s}
+.scl-btn:hover:not(:disabled){border-color:var(--text2);color:var(--text)}
+.scl-btn:disabled{opacity:.4;cursor:default}
+.scl-btn.recording{background:var(--red);border-color:var(--red);color:#fff;animation:fbExecPulse 1s ease-in-out infinite}
+.scl-btn.live{background:rgba(0,230,118,.16);border-color:var(--green);color:var(--green)}
+.scl-note-row{display:flex;gap:5px}
+.scl-note-row input{flex:1;background:var(--s2);border:1px solid var(--border);color:var(--text);font-size:11px;padding:7px 9px;border-radius:7px;font-family:var(--mono)}
+.scl-note-add{background:var(--amber);border:none;color:#000;font-size:14px;font-weight:700;padding:0 13px;border-radius:7px;cursor:pointer}
+.scl-topdot{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;color:#fff;background:var(--red);padding:4px 9px;border-radius:6px;animation:fbExecPulse 1s ease-in-out infinite;flex-shrink:0}
+/* Prompt lane */
+.scl-lane{display:none;position:sticky;top:0;z-index:550;background:rgba(10,14,18,.97);border-bottom:1px solid var(--border);padding:7px 16px;align-items:center;gap:8px;overflow-x:auto;backdrop-filter:blur(6px)}
+.scl-lane.visible{display:flex}
+.scl-clock{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green);letter-spacing:1px;flex-shrink:0}
+.scl-nudge{background:var(--s3);border:1px solid var(--border);color:var(--muted2);font-family:var(--mono);font-size:10px;font-weight:700;padding:5px 8px;border-radius:6px;cursor:pointer;flex-shrink:0}
+.scl-nudge:hover{color:var(--text);border-color:var(--text2)}
+.scl-chip{background:var(--s2);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:11px;padding:6px 11px;border-radius:7px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;display:inline-flex;align-items:center;gap:7px}
+.scl-chip .scl-dt{color:var(--muted);font-size:10px}
+.scl-chip.note{border-color:rgba(255,193,7,.5);color:var(--amber)}
+.scl-chip.imminent{border-color:var(--green);color:var(--green);animation:fbExecPulse .9s ease-in-out infinite}
+.scl-chip.imminent .scl-dt{color:var(--green)}
+.scl-chip.overdue{border-color:var(--red);color:#ff8a8a}
+.scl-empty{font-family:var(--mono);font-size:10px;color:var(--muted);font-style:italic}
+.scl-end{margin-left:auto;background:transparent;border:1px solid var(--red);color:var(--red);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 11px;border-radius:6px;cursor:pointer;flex-shrink:0}
+/* The control to hit, glowing as its moment approaches */
+@keyframes sclGlow{0%,100%{box-shadow:0 0 0 2px rgba(0,230,118,.85),0 0 18px rgba(0,230,118,.45)}50%{box-shadow:0 0 0 2px rgba(0,230,118,.35),0 0 8px rgba(0,230,118,.2)}}
+.sc-glow{animation:sclGlow 1s ease-in-out infinite;border-radius:10px;position:relative;z-index:5}
 .fw-fav-head{display:flex;align-items:center;justify-content:space-between}
 .fw-fav-add{font-size:10px;font-weight:600;letter-spacing:.5px;color:var(--amber);background:transparent;border:1px dashed rgba(255,193,7,.4);padding:4px 10px;border-radius:6px;cursor:pointer;position:relative;transition:all .12s}
 .fw-fav-add:hover{background:rgba(255,193,7,.1)}
@@ -1180,8 +1238,12 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
       <span id="stopall-lbl">↓ FADE ALL</span>
       <div class="stopall-progress" id="stopall-progress"></div>
     </button>
+    <span class="scl-topdot" id="scl-topdot" style="display:none" title="Recording show">⏺ REC</span>
   </div>
 </div>
+
+<!-- Show Caller prompt lane (visible during SHOW mode) -->
+<div class="scl-lane" id="scl-lane"></div>
 
 <!-- ══ FLOATING CONTROL WINDOW ══ -->
 <div class="float-window hidden" id="float-window">
@@ -1260,6 +1322,22 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     <div class="fw-divider"></div>
     <!-- Fade All -->
     <button class="fw-fadeall" onclick="stopAllFade()">↓ FADE ALL TRACKS</button>
+    <div class="fw-divider"></div>
+    <!-- Show Caller -->
+    <div class="fw-fav-head">
+      <span class="fw-section-title">🎬 Show Caller</span>
+    </div>
+    <div class="scl-status" id="scl-status">No show recorded yet</div>
+    <div class="scl-btnrow">
+      <button class="scl-btn" id="scl-rec-btn" onclick="scToggleRec()">⏺ REC SHOW</button>
+      <button class="scl-btn" id="scl-show-btn" onclick="scToggleShow()" disabled>▶ SHOW MODE</button>
+    </div>
+    <div class="scl-filter-row" id="scl-filter-row" title="Choose which actions the Show Caller captures & prompts"></div>
+    <div class="scl-note-row" id="scl-note-row" style="display:none">
+      <input type="text" id="scl-note-input" placeholder="Type a note, press Enter…" maxlength="80"
+        onkeydown="if(event.key==='Enter'){scAddNote();event.preventDefault();}">
+      <button class="scl-note-add" onclick="scAddNote()">＋</button>
+    </div>
     <div class="fw-divider"></div>
     <!-- Favourites -->
     <div class="fw-fav-head">
@@ -1494,6 +1572,8 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     <div class="fb-notes-lbl">Scene Notes</div>
     <div class="fb-notes-text" id="fb-notes-text"></div>
   </div>
+  <!-- Show Caller prompt lane (mirrors console; tap chip = re-sync) -->
+  <div class="fb-scl-lane" id="fb-scl-lane"></div>
   <div class="fb-faders" id="fb-faders"></div>
   <div class="fb-pager" id="fb-pager"></div>
 
@@ -1513,6 +1593,27 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
         <div class="fb-cf-section">
           <div class="fb-cf-section-lbl">★ Favourites</div>
           <div class="fb-cf-favs" id="fb-cf-favs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pan modal (SFX tracks) — slide L/R or fire a travel sweep -->
+  <div class="fb-cf-overlay" id="fb-pan-overlay" onclick="if(event.target===this)fbClosePan()">
+    <div class="fb-cf-modal fb-pan-modal">
+      <div class="fb-cf-head">
+        <span class="fb-cf-title" id="fb-pan-title">Pan</span>
+        <button class="fb-cf-close" onclick="fbClosePan()" title="Close">✕</button>
+      </div>
+      <div class="fb-pan-body">
+        <div class="fb-pan-scale"><span>L</span><span>C</span><span>R</span></div>
+        <input type="range" id="fb-pan-slider" min="-1" max="1" step="0.01" value="0"
+          oninput="fbPanInput(this.value)" ondblclick="fbPanInput(0)">
+        <div class="fb-pan-val" id="fb-pan-val">C</div>
+        <div class="fb-pan-travel-row">
+          <button class="fb-pan-tbtn" onclick="fbPanTravel('lr')">⟶ TRAVEL L→R</button>
+          <button class="fb-pan-tbtn" onclick="fbPanTravel('rl')">⟵ TRAVEL R→L</button>
+          <label class="fb-pan-secs-wrap"><input type="number" id="fb-pan-secs" min="0.5" max="30" step="0.5" value="4"> s</label>
         </div>
       </div>
     </div>
@@ -1969,6 +2070,8 @@ function mkTrack(name='New Track',cat='AMB'){
   const idx=catC[cat]++%CAT_ACCENTS[cat].length;
   return{id:++uid,name,cat,src:null,filename:null,
     playing:false,volume:1,speed:1,
+    pan:0,                      // -1 (L) .. 0 (C) .. +1 (R) — SFX tracks only
+    _panWired:false,_panNode:null,_panSrc:null,_panTravelTimer:null,
     loopEnabled:false,loopStart:null,loopEnd:null,loopCount:0,loopPlays:0,
     autoStop:0,autoStopTimer:null,fadeTimer:null,
     cues:[],ws:null,region:null,_rp:null,
@@ -2064,6 +2167,7 @@ function removeTrackFromGroup(trackId){
 // Snap all members' playback positions to the first member's current time
 async function groupTogglePlay(id){
   const g=gById(id); if(!g) return;
+  scRecord(g.isPlaying?'gstop':'gplay', `${g.isPlaying?'Stop':'Play'} group: ${g.name}`, {type:'group',id});
   const members=g.trackIds.map(tById).filter(t=>t && t.src);
   if(!members.length){ showToast('Group is empty or stems lack audio'); diagWarn(`Group play attempted but empty: ${g.name}`); return; }
   // Authoritative "is it actually playing?" — true if the flag is set OR there
@@ -2137,6 +2241,7 @@ function groupResync(id){
 function setGroupVolume(id,v){
   const g=gById(id); if(!g) return;
   g.volume = parseFloat(v);
+  scRecordFader('group', id, g.name, g.volume);
   setGroupAudioVolume(g, g.volume);
   const vp = g.el?.querySelector('[data-grole="vol-pct"]');
   if(vp) vp.textContent = Math.round(g.volume*100)+'%';
@@ -2369,6 +2474,7 @@ function toggleGroupPop(trackId, event){
 // ════════════════════════════════════════════════
 function setMaster(v){
   masterVol=parseFloat(v);
+  scRecordFader('master','all','Master',masterVol);
   const pct=Math.round(masterVol*100)+'%';
   const mv=document.getElementById('master-val'); if(mv) mv.textContent=pct;
   const sm=document.getElementById('st-master'); if(sm) sm.textContent=pct;
@@ -2388,6 +2494,7 @@ function nudgeMaster(delta){
 // ── Category volume (BGM / SFX / AMB) ──
 function setCatVol(cat,v){
   catVol[cat]=parseFloat(v);
+  scRecordFader('cat',cat,cat+' fader',catVol[cat]);
   tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
   // Groups are treated as BGM, so the BGM fader scales playing groups too.
   if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
@@ -2422,6 +2529,7 @@ function applyCatOut(cat){
 function catFadeToggle(cat, fadeMs, dir){
   if(!(cat in catFaded)) return;
   const goingOut = dir ? (dir==='out') : !catFaded[cat]; // forced, or toggle
+  scRecord('catFade', `${cat} fade ${goingOut?'out':'in'}`, {type:'cat',id:cat});
   // No-op if already in the requested state (e.g. Fade In when already audible).
   if(dir && goingOut === catFaded[cat]) {
     // already in target latch state; still ensure ramp settled
@@ -2484,6 +2592,7 @@ function uploadFavourites(event){
 
 function fireFavourite(fid_){
   const fav=favourites.find(f=>f.id===fid_); if(!fav||!fav.src){ showToast('No audio for this favourite — re-upload'); return; }
+  scRecord('fav', `★ ${fav.name}`, {type:'fav',id:fid_});
   const a=new Audio(fav.src);
   a.volume=0.5; // favourites always fire at 50%
   a.play().catch(()=>{});
@@ -2600,6 +2709,7 @@ function updateCueGoButton(){
 // Put a cue on standby (operator sees amber flashing).
 function cueStandby(id){
   const c = lightCues.find(x=>x.id===id); if(!c) return;
+  scRecord('cueStandby', `Standby: ${c.label}`, {type:'cue',id});
   cueState = { phase:'standby', cueId:id, label:c.label, color:c.color, ts:Date.now() };
   renderCueList();
   pushStateNow();
@@ -2609,6 +2719,7 @@ function cueStandby(id){
 // Fire the standing-by cue (operator sees green GO).
 function cueGo(){
   if(cueState.phase!=='standby' || !cueState.cueId) return;
+  scRecord('cueGo', `GO: ${cueState.label}`, {type:'cue',id:cueState.cueId});
   cueState = { ...cueState, phase:'go', ts:Date.now() };
   renderCueList();
   pushStateNow();
@@ -2972,6 +3083,14 @@ function buildTrackElement(t){
           onmousedown="seekDragging[${t.id}]=true" onmouseup="seekDragging[${t.id}]=false"
           ontouchstart="seekDragging[${t.id}]=true" ontouchend="seekDragging[${t.id}]=false">
       </div>
+      <div class="exp-sl-row exp-pan-row" data-role="pan-row" style="${t.cat==='SFX'?'':'display:none'}">
+        <span class="exp-sl-tag">P</span>
+        <input type="range" class="exp-pan-slider" data-role="pan-e" min="-1" max="1" step="0.01" value="${t.pan||0}" oninput="setTrackPan(${t.id},this.value)" ondblclick="setTrackPan(${t.id},0)" title="Pan — double-click to centre">
+        <span class="exp-pan-lbl" data-role="panlbl-e">${panLabel(t.pan||0)}</span>
+        <button class="exp-pan-travel" onclick="panTravel(${t.id},'lr',role(tById(${t.id}),'pansec-e')?.value)" title="Travel left → right">⟶</button>
+        <button class="exp-pan-travel" onclick="panTravel(${t.id},'rl',role(tById(${t.id}),'pansec-e')?.value)" title="Travel right → left">⟵</button>
+        <input type="number" class="exp-pan-secs" data-role="pansec-e" min="0.5" max="30" step="0.5" value="4" title="Travel time (seconds)">
+      </div>
       <div class="exp-autostop">
         <span>Auto-stop</span>
         <input type="number" data-role="autostop-e" min="0" max="3600" placeholder="off" value="${t.autoStop||''}" oninput="tById(${t.id}).autoStop=parseFloat(this.value)||0;autoSave()">
@@ -3062,6 +3181,8 @@ function refreshTrackDisplay(t){
   // Category
   const cc=role(t,'cat-c'); if(cc){ cc.textContent=t.cat; cc.className=`tc-cat ${t.cat}`; }
   const ce=role(t,'cat-e'); if(ce){ ce.textContent=t.cat; ce.className=`exp-cat ${t.cat}`; }
+  // Pan row only exists for SFX
+  const pr=role(t,'pan-row'); if(pr) pr.style.display = t.cat==='SFX' ? '' : 'none';
   // Filename
   const fn=role(t,'filename-e'); if(fn){ fn.textContent=t.filename||'No file loaded'; }
   const ufn=role(t,'upload-fn'); if(ufn){
@@ -3372,13 +3493,361 @@ function toggleCatPop(id,event){
 }
 function setCat(id,cat){
   const t=tById(id); if(!t) return;
+  const wasSFX = t.cat==='SFX';
   t.cat=cat;
   const idx=catC[cat]++%CAT_ACCENTS[cat].length;
   t.accent=CAT_ACCENTS[cat][idx];
+  // Pan is an SFX-only feature — leaving SFX recentres the sound.
+  if(wasSFX && cat!=='SFX' && t.pan!==0) setTrackPan(t.id, 0);
   refreshTrackDisplay(t);
   document.querySelectorAll('.cat-popup.open').forEach(p=>p.classList.remove('open'));
   layoutTracks();
   autoSave();
+}
+
+// ════════════════════════════════════════════════
+// SHOW CALLER — record a rehearsal's actions + notes against the clock,
+// then replay them as timed prompts during the show.
+//   REC: timestamps every operator action (plays, fades, faders, scenes,
+//        cues, favourites) plus typed notes.
+//   SHOW: a lane shows what's coming (notes surface ~60s early); the actual
+//         control to hit glows as its moment approaches. Prompts only —
+//         nothing ever auto-fires. Re-sync: tap an upcoming chip ("we're
+//         here now") or nudge ±30s.
+// ════════════════════════════════════════════════
+let showRec = null;        // {t0, events:[]} while recording
+let showTimeline = null;   // saved {recordedAt, duration, events:[]} — persisted per production
+let showPlay = null;       // {t0, offsetMs, done:Set} while in SHOW mode
+let _scSquelch = false;    // true inside compound ops (scene fire) so internals don't double-record
+let _scFaderPend = {};     // debounced fader-move capture
+let _scTimer = null;       // lane/highlight refresh
+let _scGlowEls = new Set();
+
+// ── Capture/prompt filter ──
+// Which action families the Show Caller records and prompts. A device
+// preference (persisted locally), applied BOTH when recording (new timelines
+// stay lean) and when displaying (existing recordings de-clutter immediately).
+// Notes are always on. Fader moves ('vols') default OFF — they're the main
+// source of lane clutter.
+const SC_GROUPS = {
+  plays:  ['play','stop','gplay','gstop','fav'],
+  fades:  ['fadeIn','fadeOut','fadeAll','catFade'],
+  vols:   ['vol'],
+  scenes: ['scene','xfade'],
+  cues:   ['cueStandby','cueGo'],
+};
+let scFilter = {plays:true, fades:true, vols:false, scenes:true, cues:true};
+try{ const _sf=localStorage.getItem('offside_sc_filter'); if(_sf) scFilter=Object.assign(scFilter, JSON.parse(_sf)); }catch(_){}
+function scKindOn(kind){
+  if(kind==='note') return true;
+  for(const g in SC_GROUPS){ if(SC_GROUPS[g].includes(kind)) return !!scFilter[g]; }
+  return true;
+}
+function scToggleFilter(group){
+  scFilter[group]=!scFilter[group];
+  try{ localStorage.setItem('offside_sc_filter', JSON.stringify(scFilter)); }catch(_){}
+  scRenderFilterChips();
+  scRenderLane(true);
+  pushStateNow(); // board prompts follow the same filter
+}
+function scRenderFilterChips(){
+  const row=document.getElementById('scl-filter-row'); if(!row) return;
+  const defs=[['plays','▶ Plays'],['fades','↕ Fades'],['vols','🎚 Faders'],['scenes','⚡ Scenes'],['cues','💡 Cues']];
+  row.innerHTML = defs.map(([g,lbl])=>`<button class="scl-chiptoggle ${scFilter[g]?'on':''}" onclick="scToggleFilter('${g}')" title="${scFilter[g]?'Captured & prompted — tap to ignore':'Ignored — tap to capture & prompt'}">${lbl}</button>`).join('');
+}
+
+function scClock(){ // seconds on the show clock (recording or playback)
+  if(showRec) return (Date.now()-showRec.t0)/1000;
+  if(showPlay) return (Date.now()-showPlay.t0+showPlay.offsetMs)/1000;
+  return 0;
+}
+function scFmt(s){ s=Math.max(0,Math.round(s)); const m=Math.floor(s/60); return `${m}:${String(s%60).padStart(2,'0')}`; }
+
+// ── Capture ──
+function scRecord(kind, label, ref){
+  if(_scSquelch) return;
+  if(!scKindOn(kind)) return; // filtered out by the capture/prompt preference
+  if(showRec){
+    showRec.events.push({t:+scClock().toFixed(1), kind, label, ref:ref||null});
+    scUpdateRecUI();
+  } else if(showPlay){
+    scMatch(kind, ref);
+  }
+}
+// Fader drags produce floods of values — capture one event per gesture,
+// stamped at the FIRST movement, valued at the LAST.
+function scRecordFader(refType, id, name, value){
+  if(_scSquelch || (!showRec && !showPlay)) return;
+  if(!scKindOn('vol')) return;
+  const key=`${refType}:${id}`;
+  let p=_scFaderPend[key];
+  if(!p){ p=_scFaderPend[key]={firstT:+scClock().toFixed(1), timer:null}; }
+  p.value=value; p.name=name;
+  clearTimeout(p.timer);
+  p.timer=setTimeout(()=>{
+    delete _scFaderPend[key];
+    const pct=Math.round(p.value*100);
+    if(showRec){
+      showRec.events.push({t:p.firstT, kind:'vol', label:`${p.name} → ${pct}%`, ref:{type:refType, id}});
+      scUpdateRecUI();
+    } else if(showPlay){ scMatch('vol', {type:refType, id}); }
+  }, 700);
+}
+function scAddNote(){
+  const inp=document.getElementById('scl-note-input');
+  const text=(inp?.value||'').trim();
+  if(!text || !showRec) return;
+  showRec.events.push({t:+scClock().toFixed(1), kind:'note', label:text, ref:null});
+  inp.value='';
+  scUpdateRecUI();
+  showToast('Note marked');
+}
+
+// ── REC ──
+function scStartRec(){
+  if(showPlay) scEndShow();
+  if(showTimeline && !confirm('A show recording already exists for this production. Recording again will REPLACE it when you stop. Continue?')) return;
+  showRec={t0:Date.now(), events:[]};
+  scSetTimer();
+  scUpdateRecUI();
+  diagInfo('Show Caller: REC started');
+  showToast('⏺ Recording show — break a leg');
+}
+function scStopRec(){
+  if(!showRec) return;
+  const dur=scClock();
+  if(!showRec.events.length){
+    if(!confirm('No actions were recorded. Discard this recording?')){ return; }
+    showRec=null; scSetTimer(); scUpdateRecUI(); return;
+  }
+  showTimeline={recordedAt:Date.now(), duration:+dur.toFixed(1), events:showRec.events.slice().sort((a,b)=>a.t-b.t)};
+  showRec=null;
+  scSetTimer(); scUpdateRecUI(); autoSave();
+  diagInfo(`Show Caller: saved timeline, ${showTimeline.events.length} events over ${scFmt(dur)}`);
+  showToast(`✓ Show saved — ${showTimeline.events.length} cues over ${scFmt(dur)}`);
+}
+
+// ── SHOW ──
+function scStartShow(){
+  if(showRec){ showToast('Stop recording first'); return; }
+  if(!showTimeline || !showTimeline.events.length){ showToast('No show recorded yet — REC a rehearsal first'); return; }
+  showPlay={t0:Date.now(), offsetMs:0, done:new Set()};
+  scSetTimer(); scUpdateRecUI(); scRenderLane();
+  diagInfo('Show Caller: SHOW started');
+  showToast('▶ Show clock running');
+}
+function scEndShow(){
+  if(!showPlay) return;
+  showPlay=null;
+  scSetTimer(); scClearGlows(); scRenderLane(); scUpdateRecUI();
+  diagInfo('Show Caller: SHOW ended');
+}
+function scNudge(sec){
+  if(!showPlay) return;
+  showPlay.offsetMs += sec*1000;
+  scRenderLane(true);
+  showToast(`Clock ${sec>0?'+':''}${sec}s`);
+}
+function scSyncToEvent(idx){
+  if(!showPlay || !showTimeline) return;
+  const ev=showTimeline.events[idx];
+  if(!ev) return;
+  // "We're here now": shift the clock so this event's time == now.
+  showPlay.offsetMs = ev.t*1000 - (Date.now()-showPlay.t0);
+  scRenderLane(true);
+  showToast(`⟲ Synced to: ${ev.label}`);
+}
+// Performing the matching action marks the nearest pending prompt done.
+function scMatch(kind, ref){
+  if(!showPlay || !showTimeline) return;
+  const now=scClock();
+  let best=-1, bestDist=46; // within ±45s
+  showTimeline.events.forEach((ev,i)=>{
+    if(showPlay.done.has(i) || ev.kind!==kind) return;
+    const sameRef = (!ev.ref && !ref) || (ev.ref && ref && ev.ref.type===ref.type && String(ev.ref.id)===String(ref.id));
+    if(!sameRef) return;
+    const d=Math.abs(ev.t-now);
+    if(d<bestDist){ bestDist=d; best=i; }
+  });
+  if(best>=0){ showPlay.done.add(best); scRenderLane(true); }
+}
+
+// ── Lane + highlights ──
+function scSetTimer(){
+  clearInterval(_scTimer); _scTimer=null;
+  if(showRec||showPlay) _scTimer=setInterval(()=>{ scUpdateRecUI(); if(showPlay) scRenderLane(); }, 500);
+}
+let _scLaneSig=null;
+function scRenderLane(force){
+  const lane=document.getElementById('scl-lane');
+  if(!lane) return;
+  if(!showPlay){ lane.classList.remove('visible'); _scLaneSig=null; scClearGlows(); return; }
+  const now=scClock();
+  const upcoming=[];
+  showTimeline.events.forEach((ev,i)=>{
+    if(showPlay.done.has(i)) return;
+    if(!scKindOn(ev.kind)) return; // hidden by the capture/prompt preference
+    const dt=ev.t-now;
+    const horizon = ev.kind==='note' ? 75 : 45;   // notes surface earlier
+    if(dt>-12 && dt<horizon) upcoming.push({ev,i,dt});
+  });
+  upcoming.sort((a,b)=>a.dt-b.dt);
+  const top=upcoming.slice(0,4);
+  const sig=now.toFixed(0)+'|'+top.map(u=>`${u.i}:${Math.round(u.dt)}`).join(',');
+  if(!force && sig===_scLaneSig){ scApplyGlows(top); return; }
+  _scLaneSig=sig;
+  lane.classList.add('visible');
+  let html=`<span class="scl-clock">⏱ ${scFmt(now)}</span>`;
+  html+=`<button class="scl-nudge" onclick="scNudge(-30)" title="Clock back 30s">−30s</button><button class="scl-nudge" onclick="scNudge(30)" title="Clock forward 30s">+30s</button>`;
+  if(!top.length){ html+=`<span class="scl-empty">— no upcoming cues —</span>`; }
+  top.forEach(u=>{
+    const imminent=u.dt<=10;
+    const overdue=u.dt<0;
+    const icon=scIcon(u.ev.kind);
+    html+=`<button class="scl-chip ${u.ev.kind==='note'?'note':''} ${imminent?'imminent':''} ${overdue?'overdue':''}" onclick="scSyncToEvent(${u.i})" title="Tap = we're here now (re-sync)">${icon} ${esc(u.ev.label)} <span class="scl-dt">${overdue?'now':('in '+scFmt(u.dt))}</span></button>`;
+  });
+  html+=`<button class="scl-end" onclick="scEndShow()" title="End show mode">■ END</button>`;
+  lane.innerHTML=html;
+  scApplyGlows(top);
+}
+function scIcon(kind){
+  return {play:'▶',stop:'■',gplay:'▶',gstop:'■',fadeIn:'↑',fadeOut:'↓',scene:'⚡',xfade:'⇄',cueStandby:'💡',cueGo:'🟢',catFade:'〰',fadeAll:'⤓',fav:'★',vol:'🎚',note:'✎'}[kind]||'•';
+}
+// Glow the actual control for prompts inside the action window (−8s..+6s)
+function scApplyGlows(top){
+  const want=new Set();
+  top.forEach(u=>{
+    if(u.dt>8 || u.dt<-6) return;
+    const el=scRefEl(u.ev);
+    if(el) want.add(el);
+  });
+  _scGlowEls.forEach(el=>{ if(!want.has(el)) el.classList.remove('sc-glow'); });
+  want.forEach(el=>el.classList.add('sc-glow'));
+  _scGlowEls=want;
+}
+function scClearGlows(){ _scGlowEls.forEach(el=>el.classList.remove('sc-glow')); _scGlowEls=new Set(); }
+function scRefEl(ev){
+  const r=ev.ref;
+  if(!r) return null;
+  try{
+    if(r.type==='track'){ const t=tById(r.id); return t?.el||null; }
+    if(r.type==='group'){ const g=gById(r.id); return g?.el||null; }
+    if(r.type==='scene'){ return document.getElementById(`sc-${r.id}`); }
+    if(r.type==='cue'){ return document.querySelector(`[data-cue="${r.id}"]`); }
+    if(r.type==='cat'){ return document.querySelector(`.fw-fader[data-cat="${r.id}"]`); }
+    if(r.type==='master'){ return document.getElementById('stopall-btn'); }
+    if(r.type==='fav'){ return document.querySelector(`[data-fav="${r.id}"]`); }
+  }catch(_){}
+  return null;
+}
+function scUpdateRecUI(){
+  const st=document.getElementById('scl-status');
+  const recBtn=document.getElementById('scl-rec-btn');
+  const showBtn=document.getElementById('scl-show-btn');
+  const noteRow=document.getElementById('scl-note-row');
+  const dot=document.getElementById('scl-topdot');
+  if(recBtn){ recBtn.textContent = showRec ? '■ STOP & SAVE' : '⏺ REC SHOW'; recBtn.classList.toggle('recording', !!showRec); }
+  if(showBtn){
+    showBtn.textContent = showPlay ? '■ END SHOW' : '▶ SHOW MODE';
+    showBtn.disabled = !showPlay && !(showTimeline && showTimeline.events.length);
+    showBtn.classList.toggle('live', !!showPlay);
+  }
+  if(noteRow) noteRow.style.display = showRec ? '' : 'none';
+  if(st){
+    if(showRec) st.textContent=`⏺ ${scFmt(scClock())} · ${showRec.events.length} actions captured`;
+    else if(showPlay) st.textContent=`▶ show clock ${scFmt(scClock())}`;
+    else if(showTimeline) st.textContent=`Saved: ${showTimeline.events.length} cues over ${scFmt(showTimeline.duration)}`;
+    else st.textContent='No show recorded yet';
+  }
+  if(dot) dot.style.display = showRec ? '' : 'none';
+}
+// Render the capture-filter chips once at boot (load paths re-render too).
+scRenderFilterChips();
+function scToggleRec(){ showRec ? scStopRec() : scStartRec(); }
+function scToggleShow(){ showPlay ? scEndShow() : scStartShow(); }
+
+// ════════════════════════════════════════════════
+// PAN (SFX tracks) — static position + travel sweeps
+// Routes the track's media element through a StereoPannerNode lazily, only
+// when pan is first used (pan 0 = centre = identical to unrouted audio).
+// NOTE: a media element can be captured by createMediaElementSource only ONCE,
+// so wiring is one-way and per-track; volume control via ws still works
+// because the element's own volume applies before the node graph.
+// ════════════════════════════════════════════════
+function ensureTrackPanner(t){
+  if(t._panWired) return !!t._panNode;
+  if(!t.ws) return false;
+  try{
+    const el = t.ws.getMediaElement ? t.ws.getMediaElement() : null;
+    if(!el) return false;
+    const ctx = getAudioCtx();
+    if(ctx.state==='suspended') ctx.resume().catch(()=>{});
+    t._panSrc = ctx.createMediaElementSource(el);
+    t._panNode = ctx.createStereoPanner();
+    t._panSrc.connect(t._panNode);
+    t._panNode.connect(ctx.destination);
+    t._panWired = true;
+    diagInfo(`Panner wired: ${t.name}`);
+    return true;
+  }catch(err){
+    t._panWired = true; // don't retry every call — element may already be captured
+    t._panNode = null;
+    diagErr(`Panner failed for ${t.name}`, err && err.message);
+    return false;
+  }
+}
+
+function setTrackPan(id, v){
+  const t=tById(id); if(!t) return;
+  clearTimeout(t._panTravelTimer);
+  t.pan = Math.max(-1, Math.min(1, parseFloat(v)||0));
+  if(t.pan!==0 || t._panWired){
+    if(ensureTrackPanner(t) && t._panNode){
+      const ctx=getAudioCtx(), now=ctx.currentTime;
+      t._panNode.pan.cancelScheduledValues(now);
+      t._panNode.pan.setValueAtTime(t._panNode.pan.value, now);
+      t._panNode.pan.linearRampToValueAtTime(t.pan, now+0.04);
+    }
+  }
+  syncPanUI(t);
+  autoSave();
+}
+
+// Sweep the sound across the stage: 'lr' = start hard LEFT, travel to RIGHT
+// over `secs`; 'rl' mirrored. The fader cap (pan slider) follows.
+function panTravel(id, dir, secs){
+  const t=tById(id); if(!t) return;
+  if(!ensureTrackPanner(t) || !t._panNode){ showToast('Pan unavailable for this track'); return; }
+  clearTimeout(t._panTravelTimer);
+  const from = dir==='lr' ? -1 : 1, to = dir==='lr' ? 1 : -1;
+  const dur = Math.max(0.5, Math.min(30, parseFloat(secs)||4));
+  const ctx=getAudioCtx(), now=ctx.currentTime;
+  if(ctx.state==='suspended') ctx.resume().catch(()=>{});
+  t._panNode.pan.cancelScheduledValues(now);
+  t._panNode.pan.setValueAtTime(from, now);
+  t._panNode.pan.linearRampToValueAtTime(to, now+dur);
+  t.pan = from; syncPanUI(t);
+  // Animate the slider along with the sweep (UI only — audio is ramping natively)
+  const t0=Date.now();
+  const tick=()=>{
+    const r=Math.min((Date.now()-t0)/(dur*1000),1);
+    t.pan = from + (to-from)*r;
+    syncPanUI(t);
+    if(r<1) t._panTravelTimer=setTimeout(tick,80);
+    else autoSave();
+  };
+  t._panTravelTimer=setTimeout(tick,80);
+  diagInfo(`Pan travel ${dir} over ${dur}s: ${t.name}`);
+}
+
+function syncPanUI(t){
+  const ps=role(t,'pan-e'); if(ps && parseFloat(ps.value)!==t.pan) ps.value=t.pan;
+  const pl=role(t,'panlbl-e'); if(pl) pl.textContent = panLabel(t.pan);
+}
+function panLabel(p){
+  if(Math.abs(p)<0.05) return 'C';
+  const pct=Math.round(Math.abs(p)*100);
+  return (p<0?'L':'R')+pct;
 }
 
 // ════════════════════════════════════════════════
@@ -3397,6 +3866,10 @@ function initWS(t){
   ws.load(t.src);
   ws.on('ready',()=>{
     t._audioVol=t.volume; // actual audio level starts at target
+    // Restore a saved pan position (SFX) — wires the panner lazily.
+    if(t.cat==='SFX' && t.pan!==0 && ensureTrackPanner(t) && t._panNode){
+      t._panNode.pan.setValueAtTime(t.pan, getAudioCtx().currentTime);
+    }
     ws.setPlaybackRate(t.speed);
     ws.setVolume(effectiveVol(t));
     const tdur=role(t,'tdur'); if(tdur) tdur.textContent=fmtT(ws.getDuration());
@@ -3559,7 +4032,7 @@ async function togglePlay(id){
       setTimeout(res,3500);
     });
   }
-  if(t.ws) await t.ws.playPause();
+  if(t.ws){ scRecord(t.playing?'stop':'play', `${t.playing?'Stop':'Play'}: ${t.name}`, {type:'track',id:t.id}); await t.ws.playPause(); }
 }
 
 function stopTrack(id){
@@ -3624,6 +4097,8 @@ function hardStopAll(){
 // Fade out a filtered set of tracks. cat=null fades everything; cat='SFX' etc fades that category.
 function stopAllFade(){
   if(stopAllTimer!==null){ hardStopAll(); return; }
+  scRecord('fadeAll','FADE ALL',{type:'master',id:'all'});
+  _scSquelch=true; setTimeout(()=>{_scSquelch=false;}, 800);
   const FADE=2000;
   const playing=tracks.filter(t=>t.playing&&t.ws);
   // Groups play through the Web Audio engine (not t.ws). Include any group that
@@ -3684,6 +4159,7 @@ function onVol(id,v){
   const t=tById(id); if(!t) return;
   t.volume=parseFloat(v);
   const nv=t.volume;
+  scRecordFader('track', id, t.name, nv);
   // Update displays immediately (compare numerically so remote string values still apply)
   const vc=role(t,'vol-c'); if(vc && parseFloat(vc.value)!==nv) vc.value=nv;
   const ve=role(t,'vol-e'); if(ve && parseFloat(ve.value)!==nv) ve.value=nv;
@@ -3746,6 +4222,7 @@ function syncVolUI(t){
 }
 function doFade(id,dir){
   const t=tById(id); if(!t?.ws) return;
+  scRecord(dir==='in'?'fadeIn':'fadeOut', `Fade ${dir}: ${t.name}`, {type:'track',id:t.id});
   clearInterval(t.fadeTimer);
   const FADE_MS = 2000; // constant 2-second fade regardless of starting volume
 
@@ -4053,6 +4530,8 @@ function renameScene(sid){
 
 function fireScene(sid,xfade=false){
   const s=scenes.find(s=>s.id===sid); if(!s) return;
+  scRecord(xfade?'xfade':'scene', `${xfade?'Crossfade to':'Fire scene'}: ${s.name}`, {type:'scene',id:sid});
+  _scSquelch=true; setTimeout(()=>{_scSquelch=false;}, 800); // internals must not double-record
   diagInfo(`Scene ${xfade?'xfade':'fire'}: ${s.name}`);
   activeSceneId=sid;
   const fadeDur=(xfade?Math.max(0.5,s.fadeDur):0)*1000;
@@ -4524,6 +5003,11 @@ const MANUAL_HTML = `
   <h3>⚙ Controls window</h3>
   <p>Draggable panel with the <strong>Master</strong> fader, three <strong>category faders</strong> (BGM / SFX / AMB), <strong>Fade All Tracks</strong>, <strong>Favourites</strong>, and (on the local-server version) <strong>Light Cues</strong>. Favourites are one-shot sounds (door slams, switches, stings) that fire instantly at 50% on tap.</p>
   <p>Each category has <strong>Fade In / Fade Out</strong> buttons (mirrored on the fader board): Fade Out ramps that whole category to silence and <em>latches</em> it — the fader cap stays put, and moving it makes no sound while latched. Fade In ramps back up to wherever the fader now sits. A latched category shows a dimmed fader and a highlighted button on both devices.</p>
+
+  <h3>🎬 Show Caller</h3>
+  <p>Record a rehearsal, replay it as timed prompts on show night. In ⚙ Controls: hit <strong>⏺ REC SHOW</strong> at curtain-up — every action you take (plays, stops, fades, fader moves, scenes, cues, favourites) is timestamped, and you can type quick notes ("Rose enters") that mark the moment. Hit <strong>■ STOP &amp; SAVE</strong> at the end; the show saves with the production.</p>
+  <p>Next run, hit <strong>▶ SHOW MODE</strong> at curtain-up. A lane appears showing what's coming with countdowns (notes surface ~75s early, actions ~45s), and the <em>actual control to hit glows green</em> as its moment approaches — on the console and the fader board. Doing the action clears its prompt. <strong>Nothing ever fires by itself</strong> — it's a glowing cue sheet, you stay the operator.</p>
+  <p>Live theatre never runs at rehearsal pace, so re-sync any time: <strong>tap an upcoming chip</strong> to say "we're here now" (the whole remaining timeline shifts), or nudge the clock <strong>±30s</strong>. Both work from the fader board too.</p>
   <h3>💡 Light Cues (local-server version)</h3>
   <p>Build a list of lighting cues (e.g. "Red Light", "Lights Off") each with a colour. Tap a cue to put it on <strong>STANDBY</strong> (the light operator's screen flashes amber), then hit <strong>GO</strong> (turns green). Open the cue-light display on a spare screen by entering the server IP and choosing <strong>CUE LIGHT</strong>. Both the console and the fader board can send cues.</p>
   <h3>▤ Global Mixer</h3>
@@ -5469,10 +5953,11 @@ function migrateScenes(scenesArr){
 function stateToJSON(){
   return JSON.stringify({
     version:7,
-    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename})),
+    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,pan:t.pan||0,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename})),
     groups:groups.map(g=>({id:g.id,name:g.name,volume:g.volume,trackIds:g.trackIds})),
     favourites:favourites.map(f=>({id:f.id,name:f.name,filename:f.filename})),
     lightCues:lightCues.map(c=>({id:c.id,label:c.label,color:c.color})),
+    showTimeline: showTimeline || null,
     catVol:{BGM:catVol.BGM,SFX:catVol.SFX,AMB:catVol.AMB},
     scenes,activeSceneId,masterVol,uid,gid,fid,lcid,
     expandedIds:[...expandedIds],
@@ -5551,6 +6036,9 @@ function resetWorkspace(){
   groups.forEach(g=>{ if(g.el) g.el.remove(); });
   favourites.forEach(f=>{ if(f.src) URL.revokeObjectURL(f.src); });
   tracks=[]; scenes=[]; groups=[]; favourites=[]; lightCues=[];
+  if(showRec){ showRec=null; }
+  if(showPlay){ scEndShow(); }
+  showTimeline=null; scSetTimer(); scClearGlows();
   cueState={ phase:'idle', cueId:null, label:'', color:'', ts:0 };
   expandedIds.clear();
   activeSceneId=null;
@@ -5581,6 +6069,9 @@ function loadProject(id){
       groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null,buffers:{},sources:{},decodeStatus:{},isPlaying:false,duration:gd.duration||0,startedAt:0,pausedAt:0}));
       favourites=(data.favourites||[]).map(fd=>({id:fd.id,name:fd.name,filename:fd.filename||null,src:null}));
       lightCues=(data.lightCues||[]).map(c=>({id:c.id,label:c.label,color:c.color||'#ffc107'}));
+      showTimeline = data.showTimeline || null;
+      scUpdateRecUI();
+      scRenderFilterChips();
       if(data.catVol){ catVol.BGM=data.catVol.BGM??1; catVol.SFX=data.catVol.SFX??1; catVol.AMB=data.catVol.AMB??1; }
       (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
       tracks.forEach(t=>buildTrackElement(t));
@@ -5803,7 +6294,7 @@ function deserializeTracks(arr){
     const t=mkTrack(td.name,td.cat||'AMB');
     Object.assign(t,{
       id:td.id, name:td.name, cat:td.cat||'AMB',
-      volume:td.volume??1, speed:td.speed||1,
+      volume:td.volume??1, speed:td.speed||1, pan:td.pan??0,
       loopEnabled:td.loopEnabled||false,
       loopStart:td.loopStart??null, loopEnd:td.loopEnd??null,
       loopCount:td.loopCount||0,
@@ -5971,9 +6462,24 @@ function buildFaderSnapshot(){
     master: masterVol,
     catVol: { BGM: catVol.BGM ?? 1, SFX: catVol.SFX ?? 1, AMB: catVol.AMB ?? 1 },
     catFaded: { BGM: !!catFaded.BGM, SFX: !!catFaded.SFX, AMB: !!catFaded.AMB },
+    showCaller: (()=>{
+      if(!showPlay || !showTimeline) return { active:false };
+      const now=scClock();
+      const up=[];
+      showTimeline.events.forEach((ev,i)=>{
+        if(showPlay.done.has(i)) return;
+        if(!scKindOn(ev.kind)) return;
+        const dt=ev.t-now;
+        const horizon = ev.kind==='note' ? 75 : 45;
+        if(dt>-12 && dt<horizon) up.push({i, dt:+dt.toFixed(1), kind:ev.kind, label:ev.label, refType:ev.ref?.type||null, refId:ev.ref?.id??null});
+      });
+      up.sort((a,b)=>a.dt-b.dt);
+      return { active:true, clock:+now.toFixed(1), upcoming:up.slice(0,3) };
+    })(),
     tracks: tracks.filter(t=>!groupedTrackIds.has(t.id)).map(t=>({
       id: t.id, name: t.name, cat: t.cat,
       volume: t.volume,
+      pan: t.pan || 0,
       muted: t.volume <= 0.001,
       playing: !!t.playing,
       level: t._audioVol ?? (t.playing ? effectiveVol(t) : 0),
@@ -6025,6 +6531,9 @@ function applyFaderChange(ch){
   if(ch.type === 'master'){
     if(ch.field === 'fadeAll'){ stopAllFade(); return; }
     setMaster(ch.value);
+  } else if(ch.type === 'showcaller'){
+    if(ch.field === 'sync') scSyncToEvent(ch.value);
+    else if(ch.field === 'nudge') scNudge(ch.value);
   } else if(ch.type === 'cat'){
     if(ch.field === 'muted'){ fadeCatMute(ch.id, ch.value); }
     else if(ch.field === 'fade'){ catFadeToggle(ch.id); }
@@ -6032,6 +6541,8 @@ function applyFaderChange(ch){
   } else if(ch.type === 'track'){
     const t = tById(ch.id); if(!t) return;
     if(ch.field === 'volume') onVol(ch.id, ch.value);
+    else if(ch.field === 'pan'){ setTrackPan(ch.id, ch.value); }
+    else if(ch.field === 'panTravel'){ unlockAudioForRemote(); panTravel(ch.id, ch.value?.dir, ch.value?.secs); }
     else if(ch.field === 'muted'){
       fadeTrackMute(ch.id, ch.value);
     }
@@ -6039,7 +6550,7 @@ function applyFaderChange(ch){
       // A play command from the fader board is not a user gesture on THIS device,
       // so the browser may have the audio context suspended. Wake it first.
       unlockAudioForRemote();
-      if(t.playing) stopTrack(ch.id);
+      if(t.playing){ scRecord('stop', `Stop: ${t.name}`, {type:'track',id:t.id}); stopTrack(ch.id); }
       else togglePlay(ch.id);
     }
   } else if(ch.type === 'group'){
@@ -6050,7 +6561,7 @@ function applyFaderChange(ch){
       // Authoritative check (flag OR live sources) so a board tap reliably
       // stops a group that a scene started, instead of stacking a 2nd copy.
       const actuallyPlaying = g.isPlaying || (g.sources && Object.keys(g.sources).length>0);
-      if(actuallyPlaying) groupStop(ch.id);
+      if(actuallyPlaying){ scRecord('gstop', `Stop group: ${g.name}`, {type:'group',id:g.id}); groupStop(ch.id); }
       else groupTogglePlay(ch.id);
     }
   }
@@ -6297,7 +6808,7 @@ function startFaderBoard(){
   });
   // Connect via WebSocket; falls back to polling automatically.
   connectWS('faderboard',
-    (state)=>{ _fbState = state; fbConn(true); renderFaderBoard(); updateSceneControls(); renderFavourites_fb(); renderCues_fb(); },
+    (state)=>{ _fbState = state; fbConn(true); renderFaderBoard(); updateSceneControls(); renderFavourites_fb(); renderCues_fb(); fbRenderSCLane(); },
     null
   );
   _fbMeterTimer = setInterval(updateFaderMeters, 80);
@@ -6771,9 +7282,13 @@ function faderStripHTML(type, id, label, value, muted, playing, extraCls='', cat
   const hasMeter = isTrack;
   // Category fade-out latch state (from the synced snapshot)
   const faded = isCat && _fbState && _fbState.catFaded && _fbState.catFaded[id];
-  // Bottom-slot control: tracks get MUTE, categories get a FADE toggle, others a spacer.
+  // Bottom-slot control: tracks get MUTE (SFX tracks also get PAN), categories
+  // get a FADE toggle, others a spacer.
   let bottom;
-  if(isTrack) bottom = `<button class="fb-mute" data-fb="mute" onclick="fbToggleMute(${id})">${muted?'UNMUTE':'MUTE'}</button>`;
+  if(isTrack){
+    bottom = `<button class="fb-mute" data-fb="mute" onclick="fbToggleMute(${id})">${muted?'UNMUTE':'MUTE'}</button>`;
+    if(catTag==='SFX') bottom += `<button class="fb-panbtn" data-fb="panbtn" onclick="fbOpenPan(${id})" title="Pan / travel">◖ PAN ◗</button>`;
+  }
   else if(isCat) bottom = `<button class="fb-catfade ${faded?'faded':''}" data-fb="catfade" onclick="fbCatFade('${id}')">${faded?'FADE IN':'FADE OUT'}</button>`;
   else bottom = `<div class="fb-spacer"></div>`;
   return `<div class="fb-strip ${extraCls} ${muted?'is-muted':''} ${playing?'is-playing':''} ${staged?'is-staged':''} ${faded?'is-cat-faded':''} ${hasMeter?'':'no-meter'}" data-key="${key}" data-type="${type}" data-id="${id ?? ''}">
@@ -6855,6 +7370,14 @@ function updateFaderStrip(type, id, value, muted, playing){
     const t = (_fbState?.tracks||[]).find(x=>x.id===id);
     const staged = t && t.inScene && !effPlaying;
     strip.classList.toggle('is-staged', !!staged);
+    // PAN button is SFX-only — add/remove in place if the category changed.
+    if(t){
+      const btn = strip.querySelector('[data-fb="panbtn"]');
+      if(t.cat==='SFX' && !btn){
+        const mute = strip.querySelector('[data-fb="mute"]');
+        if(mute) mute.insertAdjacentHTML('afterend', `<button class="fb-panbtn" data-fb="panbtn" onclick="fbOpenPan(${id})" title="Pan / travel">◖ PAN ◗</button>`);
+      } else if(t.cat!=='SFX' && btn){ btn.remove(); }
+    }
   }
   // Category fade-out latch → update the FADE button + dimmed styling.
   if(type==='cat'){
@@ -6922,6 +7445,51 @@ function _fbMuteState(key){
   return null;
 }
 
+// ── Pan modal (SFX tracks) ──
+let _fbPanTrackId = null;
+let _fbPanDragging = false;
+let _fbPanSyncTimer = null;
+function fbOpenPan(id){
+  _fbPanTrackId = id;
+  const t = (_fbState?.tracks||[]).find(x=>x.id===id);
+  document.getElementById('fb-pan-title').textContent = `Pan — ${t ? t.name : 'Track'}`;
+  const v = t ? (t.pan||0) : 0;
+  const sl = document.getElementById('fb-pan-slider');
+  sl.value = v;
+  document.getElementById('fb-pan-val').textContent = panLabel(v);
+  document.getElementById('fb-pan-overlay').classList.add('open');
+  // Live-sync the slider from console state while open (console may travel-sweep)
+  clearInterval(_fbPanSyncTimer);
+  _fbPanSyncTimer = setInterval(()=>{
+    if(_fbPanDragging || _fbPanTrackId===null) return;
+    const tt = (_fbState?.tracks||[]).find(x=>x.id===_fbPanTrackId);
+    if(!tt) return;
+    const cur = tt.pan||0;
+    if(Math.abs(parseFloat(sl.value)-cur) > 0.01){ sl.value = cur; }
+    document.getElementById('fb-pan-val').textContent = panLabel(cur);
+  }, 150);
+  sl.onpointerdown = ()=>{ _fbPanDragging = true; };
+  sl.onpointerup = sl.onpointercancel = ()=>{ _fbPanDragging = false; };
+}
+function fbClosePan(){
+  _fbPanTrackId = null;
+  clearInterval(_fbPanSyncTimer); _fbPanSyncTimer = null;
+  document.getElementById('fb-pan-overlay').classList.remove('open');
+}
+function fbPanInput(v){
+  if(_fbPanTrackId===null) return;
+  document.getElementById('fb-pan-val').textContent = panLabel(parseFloat(v)||0);
+  const sl=document.getElementById('fb-pan-slider');
+  if(parseFloat(sl.value)!==parseFloat(v)) sl.value=v;
+  fbSendChange('track', _fbPanTrackId, 'pan', parseFloat(v)||0);
+}
+function fbPanTravel(dir){
+  if(_fbPanTrackId===null) return;
+  const secs = parseFloat(document.getElementById('fb-pan-secs').value)||4;
+  fbSendChange('track', _fbPanTrackId, 'panTravel', {dir, secs});
+  diagInfo(`Board send: panTravel ${dir} ${secs}s`);
+}
+
 // Toggle a category's fade-out latch from the board. Optimistically flip the
 // button (with a "FADING…" pulse for the ramp duration) and hold that state
 // against snapshot updates until the console's new state arrives.
@@ -6979,6 +7547,47 @@ function _fbPlayState(key){
 }
 
 let _fbStopAllCooldown = 0;
+// ── Show Caller lane on the board (prompts + re-sync; lifecycle stays on console) ──
+let _fbSclSig=null, _fbSclGlows=new Set();
+function fbRenderSCLane(){
+  const lane=document.getElementById('fb-scl-lane');
+  if(!lane) return;
+  const sc=_fbState?.showCaller;
+  if(!sc || !sc.active){
+    if(lane.classList.contains('visible')){ lane.classList.remove('visible'); _fbSclSig=null; _fbSclGlows.forEach(el=>el.classList.remove('sc-glow')); _fbSclGlows=new Set(); }
+    return;
+  }
+  lane.classList.add('visible');
+  const sig=Math.round(sc.clock)+'|'+(sc.upcoming||[]).map(u=>`${u.i}:${Math.round(u.dt)}`).join(',');
+  if(sig!==_fbSclSig){
+    _fbSclSig=sig;
+    let html=`<span class="scl-clock">⏱ ${scFmt(sc.clock)}</span>`;
+    html+=`<button class="scl-nudge" onclick="fbSendChange('showcaller',null,'nudge',-30)">−30s</button><button class="scl-nudge" onclick="fbSendChange('showcaller',null,'nudge',30)">+30s</button>`;
+    if(!(sc.upcoming||[]).length) html+=`<span class="scl-empty">— no upcoming cues —</span>`;
+    (sc.upcoming||[]).forEach(u=>{
+      const imminent=u.dt<=10, overdue=u.dt<0;
+      html+=`<button class="scl-chip ${u.kind==='note'?'note':''} ${imminent?'imminent':''} ${overdue?'overdue':''}" onclick="fbSendChange('showcaller',null,'sync',${u.i})" title="Tap = we're here now">${scIcon(u.kind)} ${esc(u.label)} <span class="scl-dt">${overdue?'now':('in '+scFmt(u.dt))}</span></button>`;
+    });
+    lane.innerHTML=html;
+  }
+  // Glow the matching board control for imminent prompts (−8s..+6s window)
+  const want=new Set();
+  (sc.upcoming||[]).forEach(u=>{
+    if(u.dt>8 || u.dt<-6 || !u.refType) return;
+    let el=null;
+    if(u.refType==='track') el=document.querySelector(`.fb-strip[data-key="track:${u.refId}"] [data-fb="playstop"]`)||document.querySelector(`.fb-strip[data-key="track:${u.refId}"]`);
+    else if(u.refType==='group') el=document.querySelector(`.fb-strip[data-key="group:${u.refId}"]`);
+    else if(u.refType==='scene') el=document.getElementById('fb-scene-trigger');
+    else if(u.refType==='cue'||u.refType==='fav') el=document.getElementById('fb-cf-btn');
+    else if(u.refType==='cat') el=document.querySelector(`.fb-strip[data-key="cat:${u.refId}"] [data-fb="catfade"]`)||document.querySelector(`.fb-strip[data-key="cat:${u.refId}"]`);
+    else if(u.refType==='master') el=document.querySelector('.fb-stopall');
+    if(el) want.add(el);
+  });
+  _fbSclGlows.forEach(el=>{ if(!want.has(el)) el.classList.remove('sc-glow'); });
+  want.forEach(el=>el.classList.add('sc-glow'));
+  _fbSclGlows=want;
+}
+
 function fbStopAll(){
   // Debounce: one fadeAll per fade window — repeat taps were silently re-firing.
   if(Date.now() < _fbStopAllCooldown) return;
