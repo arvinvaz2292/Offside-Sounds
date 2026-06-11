@@ -12,6 +12,7 @@
 :root{
   --bg:#070a0d;--s1:#0e1318;--s2:#151b22;--s3:#1d242c;--s4:#252d36;
   --border:#202830;--border2:#161d24;
+  --zb:#e8262d;
   --green:#00e676;--green2:#00b35a;--green-soft:rgba(0,230,118,.10);
   --amber:#ffc107;--amber-soft:rgba(255,193,7,.10);
   --red:#ff4444;--blue:#40c4ff;
@@ -711,6 +712,14 @@ body.choose-mode > .topbar, body.choose-mode > .layout, body.choose-mode > .proj
 .rc-inner{max-width:680px;width:100%;text-align:center}
 .rc-brand{font-family:var(--display);font-size:42px;letter-spacing:4px;color:var(--text)}
 .rc-byline{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted2);margin-top:6px}
+/* ── ZB Films wordmark lockup (pure CSS — single-file friendly) ──
+   ZEROBUDGET with the Z and B in brand red; FILMS between red rules. */
+.zb-r{color:var(--zb)}
+.zb-lockup{display:inline-flex;flex-direction:column;align-items:center;gap:3px;user-select:none}
+.zb-word{font-family:var(--display);font-size:20px;letter-spacing:4px;color:var(--text);line-height:1}
+.zb-films{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:5px;color:var(--text2);text-indent:5px}
+.zb-films .zb-rule{width:26px;height:1px;background:var(--zb)}
+.rc-zb{margin-top:22px;opacity:.92}
 .rc-prompt{font-family:var(--mono);font-size:14px;letter-spacing:1px;color:var(--text2);margin:34px 0 22px}
 .rc-cards{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
 .rc-card{flex:1;min-width:230px;max-width:300px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.15));
@@ -1136,7 +1145,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 <!-- ══ TOPBAR ══ -->
 <div class="topbar">
   <span class="brand-name">OFFSIDE SOUND</span>
-  <span class="brand-sub">v7 · by Arvin Vaz</span>
+  <span class="brand-sub">v7 · by Arvin Vaz · <span class="zb-r">ZB</span> FILMS</span>
   <button class="project-pill" id="project-pill" onclick="openProjectPicker()" title="Switch project">
     <span class="pp-icon">📁</span>
     <span class="pp-name" id="pp-name">—</span>
@@ -1166,7 +1175,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     <button class="btn btn-purple" onclick="openMixer()" title="Global mixer — all tracks at once">▤ MIXER</button>
     <button class="btn btn-blue" onclick="toggleFloatingWindow()" title="Show / hide control panel">⚙ CONTROLS</button>
     <button class="btn btn-ghost btn-help" onclick="openSupport()" title="Help, export, diagnostics & support — opens in a new tab">⚙️</button>
-    <button class="btn btn-purple" id="link-fader-btn" onclick="openFaderLink()" title="Link a fader board device">📱 LINK FADER</button>
+    <button class="btn btn-purple" id="link-fader-btn" onclick="openFaderLink()" title="Link a fader board or cue light device">📱 LINK DEVICES</button>
     <button class="btn-stopall" id="stopall-btn" onclick="stopAllFade()">
       <span id="stopall-lbl">↓ FADE ALL</span>
       <div class="stopall-progress" id="stopall-progress"></div>
@@ -1281,7 +1290,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     <div class="pp-card-head">
       <div class="pp-brand">
         <div class="pp-brand-name">OFFSIDE SOUND</div>
-        <div class="pp-brand-sub">Theatre Playback · v7 · by Arvin Vaz</div>
+        <div class="pp-brand-sub">Theatre Playback · v7 · by Arvin Vaz · <span class="zb-r">ZB</span> FILMS</div>
       </div>
       <button class="pp-close" id="pp-close-btn" onclick="closeProjectPicker()" style="display:none" title="Close">✕</button>
     </div>
@@ -1333,7 +1342,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 <div class="modal-overlay" id="fader-link-modal">
   <div class="modal-card">
     <div class="modal-head">
-      <div class="modal-title"><span class="modal-icon">📱</span><span>Link a Fader Board</span></div>
+      <div class="modal-title"><span class="modal-icon">📱</span><span>Link Devices — Fader Board & Cue Light</span></div>
       <button class="modal-close" onclick="closeFaderLink()" title="Close">✕</button>
     </div>
     <div class="modal-body" id="fader-link-body" style="text-align:center"></div>
@@ -1406,6 +1415,10 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
   <div class="rc-inner">
     <div class="rc-brand">OFFSIDE SOUND</div>
     <div class="rc-byline">by Arvin Vaz</div>
+    <div class="zb-lockup rc-zb">
+      <div class="zb-word"><span class="zb-r">Z</span>ERO<span class="zb-r">B</span>UDGET</div>
+      <div class="zb-films"><span class="zb-rule"></span>FILMS<span class="zb-rule"></span></div>
+    </div>
     <div class="rc-prompt">What is this device?</div>
     <div class="rc-cards">
       <button class="rc-card" onclick="chooseRole('console')">
@@ -1433,7 +1446,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
   <div class="fb-topbar">
     <div class="fb-brand-wrap">
       <div class="fb-brand">OFFSIDE SOUND</div>
-      <div class="fb-byline">by Arvin Vaz</div>
+      <div class="fb-byline">by Arvin Vaz · <span class="zb-r">ZB</span> FILMS</div>
     </div>
     <button class="fb-scene-trigger" id="fb-scene-trigger" onclick="toggleSceneModule()">
       <span class="fb-scene-trigger-label" id="fb-scene-trigger-lbl">SCENE</span>
@@ -4425,43 +4438,59 @@ function closeMixer(){
 }
 
 
-// ════════════════════════════════════════════════
-// FADER LINK — QR code to the fader board URL
-// ════════════════════════════════════════════════
-function faderBoardURL(){
-  // Same host that served this page, with faderboard mode
-  return `${location.protocol}//${location.host}/?mode=faderboard`;
-}
 
-function openFaderLink(){
-  const fbURL = faderBoardURL();                       // …/?mode=faderboard
-  const baseURL = `${location.protocol}//${location.host}/`; // bare IP → chooser
+async function openFaderLink(){
   const body = document.getElementById('fader-link-body');
-  const isLocalhost = /localhost|127\.0\.0\.1/.test(location.host);
+  document.getElementById('fader-link-modal').classList.add('open');
+  body.innerHTML = `<div style="padding:30px;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:1px">Finding this computer's network address…</div>`;
 
-  let warn = '';
-  if(isLocalhost){
-    warn = `<div style="background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.35);border-radius:8px;padding:11px 13px;margin-bottom:16px;font-size:12px;color:var(--amber);line-height:1.5;text-align:left">
-      ⚠ You opened the console at <b>localhost</b>, which other devices can't reach. To link a fader board, open the console using your computer's network address instead — the green <b>http://192.168.x.x:${location.port||3000}</b> URL the server printed in its window. Then reopen this.</div>`;
+  // Ask the SERVER for the machine's LAN address — the browser can't know it
+  // (especially when the console was opened at localhost).
+  let info = null;
+  try{
+    const res = await fetch('/api/info', {cache:'no-store'});
+    info = await res.json();
+  }catch(_){}
+
+  if(!info || !info.ip || info.ip === 'localhost'){
+    body.innerHTML = `
+      <div style="background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.35);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.6;text-align:left">
+        Couldn't detect a network address. Make sure this computer is connected to Wi-Fi or a router, then reopen this window.
+        The server's terminal window also prints the address when it starts — look for the green <b style="color:var(--green)">http://192.168.x.x</b> line.
+      </div>`;
+    return;
   }
 
-  // The simple, reliable way: type the bare address; tap "Fader Board".
+  const host = `${info.ip}:${info.port}`;
   body.innerHTML = `
-    ${warn}
     <div style="text-align:left">
-      <div style="font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--muted2);margin-bottom:7px">ON THE IPAD / PHONE — TYPE THIS IN THE BROWSER (SAFARI / CHROME):</div>
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--muted2);margin-bottom:7px">ON THE OTHER DEVICE — TYPE THIS IN THE BROWSER <span style="color:var(--muted)">(SAFARI ON IPHONE/IPAD)</span>:</div>
       <div style="display:flex;gap:8px;align-items:stretch">
-        <div id="fl-url" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:16px 18px;font-family:var(--mono);font-size:22px;font-weight:700;color:var(--green);word-break:break-all;user-select:all">${esc(location.host)}</div>
-        <button onclick="flCopy('${esc(baseURL)}')" style="flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:9px;padding:0 18px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer" id="fl-copy">COPY</button>
+        <div style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:16px 18px;font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green);word-break:break-all;user-select:all">${esc(host)}</div>
+        <button onclick="flCopy('${esc(info.base)}', this)" style="flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:9px;padding:0 18px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer">COPY</button>
       </div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-top:14px">Then tap <b style="color:#c89bff">FADER BOARD</b> on the screen that appears.</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px">Both devices must be on the same Wi-Fi / router.</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:14px">
+        A chooser appears — tap the role for that device:<br>
+        <b style="color:#c89bff">📱 FADER BOARD</b> — remote mixing surface (iPad / phone)<br>
+        <b style="color:var(--amber)">💡 CUE LIGHT</b> — the light operator's STANDBY / GO screen
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--muted);margin:16px 0 6px">OR THE DIRECT LINKS:</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);word-break:break-all;user-select:all">${esc(info.faderboard)}</span>
+          <button onclick="flCopy('${esc(info.faderboard)}', this)" style="flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--muted2);border-radius:7px;padding:8px 12px;font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer">COPY</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);word-break:break-all;user-select:all">${esc(info.cuelight)}</span>
+          <button onclick="flCopy('${esc(info.cuelight)}', this)" style="flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--muted2);border-radius:7px;padding:8px 12px;font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer">COPY</button>
+        </div>
+      </div>
+      ${info.ips && info.ips.length > 1 ? `<div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px">This computer has several network addresses (${info.ips.map(esc).join(', ')}). If the first doesn't connect, try another — use the one on the same Wi-Fi as the other device.</div>` : ''}
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px">All devices must be on the same Wi-Fi / router. No internet needed.</div>
     </div>`;
-  document.getElementById('fader-link-modal').classList.add('open');
 }
-function flCopy(url){
-  const btn = document.getElementById('fl-copy');
-  const done = ()=>{ if(btn){ btn.textContent='COPIED'; setTimeout(()=>{ if(btn) btn.textContent='COPY'; }, 1500); } };
+function flCopy(url, btn){
+  const done = ()=>{ if(btn){ const o=btn.textContent; btn.textContent='COPIED ✓'; setTimeout(()=>{ if(btn) btn.textContent=o==='COPIED ✓'?'COPY':o; }, 1500); } };
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(url).then(done).catch(()=>{ flCopyFallback(url); done(); });
   } else { flCopyFallback(url); done(); }
@@ -4595,6 +4624,13 @@ function openSupport(){
   .btn.green{border-color:var(--green);color:var(--green)} .btn.green:hover{background:var(--green);color:#000}
   .btn.blue{border-color:var(--blue);color:var(--blue)} .btn.blue:hover{background:var(--blue);color:#000}
   .btn.amber{border-color:var(--amber);color:var(--amber)} .btn.amber:hover{background:var(--amber);color:#000}
+  .btn.red{border-color:#e8262d;color:#ff6b70} .btn.red:hover{background:#e8262d;color:#fff}
+  .btn.pink{border-color:#d6409f;color:#f08bc7} .btn.pink:hover{background:#d6409f;color:#fff}
+  .zb-r{color:#e8262d}
+  .zb-lockup{display:inline-flex;flex-direction:column;align-items:center;gap:3px;user-select:none}
+  .zb-word{font-size:22px;letter-spacing:4px;color:var(--text);line-height:1;font-weight:700}
+  .zb-films{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:5px;color:var(--text2);text-indent:5px}
+  .zb-films .zb-rule{width:26px;height:1px;background:#e8262d}
   pre{background:#05080a;border:1px solid var(--border);border-radius:9px;padding:14px;font-family:var(--mono);font-size:11px;color:var(--text2);max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:14px 0 0}
   .upi{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px;font-family:var(--mono);font-size:18px;font-weight:700;color:var(--green);cursor:pointer;text-align:center}
   .qr{text-align:center;margin-top:14px}
@@ -4646,13 +4682,26 @@ function openSupport(){
 
   <div class="card">
     <h2><span class="heart">♥</span> Support this app</h2>
-    <p>Offside Sound is free — built by one person, for theatre folk. It started because I needed a reliable, no-fuss sound console for my own productions, and grew from there. If it helped your show, a small contribution keeps it alive, fixes bugs faster, and funds new features like the cue-light system. No pressure — only thanks.</p>
+    <p>Offside Sound is free — built by Arvin Vaz at <strong><span class="zb-r">ZB</span> Films</strong> (ZeroBudget Films, Goa), for theatre folk. It started because I needed a reliable, no-fuss sound console for my own productions, and grew from there. If it helped your show, a small contribution keeps it alive, fixes bugs faster, and funds new features like the cue-light system. No pressure — only thanks.</p>
     <div class="upi" id="upi-box">${SUPPORT_UPI}</div>
     <div class="hint" id="upi-hint">Tap to copy — paste into any UPI app (GPay, PhonePe, Paytm…).</div>
     <div class="qr"><img src="support-qr.png" alt="UPI QR" onerror="this.style.display='none'"></div>
   </div>
 
-  <div class="sub" style="text-align:center;margin-top:24px">Offside Sound · by Arvin Vaz</div>
+  <div class="card">
+    <h2>🎬 Follow ZB Films</h2>
+    <p>We make fiercely local films — Konkani cinema with international ambition. If you like what we build (apps included), following is the freest way to support us.</p>
+    <a class="btn red" href="https://www.youtube.com/@zbfilms_india?sub_confirmation=1" target="_blank" rel="noopener">▶ Subscribe on YouTube — @zbfilms_india</a>
+    <a class="btn pink" href="https://www.instagram.com/zbfilms_india/" target="_blank" rel="noopener">📷 Follow on Instagram — @zbfilms_india</a>
+  </div>
+
+  <div class="sub" style="text-align:center;margin-top:28px">
+    <div class="zb-lockup">
+      <div class="zb-word"><span class="zb-r">Z</span>ERO<span class="zb-r">B</span>UDGET</div>
+      <div class="zb-films"><span class="zb-rule"></span>FILMS<span class="zb-rule"></span></div>
+    </div>
+    <div style="margin-top:10px">Offside Sound · by Arvin Vaz · Goa, India</div>
+  </div>
 </div>
 <script>
   const D = ${payload};
