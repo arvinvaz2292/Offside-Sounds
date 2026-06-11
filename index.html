@@ -622,7 +622,7 @@ body.faderboard-mode .status,body.cuelight-mode .status{display:none!important}
 .spm-notes-empty{font-style:italic;color:var(--muted);font-size:10px}
 
 /* Mixer search box */
-.mxr-search{background:var(--s3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:11px;padding:6px 10px;border-radius:6px;width:180px;outline:none;transition:all .12s}
+.mxr-search{background:var(--s3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:11px;padding:6px 10px;border-radius:6px;width:180px;max-width:34vw;min-width:70px;outline:none;transition:all .12s}
 .mxr-viewmode{background:transparent;border:1px solid #c89bff;color:#c89bff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .12s;white-space:nowrap;min-width:60px}
 .mxr-viewmode.scene{background:#c89bff;color:#000}
 .mxr-search:focus{border-color:#c89bff;background:var(--s2)}
@@ -789,6 +789,13 @@ body.faderboard-mode > .project-picker{display:none!important}
 .fb-viewmode{background:transparent;border:1px solid #c89bff;color:#c89bff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:9px 14px;border-radius:8px;cursor:pointer;transition:all .12s;white-space:nowrap;min-width:64px}
 .fb-viewmode.scene{background:#c89bff;color:#000}
 .fb-stopall{background:transparent;border:1px solid var(--red);color:var(--red);font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1.5px;padding:9px 18px;border-radius:8px;cursor:pointer;transition:all .12s;white-space:nowrap}
+/* Action-in-progress feedback — a tap should always look like it did something */
+@keyframes fbExecPulse{0%,100%{opacity:1}50%{opacity:.55}}
+.fb-stopall.executing{background:var(--red);color:#fff;animation:fbExecPulse .8s ease-in-out infinite}
+.fb-scene-trigger.executing{background:rgba(0,230,118,.18);border-color:var(--green)}
+.fb-scene-trigger.executing .fb-scene-trigger-label{color:var(--green);animation:fbExecPulse .8s ease-in-out infinite}
+.fb-catfade.fading{animation:fbExecPulse .8s ease-in-out infinite;border-color:var(--amber);color:var(--amber)}
+.fb-catfade.fading.faded{background:rgba(255,193,7,.2);color:var(--amber)}
 .fb-stopall:hover{background:var(--red);color:#fff}
 .fb-diag-btn{background:transparent;border:1px solid var(--border);color:var(--text2);font-size:14px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .12s}
 .fb-diag-btn:hover{border-color:var(--text2)}
@@ -1360,85 +1367,6 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 </div>
 
 <!-- ══ README / HELP MODAL ══ -->
-<div class="modal-overlay" id="readme-modal">
-  <div class="modal-card modal-card-wide">
-    <div class="modal-head">
-      <div class="modal-title">
-        <span class="modal-icon">📖</span>
-        <span>Offside Sound — How it works</span>
-      </div>
-      <button class="modal-close" onclick="closeReadme()" title="Close">✕</button>
-    </div>
-    <div class="modal-body readme-body">
-      <p class="readme-intro">Offside Sound is a theatre playback console designed for live operators. Built by Arvin Vaz. Below is everything you need to run a show.</p>
-
-      <h3>🎬 Productions</h3>
-      <p>Each show lives in its own <strong>Production</strong>. The picker on launch lets you choose one or create a new one. Switch between productions any time using the folder pill in the topbar. Each production keeps its own tracks, scenes, groups, and favourites — nothing leaks between shows.</p>
-
-      <h3>🎵 Tracks</h3>
-      <p>Tap <strong>↑ UPLOAD</strong> to add audio. Choose <strong>Files</strong> for individual sounds or <strong>Folder</strong> to pull an entire show folder at once. Tracks auto-categorise into <strong>BGM</strong> (background music), <strong>SFX</strong> (sound effects), or <strong>AMB</strong> (ambience) based on their filename — you can change the category anytime by tapping its badge.</p>
-      <p>Each track has its own waveform, volume slider, play/stop, fade in / fade out (2-second ramp), and optional loop region + cue points. Volume slider behaves as a smooth fade; the ▲▼ buttons above the % give precise ±2% jumps with no fade.</p>
-
-      <h3>🎭 Scenes</h3>
-      <p>A scene is a snapshot of your current playback state: which tracks are playing, at what volumes, with what loops, plus which tracks are <em>staged</em> (ready but not auto-firing). Set up your tracks the way you want, then <strong>+ Save current state as scene</strong> in the sidebar.</p>
-      <p>On each scene card:</p>
-      <ul>
-        <li><strong>▶ FIRE</strong> — hard-cut to this scene</li>
-        <li><strong>⇄ XFADE</strong> — crossfade over the scene's fade duration (default 2s)</li>
-        <li><strong>👁 PREVIEW</strong> — see what's in the scene without playing it</li>
-        <li><strong>↑ UPDATE</strong> — overwrite the scene with your current state</li>
-      </ul>
-      <p>Add the active scene's notes in the textarea below the scene. They show up in a banner above the track area when fired — useful for cue numbers, timings, or reminders.</p>
-
-      <h3>⛬ Groups (stems)</h3>
-      <p>A <strong>Group</strong> plays several stems in sample-accurate sync — drum kit, multitrack song, ambient layers. On any track, tap the dashed <strong>G+</strong> button and choose <strong>+ New group…</strong> to start a group, then tap <strong>G+</strong> on other tracks to add them to it.</p>
-      <p>Inside the group container: one shared seek bar for all stems, individual volume sliders per stem (with mini-waveforms), group volume, fade in/out, and rewind. Hit play on the group and every stem fires at the same instant — no drift. Add a group to a scene just like a track, using the <strong>+ SCENE</strong> button on the group's header.</p>
-
-      <h3>⚙ Controls window</h3>
-      <p>Draggable panel. Contains the <strong>Master</strong> fader, three <strong>category faders</strong> (BGM / SFX / AMB) with their own fade in/out, a <strong>Fade All Tracks</strong> button, and <strong>Favourites</strong>.</p>
-      <p>Favourites are one-shot sounds (door slams, switches, stings) that fire instantly at 50% on tap. They overlap freely. Upload short audio files via the <strong>+ Add</strong> button.</p>
-
-      <h3>▤ Global Mixer</h3>
-      <p>The mixer shows every track and group in your production on one screen, with live volume sliders and play/stop on each row. Useful to see "what's actually happening" or to ride a gain in a hurry. Search box at the top filters by name.</p>
-
-      <h3>🎚 Fader Board (second device)</h3>
-      <p>You can use a second device — a phone, tablet, or another laptop — as a physical-style fader board for the show. It needs the local sync server running (see the FADER-BOARD-SETUP guide that came with the app). Once running, open the fader board URL on the second device.</p>
-      <p>The fader board gives you Master + BGM/SFX/AMB + a vertical fader for every track, each with a level meter and mute. It also has <strong>FIRE</strong> and <strong>XFADE</strong> buttons that advance through your scenes in order — so you can run the whole show from the second device while the console drives the audio. On a phone in landscape, faders spread across swipeable pages. If the network drops, the faders grey out and a warning shows — the console keeps working on its own regardless.</p>
-
-      <h3>⌨ Keyboard shortcuts</h3>
-      <ul>
-        <li><strong>1-9</strong> — trigger play/pause on tracks 1-9</li>
-        <li><strong>Space</strong> — toggle the last-triggered track</li>
-        <li><strong>S</strong> — fade all playing tracks to silence over 2 seconds</li>
-        <li><strong>Esc</strong> — hard stop everything immediately</li>
-      </ul>
-
-      <h3>💾 Saving and backup</h3>
-      <p>Everything auto-saves to your browser's storage every time you make a change. <strong>Export</strong> (sidebar footer) saves the production as a .json file you can email or back up. <strong>Import</strong> creates a new production from a .json file. Audio files don't get included in exports — you'll need to re-upload them, but smart-match restores them by filename.</p>
-
-      <h3>📱 Running a show on iPad</h3>
-      <ul>
-        <li>Use USB-C → 3.5mm DAC adapter (Apple's works) → cable to mixer</li>
-        <li><strong>Auto-Lock: Never</strong> — Settings → Display → Auto-Lock</li>
-        <li><strong>Do Not Disturb: ON</strong> — no notifications mid-show</li>
-        <li><strong>Guided Access</strong> — Settings → Accessibility — locks the iPad to just this app</li>
-        <li>Charge to 100% before doors; have a charger nearby</li>
-        <li>Don't pull-to-refresh the browser tab during a show — you'll lose loaded audio</li>
-        <li>Pre-play your first cue once during pre-show to warm up audio decode</li>
-      </ul>
-
-      <h3>🆘 If something goes wrong</h3>
-      <ul>
-        <li><strong>Fade All</strong> (S key) for a quick controlled silence while you regroup</li>
-        <li><strong>Esc</strong> for a hard stop on everything</li>
-        <li>If the app gets weird, close the tab and reopen it — the session is auto-saved</li>
-      </ul>
-
-      <p class="readme-foot">Built with care by Arvin Vaz · Goa, India · Version 7</p>
-    </div>
-  </div>
-</div>
-
 <!-- ══ SCENE PREVIEW MODAL ══ -->
 <div class="modal-overlay" id="scene-preview-modal">
   <div class="modal-card">
@@ -1508,7 +1436,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
       <div class="fb-byline">by Arvin Vaz</div>
     </div>
     <button class="fb-scene-trigger" id="fb-scene-trigger" onclick="toggleSceneModule()">
-      <span class="fb-scene-trigger-label">SCENE</span>
+      <span class="fb-scene-trigger-label" id="fb-scene-trigger-lbl">SCENE</span>
       <span class="fb-scene-trigger-name" id="fb-scene-active">No scene</span>
       <span class="fb-scene-trigger-caret">▾</span>
     </button>
@@ -1677,11 +1605,9 @@ let lcid=0;        // counter for light cue ids
 // by / firing, and the phase ('idle'|'standby'|'go').
 let cueState={ phase:'idle', cueId:null, label:'', color:'', ts:0 };
 const catVol={BGM:1,SFX:1,AMB:1}; // per-category volume multipliers (fader target)
-const catLiveVol={BGM:1,SFX:1,AMB:1}; // actual live category level (for fades)
 const catFaded={BGM:false,SFX:false,AMB:false}; // latched "faded out" state — when true, the category is silent regardless of fader position, until fade-in releases it
 const catFadeRamp={BGM:undefined,SFX:undefined,AMB:undefined}; // transient 0..1 ramp factor during a fade toggle (undefined = settled)
 const catFadeToggleTimer={BGM:null,SFX:null,AMB:null};
-const catFadeTimer={BGM:null,SFX:null,AMB:null};
 const seekDragging={};
 const expandedIds=new Set();
 const CAT_ORDER=['BGM','SFX','AMB'];
@@ -2038,19 +1964,6 @@ function mkTrack(name='New Track',cat='AMB'){
 }
 function tById(id){return tracks.find(t=>t.id===id);}
 
-// ════════════════════════════════════════════════
-// GROUPS — operations
-// ════════════════════════════════════════════════
-function createGroup(){
-  const name=prompt('Group name:',`Group ${groups.length+1}`);
-  if(!name) return;
-  const g=mkGroup(name.trim()||`Group ${groups.length+1}`);
-  groups.push(g);
-  buildGroupElement(g);
-  layoutTracks();
-  showToast(`Created group "${g.name}"`);
-  autoSave();
-}
 
 function createGroupFromTrack(trackId){
   const name=prompt('Group name:',`Group ${groups.length+1}`);
@@ -2461,9 +2374,7 @@ function nudgeMaster(delta){
 
 // ── Category volume (BGM / SFX / AMB) ──
 function setCatVol(cat,v){
-  clearInterval(catFadeTimer[cat]); // manual move cancels any running fade
   catVol[cat]=parseFloat(v);
-  catLiveVol[cat]=catVol[cat]; // manual move sets the live level directly
   tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
   // Groups are treated as BGM, so the BGM fader scales playing groups too.
   if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
@@ -2478,59 +2389,7 @@ function nudgeCatVol(cat,delta){
   setCatVol(cat,catVol[cat]);
 }
 
-// Fade an entire category — mirrors the track-card Fade In/Out behaviour:
-//  • Fade In ramps the actual audio from its current live level UP to the fader's
-//    set value over 2s, leaving the fader knob where it is. If the fader sits at 0,
-//    it bumps to 100% first (same as the track version).
-//  • Fade Out ramps the audio DOWN to silence over 2s, leaving the fader knob put,
-//    so a later Fade In returns to that remembered level.
-// We track the live audio level in catLiveVol[cat], separate from the stored catVol[cat].
-function catFade(cat,dir){
-  clearInterval(catFadeTimer[cat]);
-  const FADE_MS=2000;
-  // Where the audio currently sits (live). Initialise to the stored fader value.
-  if(catLiveVol[cat]===undefined) catLiveVol[cat]=catVol[cat]??1;
-  let target;
-  if(dir==='in'){
-    target = (catVol[cat]<=0.01) ? 1 : catVol[cat];
-    if(catVol[cat]<=0.01){
-      catVol[cat]=1;
-      const sl=document.getElementById(`catvol-slider-${cat}`); if(sl) sl.value=1;
-      const lbl=document.getElementById(`catvol-val-${cat}`); if(lbl) lbl.textContent='100%';
-    }
-  } else {
-    target = 0;
-  }
-  const startLevel = catLiveVol[cat];
-  if(Math.abs(startLevel-target)<0.005){
-    catLiveVol[cat]=target;
-    applyCatLive(cat);
-    return;
-  }
-  const t0=Date.now();
-  catFadeTimer[cat]=setInterval(()=>{
-    const r=Math.min((Date.now()-t0)/FADE_MS,1);
-    catLiveVol[cat]=startLevel+(target-startLevel)*r;
-    applyCatLive(cat);
-    if(r>=1){
-      clearInterval(catFadeTimer[cat]);
-      catLiveVol[cat]=target;
-      applyCatLive(cat);
-    }
-  },30);
-}
 
-// Apply the live category multiplier (catLiveVol) to all tracks in that category,
-// without disturbing the stored fader value.
-function applyCatLive(cat){
-  const prev=catVol[cat];
-  catVol[cat]=catLiveVol[cat];
-  tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
-  // Groups are BGM — fade them along with the BGM category. setGroupAudioVolume
-  // reads catVol.BGM, which is the live value inside this window.
-  if(cat==='BGM'){ groups.forEach(g=>{ if(g.isPlaying) setGroupAudioVolume(g, g.volume); }); }
-  catVol[cat]=prev;
-}
 
 // Push the current category output to all tracks/groups in it (reads catOut, so
 // it honours both the fader value and the fade ramp/latch).
@@ -2555,13 +2414,15 @@ function catFadeToggle(cat, fadeMs, dir){
     // already in target latch state; still ensure ramp settled
   }
   clearInterval(catFadeToggleTimer[cat]);
-  clearInterval(catFadeTimer[cat]); // cancel any old-style cat fade
   const FADE_MS = (typeof fadeMs === 'number' && fadeMs > 0) ? fadeMs : 2000;
   const from = (catFadeRamp[cat] === undefined) ? (catFaded[cat] ? 0 : 1) : catFadeRamp[cat];
   const to = goingOut ? 0 : 1;
-  // Releasing the latch immediately so the ramp-up is audible; setting it at the
-  // end for fade-out so it stays silent afterwards.
-  if(!goingOut) catFaded[cat] = false;
+  // Set the latch to the TARGET state immediately — audio is unaffected while
+  // the ramp runs (catOut prefers catFadeRamp while it's defined), but snapshots
+  // now carry the new state at once. Without this, the board's optimistically
+  // flipped button got reverted by mid-ramp snapshots still saying "not faded",
+  // making taps look like they hadn't registered (→ double-taps that undo).
+  catFaded[cat] = goingOut;
   const t0 = Date.now();
   catFadeToggleTimer[cat] = setInterval(()=>{
     const r = Math.min((Date.now()-t0)/FADE_MS, 1);
@@ -3859,16 +3720,6 @@ function startVolEase(t){
   },20);
 }
 
-// Immediate fine nudge (no fade) — for the up/down precision buttons
-function nudgeVol(id,delta){
-  const t=tById(id); if(!t) return;
-  clearInterval(t.fadeTimer);
-  t.volume=Math.max(0,Math.min(1, t.volume+delta));
-  t._audioVol=t.volume;
-  if(t.ws) t.ws.setVolume(effectiveVol(t));
-  syncVolUI(t);
-  autoSave();
-}
 
 function syncVolUI(t){
   const vc=role(t,'vol-c'); if(vc) vc.value=t.volume;
@@ -4573,15 +4424,6 @@ function closeMixer(){
   if(_mixerRefreshTimer){ clearInterval(_mixerRefreshTimer); _mixerRefreshTimer=null; }
 }
 
-// ════════════════════════════════════════════════
-// README / HELP MODAL
-// ════════════════════════════════════════════════
-function openReadme(){
-  document.getElementById('readme-modal').classList.add('open');
-}
-function closeReadme(){
-  document.getElementById('readme-modal').classList.remove('open');
-}
 
 // ════════════════════════════════════════════════
 // FADER LINK — QR code to the fader board URL
@@ -4644,14 +4486,15 @@ const MANUAL_HTML = `
   <p>Each show lives in its own <strong>Production</strong>. The picker on launch lets you choose one or create a new one. Switch between productions any time using the folder pill in the topbar. Each production keeps its own tracks, scenes, groups, favourites, and light cues — nothing leaks between shows.</p>
   <h3>🎵 Tracks</h3>
   <p>Tap <strong>↑ UPLOAD</strong> to add audio. Choose <strong>Files</strong> for individual sounds or <strong>Folder</strong> to pull an entire show folder at once. Tracks auto-categorise into <strong>BGM</strong> (background music), <strong>SFX</strong> (sound effects), or <strong>AMB</strong> (ambience) based on their filename — change the category anytime by tapping its badge.</p>
-  <p>Each track has its own waveform, volume slider, play/stop, fade in / fade out (2-second ramp), and optional loop region + cue points. The volume slider behaves as a smooth fade; the ▲▼ buttons give precise ±2% jumps with no fade.</p>
+  <p>Each track has its own waveform, volume slider, play/stop, fade in / fade out (2-second ramp), and optional loop region + cue points. The volume slider behaves as a smooth fade. (The ▲▼ precision buttons for ±2% jumps live on the Master and category faders in the ⚙ Controls window.)</p>
   <h3>🎭 Scenes</h3>
   <p>A scene is a snapshot of your playback state: which tracks are playing, at what volumes, with what loops, plus which are <em>staged</em> (ready but not auto-firing). Set things up, then <strong>+ Save current state as scene</strong> in the sidebar.</p>
   <p>On each scene card: <strong>▶ FIRE</strong> (hard-cut), <strong>⇄ XFADE</strong> (crossfade over the scene's fade time), <strong>👁 PREVIEW</strong> (inspect without playing), <strong>↑ UPDATE</strong> (overwrite with current state). Add notes in the textarea below a scene — they appear in a banner when fired (cue numbers, timings, reminders).</p>
   <h3>⛬ Groups (stems)</h3>
   <p>A <strong>Group</strong> plays several stems in sample-accurate sync — drum kit, multitrack song, ambient layers. On any track tap the dashed <strong>G+</strong> button and choose <strong>+ New group…</strong>, then tap <strong>G+</strong> on other tracks to add them. Groups are treated as BGM, so the BGM and Master faders scale them. A group staged in a scene appears in Now Playing with its own play button.</p>
   <h3>⚙ Controls window</h3>
-  <p>Draggable panel with the <strong>Master</strong> fader, three <strong>category faders</strong> (BGM / SFX / AMB) with fade in/out, <strong>Fade All Tracks</strong>, <strong>Favourites</strong>, and (on the local-server version) <strong>Light Cues</strong>. Favourites are one-shot sounds (door slams, switches, stings) that fire instantly at 50% on tap.</p>
+  <p>Draggable panel with the <strong>Master</strong> fader, three <strong>category faders</strong> (BGM / SFX / AMB), <strong>Fade All Tracks</strong>, <strong>Favourites</strong>, and (on the local-server version) <strong>Light Cues</strong>. Favourites are one-shot sounds (door slams, switches, stings) that fire instantly at 50% on tap.</p>
+  <p>Each category has <strong>Fade In / Fade Out</strong> buttons (mirrored on the fader board): Fade Out ramps that whole category to silence and <em>latches</em> it — the fader cap stays put, and moving it makes no sound while latched. Fade In ramps back up to wherever the fader now sits. A latched category shows a dimmed fader and a highlighted button on both devices.</p>
   <h3>💡 Light Cues (local-server version)</h3>
   <p>Build a list of lighting cues (e.g. "Red Light", "Lights Off") each with a colour. Tap a cue to put it on <strong>STANDBY</strong> (the light operator's screen flashes amber), then hit <strong>GO</strong> (turns green). Open the cue-light display on a spare screen by entering the server IP and choosing <strong>CUE LIGHT</strong>. Both the console and the fader board can send cues.</p>
   <h3>▤ Global Mixer</h3>
@@ -4858,24 +4701,6 @@ function openSupport(){
       if(!opened) showToast('Allow pop-ups to open the support page, or check your browser bar.');
     }catch(_){ showToast('Could not open the support page.'); }
   }
-}
-function closeSupport(){ const m=document.getElementById('support-modal'); if(m) m.classList.remove('open'); }
-function copyUPI(){
-  const btn = document.getElementById('support-upi');
-  const hint = document.getElementById('support-copy-hint');
-  const done = ()=>{
-    if(btn){ const orig=btn.textContent; btn.textContent='✓ Copied!'; setTimeout(()=>{ if(btn) btn.textContent=orig; }, 1600); }
-    if(hint) hint.textContent='Copied — paste into your UPI app to contribute. Thank you!';
-  };
-  if(navigator.clipboard?.writeText){
-    navigator.clipboard.writeText(SUPPORT_UPI).then(done).catch(()=>{ _copyFallback(SUPPORT_UPI); done(); });
-  } else { _copyFallback(SUPPORT_UPI); done(); }
-}
-function _copyFallback(text){
-  try{
-    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-  }catch(_){}
 }
 
 // ════════════════════════════════════════════════
@@ -5683,7 +5508,6 @@ function resetWorkspace(){
   uid=0; gid=0; fid=0;
   masterVol=1;
   catVol.BGM=1; catVol.SFX=1; catVol.AMB=1;
-  catLiveVol.BGM=1; catLiveVol.SFX=1; catLiveVol.AMB=1;
   catFaded.BGM=false; catFaded.SFX=false; catFaded.AMB=false;
   catFadeRamp.BGM=undefined; catFadeRamp.SFX=undefined; catFadeRamp.AMB=undefined;
   lastTriggeredId=null;
@@ -5947,66 +5771,11 @@ function deserializeTracks(arr){
   });
 }
 
-function importState(event){
-  const f=event.target.files[0]; if(!f) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(!data.tracks) throw new Error('Invalid file');
-      tracks.forEach(t=>{ if(t.ws) t.ws.destroy(); if(t.el) t.el.remove(); });
-      groups.forEach(g=>{ if(g.el) g.el.remove(); });
-      tracks=[]; scenes=[]; groups=[]; expandedIds.clear();
-      uid=data.uid||0; gid=data.gid||0; fid=data.fid||0; lcid=data.lcid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
-      tracks=deserializeTracks(data.tracks);
-      scenes=migrateScenes(data.scenes);
-      groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null,buffers:{},sources:{},decodeStatus:{},isPlaying:false,duration:gd.duration||0,startedAt:0,pausedAt:0}));
-      favourites=(data.favourites||[]).map(fd=>({id:fd.id,name:fd.name,filename:fd.filename||null,src:null}));
-      lightCues=(data.lightCues||[]).map(c=>({id:c.id,label:c.label,color:c.color||'#ffc107'}));
-      if(data.catVol){ catVol.BGM=data.catVol.BGM??1; catVol.SFX=data.catVol.SFX??1; catVol.AMB=data.catVol.AMB??1; }
-      (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
-      tracks.forEach(t=>buildTrackElement(t));
-      groups.forEach(g=>buildGroupElement(g));
-      const msl=document.getElementById('master-slider'); if(msl) msl.value=masterVol;
-      document.getElementById('master-val').textContent=Math.round(masterVol*100)+'%';
-      syncCatVolUI();
-      renderFavourites();
-      renderCueList();
-      layoutTracks(); renderScenes(); updateNotesBanner();
-      showToast('Imported! Use ↑ UPLOAD with the same files to restore audio.');
-    } catch(err){ alert('Could not import: '+err.message); }
-  };
-  reader.readAsText(f);
-  event.target.value='';
-}
 
-function loadAutoSave(){
-  try{
-    const raw=localStorage.getItem('offside_v7')||localStorage.getItem('offside_v6'); if(!raw) return false;
-    const data=JSON.parse(raw);
-    if(!data.tracks||!data.tracks.length) return false;
-    uid=data.uid||0; gid=data.gid||0; fid=data.fid||0; lcid=data.lcid||0; masterVol=data.masterVol||1; activeSceneId=data.activeSceneId||null;
-    tracks=deserializeTracks(data.tracks);
-    scenes=migrateScenes(data.scenes);
-    groups=(data.groups||[]).map(gd=>({id:gd.id,name:gd.name,volume:gd.volume??1,trackIds:gd.trackIds||[],fadeTimer:null,el:null,buffers:{},sources:{},decodeStatus:{},isPlaying:false,duration:gd.duration||0,startedAt:0,pausedAt:0}));
-    favourites=(data.favourites||[]).map(fd=>({id:fd.id,name:fd.name,filename:fd.filename||null,src:null}));
-    lightCues=(data.lightCues||[]).map(c=>({id:c.id,label:c.label,color:c.color||'#ffc107'}));
-    if(data.catVol){ catVol.BGM=data.catVol.BGM??1; catVol.SFX=data.catVol.SFX??1; catVol.AMB=data.catVol.AMB??1; }
-    (data.expandedIds||[]).forEach(id=>expandedIds.add(id));
-    tracks.forEach(t=>buildTrackElement(t));
-    groups.forEach(g=>buildGroupElement(g));
-    const msl=document.getElementById('master-slider'); if(msl) msl.value=masterVol;
-    document.getElementById('master-val').textContent=Math.round(masterVol*100)+'%';
-    document.getElementById('st-master').textContent=Math.round(masterVol*100)+'%';
-    syncCatVolUI();
-    return true;
-  }catch(e){ return false; }
-}
 
 // Sync the category fader sliders + labels to current catVol values
 function syncCatVolUI(){
   CAT_ORDER.forEach(cat=>{
-    catLiveVol[cat]=catVol[cat];
     const sl=document.getElementById(`catvol-slider-${cat}`); if(sl) sl.value=catVol[cat];
     const lbl=document.getElementById(`catvol-val-${cat}`); if(lbl) lbl.textContent=Math.round(catVol[cat]*100)+'%';
     syncCatFadeUI(cat);
@@ -6045,10 +5814,8 @@ document.addEventListener('click',e=>{
   if(e.target.classList.contains('modal-overlay')){
     if(e.target.id==='scene-preview-modal') closeScenePreview();
     if(e.target.id==='mixer-modal') closeMixer();
-    if(e.target.id==='readme-modal') closeReadme();
     if(e.target.id==='diag-modal') closeDiag();
     if(e.target.id==='fader-link-modal') closeFaderLink();
-    if(e.target.id==='support-modal') closeSupport();
     if(e.target.id==='cat-assign-modal') closeCategoryAssign();
     if(e.target.id==='dedupe-modal') closeDedupe();
     if(e.target.id==='diag-text-panel') e.target.classList.remove('open');
@@ -6067,6 +5834,23 @@ function fmtT(s){
   const m=Math.floor(s/60),sec=Math.floor(s%60).toString().padStart(2,'0'),ds=Math.floor((s%1)*10);
   return `${m}:${sec}.${ds}`;
 }
+// Roster update from the server: who's connected, by role. Used to show the
+// console whether a cue-light display is actually live before sending cues.
+function applyRoster(roster){
+  if(!roster) return;
+  const st = document.getElementById('fw-cue-status');
+  if(st){
+    const n = roster.cuelight || 0;
+    if(n > 0){
+      st.textContent = n === 1 ? '✓ Cue display connected' : `✓ ${n} cue displays connected`;
+      st.classList.add('connected');
+    } else {
+      st.textContent = 'No cue display connected';
+      st.classList.remove('connected');
+    }
+  }
+}
+
 function warnDuplicateConsole(count){
   diagWarn(`Duplicate console detected — ${count} consoles connected`);
   const b = document.getElementById('dup-console-banner');
@@ -6332,6 +6116,7 @@ function connectWS(role, onState, onChange){
     if(msg.kind==='state' && onState) onState(msg.state);
     else if(msg.kind==='change' && onChange) onChange(msg.change);
     else if(msg.kind==='dupConsole') warnDuplicateConsole(msg.count);
+    else if(msg.kind==='roster') applyRoster(msg.roster);
   };
   _ws.onclose = ()=>{
     _wsConnected = false;
@@ -6662,7 +6447,7 @@ function fbSceneAction(which, mode){
   // Short debounce so an accidental double-tap doesn't double-fire, but not so
   // long that real taps feel swallowed.
   if(Date.now() < _fbSceneCooldown){ diagInfo('Scene tap within debounce — ignored'); return; }
-  _fbSceneCooldown = Date.now() + 150;
+  _fbSceneCooldown = Date.now() + 500;
   diagInfo(`Scene action: ${mode} → ${target.name}`);
   fbSendChange('scene', null, mode==='xfade'?'xfadeId':'fireId', target.id);
   // Optimistically reflect the new active scene name so the UI feels instant
@@ -6670,9 +6455,19 @@ function fbSceneAction(which, mode){
   const nameEl = document.getElementById('fb-scene-active');
   if(nameEl) nameEl.textContent = target.name;
   closeSceneModule();
+  // Visible confirmation after the module closes: the topbar SCENE trigger
+  // pulses green and its label shows what's happening, so a slow crossfade
+  // doesn't look like a missed tap.
+  const trig = document.getElementById('fb-scene-trigger');
+  const lbl = document.getElementById('fb-scene-trigger-lbl');
+  if(trig && lbl){
+    lbl.textContent = mode==='xfade' ? '⇄ CROSSFADING…' : '▶ FIRED';
+    trig.classList.add('executing');
+    clearTimeout(fbSceneAction._t);
+    fbSceneAction._t = setTimeout(()=>{ lbl.textContent='SCENE'; trig.classList.remove('executing'); }, mode==='xfade' ? 2400 : 1400);
+  }
 }
 
-function openSceneModule(){ document.getElementById('fb-scene-module').classList.add('open'); }
 function closeSceneModule(){ document.getElementById('fb-scene-module').classList.remove('open'); }
 function toggleSceneModule(){ document.getElementById('fb-scene-module').classList.toggle('open'); }
 
@@ -7014,10 +6809,14 @@ function updateFaderStrip(type, id, value, muted, playing){
   }
   // Category fade-out latch → update the FADE button + dimmed styling.
   if(type==='cat'){
-    const faded = !!(_fbState && _fbState.catFaded && _fbState.catFaded[id]);
+    const ov = _fbCatFadeOverride[id];
+    const faded = (ov && Date.now() < ov.until) ? ov.faded : !!(_fbState && _fbState.catFaded && _fbState.catFaded[id]);
     strip.classList.toggle('is-cat-faded', faded);
     const cf = strip.querySelector('[data-fb="catfade"]');
-    if(cf){ cf.textContent = faded ? 'FADE IN' : 'FADE OUT'; cf.classList.toggle('faded', faded); }
+    if(cf && !cf.classList.contains('fading')){
+      cf.textContent = faded ? 'FADE IN' : 'FADE OUT';
+      cf.classList.toggle('faded', faded);
+    }
   }
 }
 
@@ -7075,20 +6874,32 @@ function _fbMuteState(key){
 }
 
 // Toggle a category's fade-out latch from the board. Optimistically flip the
-// button so it feels instant, then send the command (the console runs the ramp
-// and the real latch state comes back in the next snapshot).
+// button (with a "FADING…" pulse for the ramp duration) and hold that state
+// against snapshot updates until the console's new state arrives.
 let _fbCatFadeCooldown = {};
+let _fbCatFadeOverride = {};  // cat → {faded, until}
 function fbCatFade(cat){
   if(Date.now() < (_fbCatFadeCooldown[cat]||0)) return;
   _fbCatFadeCooldown[cat] = Date.now() + 400;
   const key = `cat:${cat}`;
   const strip = document.querySelector(`.fb-strip[data-key="${key}"]`);
+  const nowFaded = strip ? strip.classList.contains('is-cat-faded') : false;
+  const willFade = !nowFaded;
+  _fbCatFadeOverride[cat] = { faded: willFade, until: Date.now() + 2600 };
   if(strip){
-    const nowFaded = strip.classList.contains('is-cat-faded');
-    const willFade = !nowFaded;
     strip.classList.toggle('is-cat-faded', willFade);
     const cf = strip.querySelector('[data-fb="catfade"]');
-    if(cf){ cf.textContent = willFade ? 'FADE IN' : 'FADE OUT'; cf.classList.toggle('faded', willFade); }
+    if(cf){
+      cf.classList.add('fading');
+      cf.classList.toggle('faded', willFade);
+      cf.textContent = willFade ? 'FADING OUT…' : 'FADING IN…';
+      setTimeout(()=>{
+        cf.classList.remove('fading');
+        // settle to the latched label (snapshots keep it correct from here)
+        const f = _fbState?.catFaded?.[cat] ?? willFade;
+        cf.textContent = f ? 'FADE IN' : 'FADE OUT';
+      }, 2100);
+    }
   }
   fbSendChange('cat', cat, 'fade', true);
   diagInfo(`Board send: cat/${cat}/fade`);
@@ -7118,8 +6929,20 @@ function _fbPlayState(key){
   return null;
 }
 
+let _fbStopAllCooldown = 0;
 function fbStopAll(){
+  // Debounce: one fadeAll per fade window — repeat taps were silently re-firing.
+  if(Date.now() < _fbStopAllCooldown) return;
+  _fbStopAllCooldown = Date.now() + 2200;
   fbSendChange('master', null, 'fadeAll', true);
+  // Visible confirmation the tap registered: pulse "FADING ALL…" for the ramp.
+  const btn = document.querySelector('.fb-stopall');
+  if(btn){
+    const orig = btn.textContent;
+    btn.textContent = 'FADING ALL…';
+    btn.classList.add('executing');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('executing'); }, 2100);
+  }
 }
 
 
