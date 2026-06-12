@@ -1103,6 +1103,14 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 .fw-divider{height:1px;background:var(--border2)}
 .fw-fadeall{background:transparent;border:1px solid var(--red);color:var(--red);font-size:11px;font-weight:600;letter-spacing:1.5px;padding:9px;border-radius:8px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-transform:uppercase}
 .fw-fadeall:hover{background:var(--red);color:#fff}
+.fw-action-row{display:flex;gap:6px}
+.fw-action-row .fw-fadeall{flex:1.6}
+.fw-duck{flex:1;background:transparent;border:1px solid var(--amber);color:var(--amber);font-size:11px;font-weight:600;letter-spacing:1px;padding:9px;border-radius:8px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-transform:uppercase;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+.fw-duck.held{background:var(--amber);color:#000}
+.fw-precheck{width:100%;background:transparent;border:1px solid var(--border);color:var(--text2);font-size:10px;font-weight:600;letter-spacing:1.2px;padding:8px;border-radius:8px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-transform:uppercase;margin-bottom:6px}
+.fw-precheck:hover{border-color:var(--green);color:var(--green)}
+.fw-precheck-out{font-family:var(--mono);font-size:9.5px;line-height:1.7;color:var(--muted2);background:var(--s2);border:1px solid var(--border2);border-radius:7px;padding:7px 9px;margin-bottom:8px;max-height:110px;overflow-y:auto}
+.pc-ok{color:var(--green)} .pc-bad{color:var(--amber)}
 .fw-section-title{font-size:11px;letter-spacing:2px;color:var(--amber);font-weight:600}
 /* ── Show Caller ── */
 .scl-status{font-size:9px;letter-spacing:.5px;color:var(--muted);font-style:italic;margin:2px 0}
@@ -1321,7 +1329,13 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     </div>
     <div class="fw-divider"></div>
     <!-- Fade All -->
-    <button class="fw-fadeall" onclick="stopAllFade()">↓ FADE ALL TRACKS</button>
+    <button class="fw-precheck" id="fw-precheck-btn" onclick="preShowCheck()" title="Plays a moment of every track quietly, in order, and flags missing or broken files">🔍 PRE-SHOW CHECK</button>
+    <div class="fw-precheck-out" id="fw-precheck-out" style="display:none"></div>
+    <div class="fw-action-row">
+      <button class="fw-fadeall" onclick="stopAllFade()">↓ FADE ALL TRACKS</button>
+      <button class="fw-duck" id="fw-duck-btn" title="Hold to dip BGM & AMB to 30% — releases back"
+        onpointerdown="duckPress()" onpointerup="duckRelease()" onpointerleave="duckRelease()" onpointercancel="duckRelease()">🤫 DUCK</button>
+    </div>
     <div class="fw-divider"></div>
     <!-- Show Caller -->
     <div class="fw-fav-head">
@@ -1332,7 +1346,7 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
       <button class="scl-btn" id="scl-rec-btn" onclick="scToggleRec()">⏺ REC SHOW</button>
       <button class="scl-btn" id="scl-show-btn" onclick="scToggleShow()" disabled>▶ SHOW MODE</button>
     </div>
-    <div class="scl-filter-row" id="scl-filter-row" title="Choose which actions the Show Caller captures & prompts"></div>
+    <div class="scl-filter-row" id="scl-filter-row" title="Everything is recorded — choose which actions are shown as prompts"></div>
     <div class="scl-note-row" id="scl-note-row" style="display:none">
       <input type="text" id="scl-note-input" placeholder="Type a note, press Enter…" maxlength="80"
         onkeydown="if(event.key==='Enter'){scAddNote();event.preventDefault();}">
@@ -1737,10 +1751,16 @@ let catC={BGM:0,SFX:0,AMB:0};
 // When a category is latched "faded", it outputs silence regardless of where its
 // fader sits — moving the fader changes the stored level but stays silent until
 // fade-in releases the latch. catFadeRamp animates the transition (0..1).
+// Momentary DUCK: dips BGM + AMB (never SFX — spot effects stay full) while
+// the button is held, springs back on release. 1 = normal, 0.3 = ducked.
+let duckVal = 1;
+let _duckTimer = null;
+
 function catOut(cat){
   const base = catVol[cat] ?? 1;
   const ramp = (catFadeRamp[cat] === undefined) ? (catFaded[cat] ? 0 : 1) : catFadeRamp[cat];
-  return base * ramp;
+  const duck = cat==='SFX' ? 1 : duckVal;
+  return base * ramp * duck;
 }
 
 function effectiveVol(t){
@@ -2560,6 +2580,140 @@ function catFadeToggle(cat, fadeMs, dir){
   }, 30);
   syncCatFadeUI(cat);
   pushStateNow(); // immediate state push so the board's button flips right away
+}
+
+// ── DUCK (hold) ──
+// Press: ramp BGM/AMB down to 30% of their current output over ~150ms.
+// Release: spring back over ~350ms. SFX is never ducked.
+function duckTo(target, ms){
+  clearInterval(_duckTimer);
+  const from = duckVal, t0 = Date.now();
+  _duckTimer = setInterval(()=>{
+    const r = Math.min((Date.now()-t0)/ms, 1);
+    duckVal = from + (target-from)*r;
+    applyCatOut('BGM'); applyCatOut('AMB');
+    if(r>=1){ clearInterval(_duckTimer); _duckTimer=null; }
+  }, 30);
+}
+function duckPress(){
+  if(duckVal < 1 && !_duckTimer) return; // already held
+  scRecord('duck','DUCK',{type:'master',id:'duck'});
+  duckTo(0.3, 150);
+  const b=document.getElementById('fw-duck-btn'); if(b) b.classList.add('held');
+}
+function duckRelease(){
+  duckTo(1, 350);
+  const b=document.getElementById('fw-duck-btn'); if(b) b.classList.remove('held');
+}
+
+// ── PRE-SHOW CHECK ──
+// Plays ~1.2s of every (ungrouped) track quietly, in order, seeking past the
+// intro so quiet starts don't read as silence. Grouped stems and favourites
+// get a file-presence check. Flags anything missing or unplayable BEFORE the
+// house opens. Tap again while running to stop.
+let _checkRun = false;
+async function preShowCheck(){
+  const btn=document.getElementById('fw-precheck-btn');
+  const out=document.getElementById('fw-precheck-out');
+  if(_checkRun){ _checkRun=false; return; } // second tap cancels
+  if(tracks.some(t=>t.playing) || groups.some(g=>g.isPlaying)){
+    showToast('Stop playback before running the check'); return;
+  }
+  if(!tracks.length && !favourites.length){ showToast('Nothing to check yet'); return; }
+  _checkRun=true; _scSquelch=true;
+  if(btn) btn.textContent='■ STOP CHECK';
+  if(out){ out.style.display=''; out.innerHTML='Starting…'; }
+  const missing=[]; let okCount=0; let current=null;
+  const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+  try{
+    for(let i=0;i<tracks.length;i++){
+      if(!_checkRun) break;
+      const t=tracks[i]; current=t;
+      if(out) out.innerHTML=`Checking ${i+1}/${tracks.length} — <b>${esc(t.name)}</b>`;
+      t.el?.classList.add('sc-glow');
+      if(!t.src || !t.ws){
+        missing.push(t.name);
+        await sleep(350);
+      } else if(groupOfTrack(t)){
+        okCount++; await sleep(150); // grouped stems play via the group engine — presence check only
+      } else {
+        try{
+          t.ws.setVolume(0.12*masterVol);
+          const dur=t.ws.getDuration()||0;
+          if(dur>4) t.ws.seekTo(0.25); // skip quiet intros
+          await t.ws.play();
+          await sleep(1200);
+          t.ws.pause(); t.ws.seekTo(0);
+          t.ws.setVolume(effectiveVol(t));
+          okCount++;
+        }catch(err){
+          try{ t.ws.pause(); t.ws.seekTo(0); t.ws.setVolume(effectiveVol(t)); }catch(_){}
+          missing.push(t.name+' (won\u2019t play)');
+        }
+      }
+      t.el?.classList.remove('sc-glow');
+    }
+    // Favourites: file presence only
+    const missFavs=favourites.filter(f=>!f.src).map(f=>'★ '+f.name);
+    missing.push(...missFavs);
+    if(out){
+      if(!_checkRun){ out.innerHTML='Check stopped.'; }
+      else if(missing.length){
+        out.innerHTML=`<span class="pc-ok">✓ ${okCount} OK</span> · <span class="pc-bad">⚠ ${missing.length} need attention:</span><br>${missing.map(esc).join('<br>')}`;
+      } else {
+        out.innerHTML=`<span class="pc-ok">✓ All ${okCount} tracks OK${favourites.length?` · ${favourites.length} favourites OK`:''} — ready for the house.</span>`;
+      }
+    }
+    diagInfo(`Pre-show check: ${okCount} OK, ${missing.length} flagged`, missing);
+  } finally {
+    if(current){ current.el?.classList.remove('sc-glow'); }
+    _checkRun=false; _scSquelch=false;
+    if(btn) btn.textContent='🔍 PRE-SHOW CHECK';
+  }
+}
+
+// ── Printable cue sheet ──
+// Renders the recorded timeline as a numbered, print-ready cue sheet (SQ1,
+// SQ2… for actions; notes as unnumbered rows). Opened from the ⚙ hub.
+function buildCueSheetHTML(){
+  if(!showTimeline || !showTimeline.events.length) return null;
+  const projName = currentProjectName()||'Untitled production';
+  const esc2 = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const kindName = {play:'PLAY',stop:'STOP',gplay:'PLAY GROUP',gstop:'STOP GROUP',fadeIn:'FADE IN',fadeOut:'FADE OUT',scene:'SCENE',xfade:'CROSSFADE',cueStandby:'LX STANDBY',cueGo:'LX GO',catFade:'CAT FADE',fadeAll:'FADE ALL',fav:'FAVOURITE',vol:'LEVEL',note:'NOTE',duck:'DUCK'};
+  let sq=0;
+  const rows = showTimeline.events.map(ev=>{
+    const isNote = ev.kind==='note';
+    if(!isNote) sq++;
+    return `<tr class="${isNote?'note':''}"><td class="num">${isNote?'—':('SQ'+sq)}</td><td class="time">${scFmt(ev.t)}</td><td class="act">${scIcon(ev.kind)} ${esc2(ev.label)}</td><td class="kind">${kindName[ev.kind]||ev.kind.toUpperCase()}</td></tr>`;
+  }).join('\n');
+  const recDate = new Date(showTimeline.recordedAt).toLocaleString();
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Cue Sheet — ${esc2(projName)}</title>
+<style>
+  body{font-family:'Courier New',monospace;background:#fff;color:#111;margin:36px;font-size:13px}
+  h1{font-size:19px;letter-spacing:3px;margin:0}
+  .sub{font-size:11px;color:#555;letter-spacing:1px;margin:5px 0 2px}
+  .zb{color:#e8262d;font-weight:bold}
+  table{border-collapse:collapse;width:100%;margin-top:18px}
+  th{font-size:10px;letter-spacing:2px;text-align:left;border-bottom:2px solid #111;padding:6px 8px}
+  td{border-bottom:1px solid #ddd;padding:6px 8px;vertical-align:top}
+  td.num{font-weight:bold;width:54px;white-space:nowrap}
+  td.time{width:64px;color:#333;white-space:nowrap}
+  td.kind{width:110px;font-size:10px;color:#777;letter-spacing:1px}
+  tr.note td{font-style:italic;background:#f7f3e8}
+  .printbtn{position:fixed;top:14px;right:14px;font-size:13px;padding:9px 18px;cursor:pointer;background:#111;color:#fff;border:none;border-radius:7px}
+  .foot{margin-top:26px;font-size:10px;color:#888;letter-spacing:1px}
+  @media print{.printbtn{display:none}body{margin:12px}}
+</style></head><body>
+<button class="printbtn" onclick="window.print()">🖨 PRINT</button>
+<h1>SOUND CUE SHEET</h1>
+<div class="sub">${esc2(projName)} — ${sq} cues over ${scFmt(showTimeline.duration)}</div>
+<div class="sub">Recorded ${esc2(recDate)} · Operator: Arvin Vaz · <span class="zb">ZB</span> FILMS</div>
+<table>
+<tr><th>CUE</th><th>TIME</th><th>ACTION</th><th>TYPE</th></tr>
+${rows}
+</table>
+<div class="foot">Generated by Offside Sound · times are from the recorded run and shift with live pacing</div>
+</body></html>`;
 }
 
 // Reflect a category's fade-latch state on the console's floating-window buttons.
@@ -3523,15 +3677,16 @@ let _scFaderPend = {};     // debounced fader-move capture
 let _scTimer = null;       // lane/highlight refresh
 let _scGlowEls = new Set();
 
-// ── Capture/prompt filter ──
-// Which action families the Show Caller records and prompts. A device
-// preference (persisted locally), applied BOTH when recording (new timelines
-// stay lean) and when displaying (existing recordings de-clutter immediately).
-// Notes are always on. Fader moves ('vols') default OFF — they're the main
-// source of lane clutter.
+// ── Prompt display filter ──
+// REC always captures EVERYTHING — the timeline is the full record of the
+// show. This filter only controls which action families are SHOWN as prompts
+// (console lane, control glows, fader-board banner). A device preference,
+// persisted locally; flip a chip any time, even mid-show, and the prompts
+// follow. Notes are always shown. Fader moves ('vols') default hidden —
+// they're the main source of lane clutter.
 const SC_GROUPS = {
   plays:  ['play','stop','gplay','gstop','fav'],
-  fades:  ['fadeIn','fadeOut','fadeAll','catFade'],
+  fades:  ['fadeIn','fadeOut','fadeAll','catFade','duck'],
   vols:   ['vol'],
   scenes: ['scene','xfade'],
   cues:   ['cueStandby','cueGo'],
@@ -3548,12 +3703,12 @@ function scToggleFilter(group){
   try{ localStorage.setItem('offside_sc_filter', JSON.stringify(scFilter)); }catch(_){}
   scRenderFilterChips();
   scRenderLane(true);
-  pushStateNow(); // board prompts follow the same filter
+  pushStateNow(); // board prompts follow the same display filter
 }
 function scRenderFilterChips(){
   const row=document.getElementById('scl-filter-row'); if(!row) return;
   const defs=[['plays','▶ Plays'],['fades','↕ Fades'],['vols','🎚 Faders'],['scenes','⚡ Scenes'],['cues','💡 Cues']];
-  row.innerHTML = defs.map(([g,lbl])=>`<button class="scl-chiptoggle ${scFilter[g]?'on':''}" onclick="scToggleFilter('${g}')" title="${scFilter[g]?'Captured & prompted — tap to ignore':'Ignored — tap to capture & prompt'}">${lbl}</button>`).join('');
+  row.innerHTML = defs.map(([g,lbl])=>`<button class="scl-chiptoggle ${scFilter[g]?'on':''}" onclick="scToggleFilter('${g}')" title="${scFilter[g]?'Shown in prompts — tap to hide':'Hidden from prompts — tap to show'}">${lbl}</button>`).join('');
 }
 
 function scClock(){ // seconds on the show clock (recording or playback)
@@ -3566,7 +3721,6 @@ function scFmt(s){ s=Math.max(0,Math.round(s)); const m=Math.floor(s/60); return
 // ── Capture ──
 function scRecord(kind, label, ref){
   if(_scSquelch) return;
-  if(!scKindOn(kind)) return; // filtered out by the capture/prompt preference
   if(showRec){
     showRec.events.push({t:+scClock().toFixed(1), kind, label, ref:ref||null});
     scUpdateRecUI();
@@ -3578,7 +3732,6 @@ function scRecord(kind, label, ref){
 // stamped at the FIRST movement, valued at the LAST.
 function scRecordFader(refType, id, name, value){
   if(_scSquelch || (!showRec && !showPlay)) return;
-  if(!scKindOn('vol')) return;
   const key=`${refType}:${id}`;
   let p=_scFaderPend[key];
   if(!p){ p=_scFaderPend[key]={firstT:+scClock().toFixed(1), timer:null}; }
@@ -3615,6 +3768,15 @@ function scStartRec(){
 }
 function scStopRec(){
   if(!showRec) return;
+  // Flush any debounced fader moves still pending (a final fade right before
+  // END REC would otherwise fire its capture timer after showRec is gone).
+  Object.keys(_scFaderPend).forEach(key=>{
+    const p=_scFaderPend[key]; if(!p) return;
+    clearTimeout(p.timer);
+    const [refType,id]=key.split(':');
+    showRec.events.push({t:p.firstT, kind:'vol', label:`${p.name} → ${Math.round(p.value*100)}%`, ref:{type:refType, id:(refType==='track'?parseInt(id):id)}});
+    delete _scFaderPend[key];
+  });
   const dur=scClock();
   if(!showRec.events.length){
     if(!confirm('No actions were recorded. Discard this recording?')){ return; }
@@ -3711,7 +3873,7 @@ function scRenderLane(force){
   scApplyGlows(top);
 }
 function scIcon(kind){
-  return {play:'▶',stop:'■',gplay:'▶',gstop:'■',fadeIn:'↑',fadeOut:'↓',scene:'⚡',xfade:'⇄',cueStandby:'💡',cueGo:'🟢',catFade:'〰',fadeAll:'⤓',fav:'★',vol:'🎚',note:'✎'}[kind]||'•';
+  return {play:'▶',stop:'■',gplay:'▶',gstop:'■',fadeIn:'↑',fadeOut:'↓',scene:'⚡',xfade:'⇄',cueStandby:'💡',cueGo:'🟢',catFade:'〰',fadeAll:'⤓',fav:'★',vol:'🎚',note:'✎',duck:'🤫'}[kind]||'•';
 }
 // Glow the actual control for prompts inside the action window (−8s..+6s)
 function scApplyGlows(top){
@@ -5003,6 +5165,9 @@ const MANUAL_HTML = `
   <h3>⚙ Controls window</h3>
   <p>Draggable panel with the <strong>Master</strong> fader, three <strong>category faders</strong> (BGM / SFX / AMB), <strong>Fade All Tracks</strong>, <strong>Favourites</strong>, and (on the local-server version) <strong>Light Cues</strong>. Favourites are one-shot sounds (door slams, switches, stings) that fire instantly at 50% on tap.</p>
   <p>Each category has <strong>Fade In / Fade Out</strong> buttons (mirrored on the fader board): Fade Out ramps that whole category to silence and <em>latches</em> it — the fader cap stays put, and moving it makes no sound while latched. Fade In ramps back up to wherever the fader now sits. A latched category shows a dimmed fader and a highlighted button on both devices.</p>
+  <p><strong>🤫 DUCK</strong> (next to Fade All): hold to dip BGM and AMB to 30% — for an announcement or a sudden dialogue moment over music — and release to spring back. SFX are never ducked.</p>
+  <p><strong>🔍 PRE-SHOW CHECK</strong>: plays a brief moment of every track quietly, in order, and lists anything missing or unplayable — run it before the house opens, especially after moving the production to a different computer. Tap again to stop early.</p>
+  <p><strong>🖨 Cue sheet</strong>: once a show is recorded with the Show Caller, the ⚙ hub's Export card gains a print-ready, numbered cue sheet (SQ1, SQ2…) with your notes — for the stage manager's book or handing the show to another operator.</p>
 
   <h3>🎬 Show Caller</h3>
   <p>Record a rehearsal, replay it as timed prompts on show night. In ⚙ Controls: hit <strong>⏺ REC SHOW</strong> at curtain-up — every action you take (plays, stops, fades, fader moves, scenes, cues, favourites) is timestamped, and you can type quick notes ("Rose enters") that mark the moment. Hit <strong>■ STOP &amp; SAVE</strong> at the end; the show saves with the production.</p>
@@ -5089,7 +5254,7 @@ function openSupport(){
   const mailto = `mailto:${SUPPORT_EMAIL}?subject=${mailSubject}&body=${mailBody}`;
 
   // JSON-encode the payloads so they embed safely inside a <script> in the new tab.
-  const payload = JSON.stringify({ diagText, fileListText, projectJSON, safeName, stamp, upi:SUPPORT_UPI, email:SUPPORT_EMAIL, mailto, manualHTML:MANUAL_HTML });
+  const payload = JSON.stringify({ diagText, fileListText, projectJSON, safeName, stamp, upi:SUPPORT_UPI, email:SUPPORT_EMAIL, mailto, manualHTML:MANUAL_HTML, cueSheetHTML:(typeof buildCueSheetHTML==='function'?buildCueSheetHTML():null) });
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Offside Sound — Help, Export & Support</title>
@@ -5161,6 +5326,7 @@ function openSupport(){
     <p>Back up this production or share what's in it.</p>
     <a class="btn green" id="dl-project">↓ Project file (.json)</a>
     <a class="btn amber" id="dl-files">↓ Audio file list (.txt)</a>
+    <a class="btn" id="dl-cuesheet" style="display:none">🖨 Cue sheet (print)</a>
     <a class="btn" id="dl-log2">↓ Diagnostics (.txt)</a>
   </div>
 
@@ -5188,7 +5354,7 @@ function openSupport(){
   </div>
 </div>
 <script>
-  const D = ${payload};
+  const D = ${payload.replace(/<\//g,'<\\/')};
   function dl(text, fname, mime){
     try{
       const blob = new Blob([text], {type:mime||'text/plain'});
@@ -5210,6 +5376,15 @@ function openSupport(){
   };
   document.getElementById('dl-project').onclick = ()=>dl(D.projectJSON, D.safeName+'_'+D.stamp+'.json','application/json');
   document.getElementById('dl-files').onclick = ()=>dl(D.fileListText, 'offside-files-'+D.safeName+'-'+D.stamp+'.txt');
+  if(D.cueSheetHTML){
+    const cs=document.getElementById('dl-cuesheet');
+    cs.style.display='';
+    cs.onclick=()=>{
+      const b=new Blob([D.cueSheetHTML],{type:'text/html'});
+      const w=window.open(URL.createObjectURL(b),'_blank');
+      if(!w) dl(D.cueSheetHTML, 'cue-sheet-'+D.safeName+'-'+D.stamp+'.html','text/html');
+    };
+  }
   const upi=document.getElementById('upi-box');
   upi.onclick=()=>{
     (navigator.clipboard?navigator.clipboard.writeText(D.upi):Promise.reject())
