@@ -1119,6 +1119,14 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 .scl-chiptoggle{background:var(--s3);border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.5px;padding:4px 7px;border-radius:10px;cursor:pointer;transition:all .12s;opacity:.55}
 .scl-chiptoggle.on{color:var(--amber);border-color:var(--amber);opacity:1;background:rgba(255,193,7,.08)}
 .scl-chiptoggle:hover{opacity:1}
+#float-window-sc{right:340px}
+@media(max-width:700px){#float-window-sc{right:22px;top:120px}}
+.scl-oprow{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2)}
+.scl-oplbl{font-size:8px;letter-spacing:1.5px;color:var(--muted);font-weight:600;flex-shrink:0}
+.scl-oprow input{flex:1;background:var(--s2);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:10px;padding:6px 8px;border-radius:6px;outline:none}
+.scl-oprow input:focus{border-color:var(--text2)}
+.pc-desc{font-size:11.5px;color:var(--text2);line-height:1.55;margin:0 0 12px}
+.pc-modal-btn{margin-bottom:10px;padding:11px;font-size:11px}
 .scl-btn{flex:1;background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:10px;font-weight:700;letter-spacing:1px;padding:8px 4px;border-radius:7px;cursor:pointer;font-family:var(--mono);transition:all .12s}
 .scl-btn:hover:not(:disabled){border-color:var(--text2);color:var(--text)}
 .scl-btn:disabled{opacity:.4;cursor:default}
@@ -1240,6 +1248,8 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     </div>
     <button class="btn btn-purple" onclick="openMixer()" title="Global mixer — all tracks at once">▤ MIXER</button>
     <button class="btn btn-blue" onclick="toggleFloatingWindow()" title="Show / hide control panel">⚙ CONTROLS</button>
+    <button class="btn btn-ghost" onclick="toggleShowCaller()" title="Show Caller — record a rehearsal run, get timed prompts during the show">🎬 SHOW</button>
+    <button class="btn btn-ghost" onclick="openPrecheck()" title="Pre-show check — verify every audio file plays">🔍</button>
     <button class="btn btn-ghost btn-help" onclick="openSupport()" title="Help, export, diagnostics & support — opens in a new tab">⚙️</button>
     <button class="btn btn-purple" id="link-fader-btn" onclick="openFaderLink()" title="Link a fader board or cue light device">📱 LINK DEVICES</button>
     <button class="btn-stopall" id="stopall-btn" onclick="stopAllFade()">
@@ -1252,6 +1262,46 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
 
 <!-- Show Caller prompt lane (visible during SHOW mode) -->
 <div class="scl-lane" id="scl-lane"></div>
+
+<!-- ══ SHOW CALLER WINDOW ══ -->
+<div class="float-window hidden" id="float-window-sc">
+  <div class="float-handle" id="float-handle-sc">
+    <span class="float-title">🎬 SHOW CALLER</span>
+    <button class="float-close" onclick="toggleShowCaller()" title="Hide">✕</button>
+  </div>
+  <div class="float-body">
+    <div class="scl-status" id="scl-status">No show recorded yet</div>
+    <div class="scl-btnrow">
+      <button class="scl-btn" id="scl-rec-btn" onclick="scToggleRec()">⏺ REC SHOW</button>
+      <button class="scl-btn" id="scl-show-btn" onclick="scToggleShow()" disabled>▶ SHOW MODE</button>
+    </div>
+    <div class="scl-filter-row" id="scl-filter-row" title="Everything is recorded — choose which actions are shown as prompts"></div>
+    <div class="scl-note-row" id="scl-note-row" style="display:none">
+      <input type="text" id="scl-note-input" placeholder="Type a note, press Enter…" maxlength="80"
+        onkeydown="if(event.key==='Enter'){scAddNote();event.preventDefault();}">
+      <button class="scl-note-add" onclick="scAddNote()">＋</button>
+    </div>
+    <div class="scl-oprow">
+      <span class="scl-oplbl">OPERATOR</span>
+      <input type="text" id="scl-operator" maxlength="40" placeholder="Name on the cue sheet" onchange="setOperatorName(this.value)">
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRE-SHOW CHECK MODAL ══ -->
+<div class="modal-overlay" id="precheck-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title"><span class="modal-icon">🔍</span><span>Pre-show Check</span></div>
+      <button class="modal-close" onclick="closePrecheck()" title="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="pc-desc">Plays a brief moment of every track quietly, in order, and flags anything missing or unplayable. Run this before the house opens — especially after moving the production to a different computer.</p>
+      <button class="fw-precheck pc-modal-btn" id="fw-precheck-btn" onclick="preShowCheck()">🔍 START CHECK</button>
+      <div class="fw-precheck-out" id="fw-precheck-out" style="display:none"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ FLOATING CONTROL WINDOW ══ -->
 <div class="float-window hidden" id="float-window">
@@ -1329,28 +1379,10 @@ body.fb-disconnected .fb-faders{opacity:.4;pointer-events:none;filter:grayscale(
     </div>
     <div class="fw-divider"></div>
     <!-- Fade All -->
-    <button class="fw-precheck" id="fw-precheck-btn" onclick="preShowCheck()" title="Plays a moment of every track quietly, in order, and flags missing or broken files">🔍 PRE-SHOW CHECK</button>
-    <div class="fw-precheck-out" id="fw-precheck-out" style="display:none"></div>
     <div class="fw-action-row">
       <button class="fw-fadeall" onclick="stopAllFade()">↓ FADE ALL TRACKS</button>
       <button class="fw-duck" id="fw-duck-btn" title="Hold to dip BGM & AMB to 30% — releases back"
         onpointerdown="duckPress()" onpointerup="duckRelease()" onpointerleave="duckRelease()" onpointercancel="duckRelease()">🤫 DUCK</button>
-    </div>
-    <div class="fw-divider"></div>
-    <!-- Show Caller -->
-    <div class="fw-fav-head">
-      <span class="fw-section-title">🎬 Show Caller</span>
-    </div>
-    <div class="scl-status" id="scl-status">No show recorded yet</div>
-    <div class="scl-btnrow">
-      <button class="scl-btn" id="scl-rec-btn" onclick="scToggleRec()">⏺ REC SHOW</button>
-      <button class="scl-btn" id="scl-show-btn" onclick="scToggleShow()" disabled>▶ SHOW MODE</button>
-    </div>
-    <div class="scl-filter-row" id="scl-filter-row" title="Everything is recorded — choose which actions are shown as prompts"></div>
-    <div class="scl-note-row" id="scl-note-row" style="display:none">
-      <input type="text" id="scl-note-input" placeholder="Type a note, press Enter…" maxlength="80"
-        onkeydown="if(event.key==='Enter'){scAddNote();event.preventDefault();}">
-      <button class="scl-note-add" onclick="scAddNote()">＋</button>
     </div>
     <div class="fw-divider"></div>
     <!-- Favourites -->
@@ -1755,6 +1787,7 @@ let catC={BGM:0,SFX:0,AMB:0};
 // the button is held, springs back on release. 1 = normal, 0.3 = ducked.
 let duckVal = 1;
 let _duckTimer = null;
+let operatorName = 'Arvin Vaz'; // shown on the printed cue sheet
 
 function catOut(cat){
   const base = catVol[cat] ?? 1;
@@ -2668,7 +2701,7 @@ async function preShowCheck(){
   } finally {
     if(current){ current.el?.classList.remove('sc-glow'); }
     _checkRun=false; _scSquelch=false;
-    if(btn) btn.textContent='🔍 PRE-SHOW CHECK';
+    if(btn) btn.textContent='🔍 START CHECK';
   }
 }
 
@@ -2707,12 +2740,12 @@ function buildCueSheetHTML(){
 <button class="printbtn" onclick="window.print()">🖨 PRINT</button>
 <h1>SOUND CUE SHEET</h1>
 <div class="sub">${esc2(projName)} — ${sq} cues over ${scFmt(showTimeline.duration)}</div>
-<div class="sub">Recorded ${esc2(recDate)} · Operator: Arvin Vaz · <span class="zb">ZB</span> FILMS</div>
+<div class="sub">Recorded ${esc2(recDate)} · Operator: ${esc2(operatorName)}</div>
 <table>
 <tr><th>CUE</th><th>TIME</th><th>ACTION</th><th>TYPE</th></tr>
 ${rows}
 </table>
-<div class="foot">Generated by Offside Sound · times are from the recorded run and shift with live pacing</div>
+<div class="foot">Generated by Offside Sound · a <span class="zb">ZB</span> FILMS app · times are from the recorded run and shift with live pacing</div>
 </body></html>`;
 }
 
@@ -2897,9 +2930,16 @@ function toggleFloatingWindow(){
   const w=document.getElementById('float-window');
   if(w) w.classList.toggle('hidden');
 }
-function makeFloatingDraggable(){
-  const w=document.getElementById('float-window');
-  const handle=document.getElementById('float-handle');
+function toggleShowCaller(){
+  const w=document.getElementById('float-window-sc');
+  if(w) w.classList.toggle('hidden');
+}
+function openPrecheck(){ document.getElementById('precheck-modal').classList.add('open'); }
+function closePrecheck(){ _checkRun=false; document.getElementById('precheck-modal').classList.remove('open'); }
+function setOperatorName(v){ operatorName=(v||'').trim()||'Arvin Vaz'; autoSave(); }
+function makeFloatingDraggable(winId='float-window', handleId='float-handle'){
+  const w=document.getElementById(winId);
+  const handle=document.getElementById(handleId);
   if(!w||!handle) return;
   let dragging=false, pointerId=null, offX=0, offY=0, curX=0, curY=0, raf=null;
 
@@ -3903,6 +3943,8 @@ function scRefEl(ev){
   return null;
 }
 function scUpdateRecUI(){
+  const op=document.getElementById('scl-operator');
+  if(op && document.activeElement!==op && op.value!==operatorName) op.value=operatorName;
   const st=document.getElementById('scl-status');
   const recBtn=document.getElementById('scl-rec-btn');
   const showBtn=document.getElementById('scl-show-btn');
@@ -5166,11 +5208,11 @@ const MANUAL_HTML = `
   <p>Draggable panel with the <strong>Master</strong> fader, three <strong>category faders</strong> (BGM / SFX / AMB), <strong>Fade All Tracks</strong>, <strong>Favourites</strong>, and (on the local-server version) <strong>Light Cues</strong>. Favourites are one-shot sounds (door slams, switches, stings) that fire instantly at 50% on tap.</p>
   <p>Each category has <strong>Fade In / Fade Out</strong> buttons (mirrored on the fader board): Fade Out ramps that whole category to silence and <em>latches</em> it — the fader cap stays put, and moving it makes no sound while latched. Fade In ramps back up to wherever the fader now sits. A latched category shows a dimmed fader and a highlighted button on both devices.</p>
   <p><strong>🤫 DUCK</strong> (next to Fade All): hold to dip BGM and AMB to 30% — for an announcement or a sudden dialogue moment over music — and release to spring back. SFX are never ducked.</p>
-  <p><strong>🔍 PRE-SHOW CHECK</strong>: plays a brief moment of every track quietly, in order, and lists anything missing or unplayable — run it before the house opens, especially after moving the production to a different computer. Tap again to stop early.</p>
+  <p><strong>🔍 PRE-SHOW CHECK</strong> (the 🔍 button in the topbar): opens a panel that plays a brief moment of every track quietly, in order, and lists anything missing or unplayable — run it before the house opens, especially after moving the production to a different computer. Tap again to stop early.</p>
   <p><strong>🖨 Cue sheet</strong>: once a show is recorded with the Show Caller, the ⚙ hub's Export card gains a print-ready, numbered cue sheet (SQ1, SQ2…) with your notes — for the stage manager's book or handing the show to another operator.</p>
 
   <h3>🎬 Show Caller</h3>
-  <p>Record a rehearsal, replay it as timed prompts on show night. In ⚙ Controls: hit <strong>⏺ REC SHOW</strong> at curtain-up — every action you take (plays, stops, fades, fader moves, scenes, cues, favourites) is timestamped, and you can type quick notes ("Rose enters") that mark the moment. Hit <strong>■ STOP &amp; SAVE</strong> at the end; the show saves with the production.</p>
+  <p>Record a rehearsal, replay it as timed prompts on show night. Tap <strong>🎬 SHOW</strong> in the topbar to open the Show Caller window, where you can also set the operator name printed on the cue sheet. Hit <strong>⏺ REC SHOW</strong> at curtain-up — every action you take (plays, stops, fades, fader moves, scenes, cues, favourites) is timestamped, and you can type quick notes ("Rose enters") that mark the moment. Hit <strong>■ STOP &amp; SAVE</strong> at the end; the show saves with the production.</p>
   <p>Next run, hit <strong>▶ SHOW MODE</strong> at curtain-up. A lane appears showing what's coming with countdowns (notes surface ~75s early, actions ~45s), and the <em>actual control to hit glows green</em> as its moment approaches — on the console and the fader board. Doing the action clears its prompt. <strong>Nothing ever fires by itself</strong> — it's a glowing cue sheet, you stay the operator.</p>
   <p>Live theatre never runs at rehearsal pace, so re-sync any time: <strong>tap an upcoming chip</strong> to say "we're here now" (the whole remaining timeline shifts), or nudge the clock <strong>±30s</strong>. Both work from the fader board too.</p>
   <h3>💡 Light Cues (local-server version)</h3>
@@ -5316,7 +5358,7 @@ function openSupport(){
     <h2>🛟 Something went wrong?</h2>
     <p>If you hit a problem during a show, send the diagnostics to Arvin so it can be fixed. Easiest way: download the log file, then email it.</p>
     <a class="btn green" id="dl-log">↓ Download diagnostics log</a>
-    <a class="btn blue" href="${mailto}">✉ Email Arvin (attach the log)</a>
+    <a class="btn blue" href="${mailto}">✉ Email Arvin — ${SUPPORT_EMAIL}</a>
     <button class="btn" id="copy-log">⧉ Copy log to clipboard</button>
     <pre id="logbox"></pre>
   </div>
@@ -6128,6 +6170,7 @@ function migrateScenes(scenesArr){
 function stateToJSON(){
   return JSON.stringify({
     version:7,
+    operatorName,
     tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,pan:t.pan||0,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename})),
     groups:groups.map(g=>({id:g.id,name:g.name,volume:g.volume,trackIds:g.trackIds})),
     favourites:favourites.map(f=>({id:f.id,name:f.name,filename:f.filename})),
@@ -6221,6 +6264,7 @@ function resetWorkspace(){
   masterVol=1;
   catVol.BGM=1; catVol.SFX=1; catVol.AMB=1;
   catFaded.BGM=false; catFaded.SFX=false; catFaded.AMB=false;
+  operatorName='Arvin Vaz';
   catFadeRamp.BGM=undefined; catFadeRamp.SFX=undefined; catFadeRamp.AMB=undefined;
   lastTriggeredId=null;
 }
@@ -6245,6 +6289,7 @@ function loadProject(id){
       favourites=(data.favourites||[]).map(fd=>({id:fd.id,name:fd.name,filename:fd.filename||null,src:null}));
       lightCues=(data.lightCues||[]).map(c=>({id:c.id,label:c.label,color:c.color||'#ffc107'}));
       showTimeline = data.showTimeline || null;
+      operatorName = data.operatorName || 'Arvin Vaz';
       scUpdateRecUI();
       scRenderFilterChips();
       if(data.catVol){ catVol.BGM=data.catVol.BGM??1; catVol.SFX=data.catVol.SFX??1; catVol.AMB=data.catVol.AMB??1; }
@@ -6534,6 +6579,7 @@ document.addEventListener('click',e=>{
     if(e.target.id==='cat-assign-modal') closeCategoryAssign();
     if(e.target.id==='dedupe-modal') closeDedupe();
     if(e.target.id==='diag-text-panel') e.target.classList.remove('open');
+    if(e.target.id==='precheck-modal') closePrecheck();
   }
 });
 
@@ -7797,6 +7843,7 @@ function chooseRole(role){
 // INIT
 // ════════════════════════════════════════════════
 makeFloatingDraggable();
+makeFloatingDraggable('float-window-sc','float-handle-sc');
 
 // Remind to export before closing the console (only when a production with
 // tracks is loaded). Browsers show their own generic "Leave site?" dialog.
